@@ -412,14 +412,10 @@ function oikai_reflect_parameters( $refFunc, $docblock ) {
 }
 
 /**
- * List the source of the function
  * 
- * @param object $refFunc
- * @param ID $post_id 
- * 
- */
-function oikai_listsource( $refFunc, $post_id=null, $component_type ) {
-  $fileName = $refFunc->getFileName();
+ */ 
+function oikai_load_from_file( $fileName, $refFunc ) {
+ 
   $file = file( $fileName );
   bw_trace2( $file );
   $start = $refFunc->getStartLine();
@@ -437,8 +433,41 @@ function oikai_listsource( $refFunc, $post_id=null, $component_type ) {
     //e( $line+1 . " " . $sourceline );
   }  
   //etag( "pre" );
+  return( $sources );
+}
+
+
+
+
+/**
+ * List the source of the function
+ *
+ * List source may involve parsing some or all of the source to create the dynamic listing.
+ * When we only want a bit of the source then we will parse only a subset
+ * but when we're parsing it for real we do the lot.
+ * Whether or not we update the parsed source after parsing depends on how we were doing it. 
+ * 
+ * $parsed_source context( "paged" ) processing                update parsed source
+ * -------------- ------------------ ---------------------     --------------------  
+ * latest         false              Parse the full source     Yes     
+ * latest         other              Use the parsed source     No
+ * not latest     false              Parse the full source     Yes
+ * not latest     true               Parse part of the source  No
+ *
+ * 
+ * 
+ * Once we've got the source then we can do the "navi" bit.
+ * 
+ * @param object $refFunc
+ * @param ID $post_id 
+ * @param string $component_type
+ * 
+ */
+function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type ) {
+  $fileName = $refFunc->getFileName();
+  $paged = bw_context( "paged" );
   
-  if ( $post_id ) {
+  if ( $post_id && $paged !== false ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
     $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id );
@@ -446,17 +475,36 @@ function oikai_listsource( $refFunc, $post_id=null, $component_type ) {
     $parsed_source = null;
   }
   
+  if ( !$parsed_source ) {  
+    $sources = oikai_load_from_file( $fileName, $refFunc );
+    if ( $paged === false ) {
+      set_time_limit( 120 );
+      bw_push();
+      oikai_syntax_source( $sources, 1 );
+      $parsed_source = bw_ret();
+      bw_pop();
+      
+      oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+      oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
+      //$plugin_slug = get_post_meta( $plugin_id, "_oikp_slug", true );
+      //$component_type = oiksc_query_component_type( $plugin_slug );
+      global $plugin;
+      $plugin = $plugin_slug;
+      // e( "flarg: $fileName" );
+      bw_update_parsed_source( $post_id, $parsed_source, oiksc_real_file( $fileName, $component_type) );   //   $files[$file]
+    } else { 
+      // We only handle a subset!
+      //$parsed_source = null;
+    }
+  } else { 
+    $parsed_source = $parsed_source->post_content;
+  } 
+  
   if ( $parsed_source ) {
     oikai_navi_parsed_source( $parsed_source );
   } else {
-    $paged = bw_context( "paged" );
-    if ( $paged === false ) {
-      set_time_limit( 40 );
-      oikai_syntax_source( $sources, 1 );
-    } else {
-      oikai_navi_source( $sources );
-    }
-  }  
+    oikai_navi_source( $sources );
+  }
 }
 
 /**
@@ -486,6 +534,7 @@ function oikai_navi_source( $sources ) {
   for ( $i = $start; $i<= $end; $i++ ) {
     $selection[] = $sources[$i];
   }
+  //e( "countsel " . count( $selection ) );
   oikai_syntax_source( $selection, 1 ); 
   bw_navi_paginate_links( $bwscid, $page, $pages );
 } 
@@ -1334,18 +1383,12 @@ function oikai_handle_char_equals( $key, $char, &$tokens ) {
  */
 function oikai_easy_tokens( $tokens, $start, $prepend_php ) {
   wp_enqueue_style( "oikai-tokens-css", oik_url( "css/oikai-tokens.css", "oik-shortcodes" ) );
-  /*
-  $line = 1;
-  while ( ( $line < $start ) && count( $tokens ) ) {
-    if ( isset( $tokens[0]) && is_array( $tokens[0] ) ) {
-      $line = $tokens[0][2];
-      //echo "$line $tokens[0][1]" ; 
-    }   
-  }
-  */
   if ( $prepend_php ) {  
     array_shift( $tokens );
   }
+  // @TODO Either strip the last token if it's T_WHITESPACE OR make sure we see it. Otherwise the line numbers can appear to be incorrect.
+  // $count = count( $tokens );
+  // $last = end( $tokens );
   //bw_trace2( $tokens, "pretokens1", false );
   //p( "Pass 1" );
   oikai_process_tokens1( $tokens );
@@ -1377,7 +1420,9 @@ function oikai_process_tokens1( &$tokens ) {
 /**
  * Second pass of tokens
  *
- * Now write the code out with syntax highlighting and any generated links
+ * Now write the code out with syntax highlighting and any generated links.
+ * @TODO Decide which is best... having a blank line at the end of the source OR stripping any trailing whitespace token.
+ *
  *  
  * @param array - the array of PHP tokens
  */
@@ -1391,6 +1436,7 @@ function oikai_process_tokens2( $tokens ) {
       //oikai_handle_char2( $token );
     }
   }
+  e( "&nbsp;" );
   etag( "pre" );
 }
 
@@ -1651,29 +1697,29 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  *
  * @param string $funcname - the function name - @TODO which may be classname::funcname
  * @param string $sourcefile - the source file
- * @param string $plugin - the plugin slug
+ * @param string $plugin_slug - the plugin slug
  * @param string $classname - the class name for a method
  * @param ID $post_id - the post ID for the "api" 
  */
-function oikai_build_apiref( $funcname, $sourcefile=null, $plugin="oik", $classname=null, $post_id ) {
+function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id ) {
   $func = oikai_get_func( $funcname, $classname );
   bw_context( "func", $func );
   $class = oikai_get_class( $funcname, $classname );
   bw_context( "classname", $class );
   // p( "Class: $class" );
-  $refFunc = oikai_pseudo_reflect( $func, $sourcefile, $plugin, $class );
+  $refFunc = oikai_pseudo_reflect( $func, $sourcefile, $plugin_slug, $class );
   if ( $refFunc ) {
     $docblock = oikai_reflect_docblock( $refFunc );
     oikai_reflect_descriptions( $docblock );
     oikai_reflect_usage( $refFunc, $docblock, $funcname );
     oikai_reflect_parameters( $refFunc, $docblock );
     oikai_print_return( $refFunc, $docblock );
-    oikai_reflect_filename( $refFunc, $sourcefile, $plugin );
-    bw_flush();
+    oikai_reflect_filename( $refFunc, $sourcefile, $plugin_slug );
+    // bw_flush();
+    //bw_push();
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-    $component_type = oiksc_query_component_type( $plugin );
-    oikai_listsource( $refFunc, $post_id, $component_type ); 
-    // oikai_reflect_links( $refFunc );
+    $component_type = oiksc_query_component_type( $plugin_slug );
+    $source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type ); 
   } else { 
     p( "No API information available for: " . $funcname );
   }  

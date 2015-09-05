@@ -417,6 +417,9 @@ function oiksc_create_oik_api( $plugin, $func, $file, $type, $title=null ) {
   $_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
   $_POST['_oik_api_type'] = $type;
   
+  // @TODO Find the correct way of setting WordPress-SEO metadata
+  //$_POST['_yoast_wpseo_metadesc'] = $post_title;
+  
   /* We don't know these values yet:
      _oik_api_example
      _oik_api_notes

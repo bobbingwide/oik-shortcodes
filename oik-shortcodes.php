@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
 Depends: oik base plugin, oik fields
-Version: 1.24
+Version: 1.25
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -708,15 +708,6 @@ function oiksc_ajax_oiksc_create_api() {
       } else {
         $post_id = oikai_get_classref( $api, null, $plugin_post->ID, $file );
       }
-      
-      /** 
-       * Update the oik_parsed_source
-       */
-      $content = bw_ret();
-      oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-      oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-      bw_update_parsed_source( $post_id, $content, oiksc_real_file( $file, $component_type ) );
-      e( $content ); 
     } else {
       e( "Invalid plugin: $plugin ");
     }    
@@ -762,25 +753,7 @@ function oiksc_ajax_oiksc_create_file() {
     if ( $plugin_post ) {
       $file_id = _oikai_create_file( $plugin_post->ID, $file ); 
       $filename = oik_pathw( $file, $plugin, $component_type );
-      
-      add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
-      add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
-      add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 );
-       
-      oiksc_display_oik_file( $filename, $component_type, $file_id );
-      oikai_save_callees( $file_id );
-  
-      oiksc_save_hooks( $file_id );
-      oiksc_save_associations( $file_id );
-      
-      /** 
-       * Update the oik_parsed_source
-       */
-      //$content = bw_ret();
-      //oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-      //bw_update_parsed_source( $file_id, $content, $filename );
-      //echo $content; 
-      
+      $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, true );
     } else {
       e( "Invalid component: $plugin, type: $component_type ");
     }    
@@ -788,7 +761,6 @@ function oiksc_ajax_oiksc_create_file() {
     bw_trace2();
     e( "missing stuff :$file:$plugin:" );
   }
-  
   bw_flush(); 
   exit();    
 }
@@ -824,7 +796,6 @@ function oiksc_ajax_nopriv_oiksc_create_api() {
   bw_flush();
   exit();
 }
-
 
 /**
  * Implement "wp_ajax_nopriv_oiksc_create_file" action for oik-shortcodes

@@ -316,14 +316,14 @@ function oiksc_create_api() {
       oik_require( "includes/bw_posts.inc" ); 
       $post_id = _oiksc_create_api( $plugin_id, $api, $files[$file], $type ); // Note: No $title 
       
-      $content = bw_ret();
-      oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-      $plugin_slug = get_post_meta( $plugin_id, "_oikp_slug", true );
-      $component_type = oiksc_query_component_type( $plugin_slug );
-      global $plugin;
-      $plugin = $plugin_slug;
-      bw_update_parsed_source( $post_id, $content, oiksc_real_file( $files[$file], $component_type) );
-      echo $content; 
+      //$content = bw_ret();
+      //oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+      //$plugin_slug = get_post_meta( $plugin_id, "_oikp_slug", true );
+     // $component_type = oiksc_query_component_type( $plugin_slug );
+     // global $plugin;
+     // $plugin = $plugin_slug;
+     // bw_update_parsed_source( $post_id, $content, oiksc_real_file( $files[$file], $component_type) );
+     // echo $content; 
       oiksc_report( $post_id, "API", "creation" );      
     }
   }

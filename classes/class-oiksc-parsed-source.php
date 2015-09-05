@@ -96,8 +96,15 @@ function bw_get_parse_count( $parsed_source ) {
   return( $parse_count );
 }
 
+/**
+ * Get the file's timestamp
+ *
+ * @param string $file - partial file name e.g. classes/class-oiksc-parsed-source.php
+ * @param string $component_type - "plugin" | "theme" 
+ * @return string - file's timestamp - file modification time
+ */
 function bw_get_file_time( $file, $component_type ) {
-  bw_backtrace();
+  //bw_backtrace();
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
   $real_file = oiksc_real_file( $file, $component_type );
   $filemtime = filemtime( $real_file );
@@ -107,11 +114,23 @@ function bw_get_file_time( $file, $component_type ) {
 /**
  * Load the latest parsed source - if it is the latest
  *
+ * We only return the parsed source if the source has been parsed more than once
+ * AND the stored timestamp is the same as or later than the current timestamp for the file.
+ *
+ * If the stored timestamp is 1 then we've only parsed the file once. 
+ * We won't be too sure whether or not the called APIs have been found. 
+ * 
+ * If the stored timestamp is earlier than the current this means the file has been updated
+ * so we should re-parse it. 
+ *
+ * @param string $file - file name
+ * @param string $component_type - "plugin" | "theme"
  * @param ID $id - ID of the post to have been parsed
+ * @return post - the parsed source post object or null
  * 
  */
 function bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id ) {
-  bw_trace2();
+  // bw_trace2();
   $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
   if ( $parsed_source ) {
     $parse_count = bw_get_parse_count( $parsed_source );
@@ -218,19 +237,49 @@ function bw_update_parsed_source( $post_id, $content, $filename ) {
   }
 }
 
-
 /**
  * Navigate the parsed source
  *
- * Like oikai_navi_source but with pre-parsed source
- *  this 
+ * Like oikai_navi_source(), but with pre-parsed source, this routine needs to cater for the new line characters in the parsed source
+ * treating them as line breaks and also the pre tags that have been wrapped around the parsed source.
  * 
+ * @param string $parsed_source - the parsed source
  */                                          
 function oikai_navi_parsed_source( $parsed_source ) {
-  bw_trace2();
-  e( $parsed_source->post_content );
+  //bw_backtrace();
+  c( "parsed source" );
+  //e( $parsed_source->post_content );
+  $parsed_source = rtrim( $parsed_source, "\n " );
+  $sources = explode( "\n", $parsed_source );
+  //bw_trace2( $sources, "sources" );
+  
+  
+  oik_require( "shortcodes/oik-navi.php" );
+  $bwscid = bw_get_shortcode_id( true );
+  $page = bw_check_paged_shortcode( $bwscid );
+  $posts_per_page = 100; // get_option( "posts_per_page" );
+  $count = count( $sources );
+  $pages = ceil( $count / $posts_per_page );
+  $start = ( $page-1 ) * $posts_per_page;
+  $end = min( $start + $posts_per_page, $count ) -1;
+  bw_navi_s2eofn( $start, $end, $count, bw_translate( "Lines: " ) );
+  if ( $start  ) {
+    e( "<pre>" );
+  }
+  for ( $i = $start; $i<= $end; $i++ ) {
+    // $selection[] = $sources[$i];
+    //$line = $i+1;
+    //e( "$line " );
+    e( $sources[$i] );
+    e( "\n" );
+  }
+  if ( $end < $count ) {
+    e( "</pre>" );
+  }
+  //oikai_syntax_source( $selection, 1 ); 
+  bw_navi_paginate_links( $bwscid, $page, $pages );
+} 
 
-}
 
 
 

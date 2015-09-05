@@ -85,20 +85,22 @@ function oiksc_listfile_create_dummy_function( $contents_arr, $component_type ) 
  *
  * @param string $file - the name of the file
  * @param string $component_type
- * @param ID $post_id - the ID of the file post
+ * @param ID $file_id - the ID of the file post
+ * @param bool $force - true if we need to rebuild
+ * @return string - parsed source or null 
  */
-function oiksc_display_oik_file( $file, $component_type, $post_id ) {
+function oiksc_display_oik_file( $file, $component_type, $file_id, $force=false ) {
    oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-  if ( $post_id ) {
+  if ( $file_id && !$force ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-    //$parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
-    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id );
+    //$parsed_source = bw_get_parsed_source_by_sourceref( $file_id );
+    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id );
   } else {
     $parsed_source = null;
   }
   
   if ( $parsed_source ) {
-    oikai_navi_parsed_source( $parsed_source );
+    oikai_navi_parsed_source( $parsed_source->post_content );
   } else { 
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
     $apis = oiksc_list_file_functions2( $file, $component_type );
@@ -125,17 +127,32 @@ function oiksc_display_oik_file( $file, $component_type, $post_id ) {
       function wp_enqueue_style() {} 
     } 
     //$contents_arr = oiksc_load_file( $tempfile->tempnam );
+    
+    
+      
+    add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
+    add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
+    add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 );
+       
     oikai_syntax_source( $contents, 0, false  );
     
     // parsed_source was null so now we can update it? 
+    // well... only if we also update the other bits
+    // otherwise it gets tits upped.
     /** 
      * Update the oik_parsed_source
      */
     $content = bw_ret();
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-    bw_update_parsed_source( $post_id, $content, $file );
+    bw_update_parsed_source( $file_id, $content, $file );
+    
+    oikai_save_callees( $file_id );
+    oiksc_save_hooks( $file_id );
+    oiksc_save_associations( $file_id );
+    
     e( $content ); 
-  }  
+  } 
+  return( $parsed_source ); 
 }
 
 /**
