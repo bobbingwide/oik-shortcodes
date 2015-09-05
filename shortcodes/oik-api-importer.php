@@ -42,7 +42,7 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
   $dd .= " ";
   $dd .= ( $default )  ? "default: " . $default : "";
   $dd .= " ";
-  $dd .= substr( $description, 0, -5 );
+  $dd .= esc_html( substr( $description, 0, -5 ));
   e( $dd );
   etag( "dd" );
 } 

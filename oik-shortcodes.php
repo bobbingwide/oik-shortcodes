@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
 Depends: oik base plugin, oik fields
-Version: 1.22
+Version: 1.23
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -64,6 +64,7 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
   // @TODO - hook - link to a specifc action hook or filter
+  bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
   // @TODO - methods 
 }
 
@@ -716,7 +717,7 @@ function oiksc_ajax_oiksc_create_api() {
       oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
       oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
       bw_update_parsed_source( $post_id, $content, oiksc_real_file( $file, $component_type ) );
-      echo $content; 
+      e( $content ); 
     } else {
       e( "Invalid plugin: $plugin ");
     }    
@@ -1105,12 +1106,8 @@ function oiksc_c3( $value, $text, $extra=false ) {
  */
 function oiksc_status_report() {
   global $bw_trace_on, $bw_trace_count;
-  if ( $bw_trace_on ) { 
-    $func = "oiksc_trace2";
-  } else {
-    $func = "oiksc_c3";
-  }
   oik_require( "shortcodes/oik-api-status.php", "oik-shortcodes" );
+  $func = "oiksc_c3";
   $defined_functions = get_defined_functions(); 
   //$count = count( $defined_functions ); 
   $count_internal = count( $defined_functions["internal"] );
@@ -1135,8 +1132,14 @@ function oiksc_status_report() {
   $func( $bw_trace_count, "Trace records", false );
   
   $elapsed = timer_stop( false, 6 );
-  $func( $elapsed, "Elapsed (secs)", false );
   // Do this regardless 
+  
+  if ( $bw_trace_on ) { 
+    $func = "oiksc_trace2";
+  } else {
+    $func = "oiksc_c3";
+  }
+  $func( $elapsed, "Elapsed (secs)", false );
   
   bw_flush();
 }
@@ -1152,7 +1155,7 @@ function oik_shortcodes_loaded() {
   
   add_action( "wp_ajax_oiksc_create_file", "oiksc_ajax_oiksc_create_file" );
   add_action( "wp_ajax_nopriv_oiksc_create_file", "oiksc_ajax_nopriv_oiksc_create_file" );
-  add_action( "shutdown", "oiksc_status_report" );
+  //add_action( "shutdown", "oiksc_status_report" );
   
 }
 

@@ -171,8 +171,22 @@ function oikai_handle_reference_type( $api, $reference_type ) {
   }  
 }
 
-
-
+/**
+ * Simplify the API name
+ *
+ * Sometimes we write an API as apiname()
+ * If we wrap this in the API shortcode we should be able to cater for the extraneous ()'s
+ * 
+ * There could be other things we could also do... such as sanitization
+ * 
+ * @param string $api - the given API name 
+ * @return string - the simplified API name
+ *  
+ */
+function oikai_simplify_apiname( $api ) {
+  $api = str_replace( "()", "", $api );
+  return( $api );
+}
 
 /**
  * Implement [api] shortcode to produce simple links to an API
@@ -195,6 +209,7 @@ function oikai_api( $atts=null, $content=null, $tag=null ) {
     oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
     $count = 0;
     foreach ( $apia as $key => $api ) {
+      $api = oikai_simplify_apiname( $api );
       if ( $count ) {
         e( "," );
         e( "&nbsp;" );

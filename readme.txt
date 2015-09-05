@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 3.8
 Tested up to: 3.9.1
-Stable tag: 1.22
+Stable tag: 1.23
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,12 +23,17 @@ It provides the following shortcodes:
 * [codes] - link to related shortcodes
 * [file] - display file contents
 * [files] - list of files
+* [hook] - link to selected hook(s)
 * [hooks] - links to action / filter hooks
 
 It provides an admin page where APIs can be added
 BUT is more useful when invoked using oik-batch, a WP-CLI like interface 
 
 In order for the Calls and Called by trees to be maintained you have to process each API twice.
+
+New in version 1.23
+* [hook] shortcode to display an inline link to a hook
+
 
 New in version 1.22
 * Parsed APIs and files are stored to improve display performance. Parsed classes will be added later.
@@ -83,6 +88,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.23 =
+Bug fixes for wp-a2z.com. Added [hook] shortcode
+
 = 1.22 =
 Performance improvements for wp-a2z.com. Some bug fixes.
 
@@ -176,6 +184,13 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.23 =
+* Added: [hook] shortcode to display an inline link to an action or filter hook
+* Added: oikai_simplify_apiname() - in case () are used within the [api] shortcode
+* Fixed: call esc_html to handle HTML in parameter descriptions that otherwise cause formatting problems
+* Changed: No longer calls oiksc_status_report on 'shutdown'; logic cloned to oik-bwtrace v1.21
+* Changed: Commented out some trace calls
+ 
 = 1.22 =
 * Added: new CPT "oik_parsed_source" which is used to store the parsed version of an API or file.
 * Deleted: Removed some unused fields: _oik_api_example, _oik_api_notes
@@ -186,7 +201,7 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 * Added: classes/class-oiksc-parsed-source.php - but not written as OO code! 
 * Changed: Extracted oiksc_real_file() from oiksc_load_file(). It's still a messy hack 
 * Fixed: "wordpress" files should display content. 
-* Fixed: Changed oik_pathw() to set detect plugin= "wordpress" as the "wordpress" component type
+* Fixed: Changed oik_pathw() to detect plugin= "wordpress" as the "wordpress" component type
 * Added: Some more docBlock comments 
 
 = 1.21 =

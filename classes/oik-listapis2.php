@@ -100,8 +100,8 @@ function oiksc_real_file( $file=null, $component_type_p=null ) {
       $real_file = ABSPATH . $filename;
     } 
   }
-  bw_trace2( $real_file, "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" );
-  bw_backtrace();
+  //bw_trace2( $real_file, "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" );
+  //bw_backtrace();
   return( $real_file );
 }
 

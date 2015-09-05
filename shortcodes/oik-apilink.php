@@ -81,6 +81,7 @@ function oikai_list_callers_callees( $post_id ) {
  * List callers of the selected API
  *
  * The possible callers now includes "oik_file" as well as "oik_api", so we use post_type="any"
+ * 2014/07/10 - now changed to use the defined post types
  *
  * @param ID $post_id - of the API that's being called
  *
@@ -88,7 +89,7 @@ function oikai_list_callers_callees( $post_id ) {
 function oikai_list_callers( $post_id ) {
   oik_require( "shortcodes/oik-navi.php" );
   // $atts['post_type'] = "oik_api"; 
-  $atts['post_type'] = "any";  
+  $atts['post_type'] = "oik_api,oik_file";  
   $atts['meta_key' ] = "_oik_api_calls";
   $atts['meta_value'] = $post_id;
   //$atts['posts_per_page'] = get_option( "posts_per_page" );
