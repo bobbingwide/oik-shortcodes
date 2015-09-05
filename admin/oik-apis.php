@@ -546,16 +546,20 @@ function oikai_add_callee( $id ) {
  * This records the fact that the current function is naming a function to implement a particular hook
  * 
  * @param ID $hook - the post_id of the hook
- * @param ID $func - the post_id of the API
+ * @param ID $func - the post_id of the API  - this may be null if the API is not yet defined
  * @global $oikai_association
  */
 function oikai_record_association( $hook, $func ) {
   global $oikai_association;
-  if ( !isset( $oikai_association ) ) {
-    $oikai_association = array();
+  if ( $func ) {
+    if ( !isset( $oikai_association ) ) {
+      $oikai_association = array();
+    }
+    $oikai_association[] = "$hook,$func"; 
+  } else {  
+    bw_trace2( $oikai_association, "oikai_association" );
+    bw_backtrace();
   }
-  $oikai_association[] = "$hook,$func"; 
-  bw_trace2( $oikai_association, "oikai_association" );
 }
 
 /** 

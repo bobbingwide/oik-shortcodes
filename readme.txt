@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 3.8
-Tested up to: 3.9.1
-Stable tag: 1.23
+Tested up to: 4.0-beta2
+Stable tag: 1.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.24 =
+Bug fixes for wp-a2z.com. Improved shortcodes for when _plugin_ref field is available.
+
 = 1.23 =
 Bug fixes for wp-a2z.com. Added [hook] shortcode
 
@@ -184,6 +187,16 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.24 =
+* Fixed: No longer creates hook associations when the API is not already defined
+* Added: oikai_concoct_api_name2() similar to create the API name from the previous tokens
+* Changed: oikai_concoct_api_name() to replace $this by the current class
+* Added: Support for __FUNCTION__ to define API name ( token T_FUNC_C )
+* Changed: Improved [apis] shortcode to work when the current post has a _plugin_ref field
+* Changed: Improved [classes] shortcode to work when the current post has a _plugin_ref field
+* Changed: Improved [files] shortcode to work when the current post has a _plugin_ref field
+* Changed: Improved [hooks] shortcode to work when the current post has a _plugin_ref field
+
 = 1.23 =
 * Added: [hook] shortcode to display an inline link to an action or filter hook
 * Added: oikai_simplify_apiname() - in case () are used within the [api] shortcode

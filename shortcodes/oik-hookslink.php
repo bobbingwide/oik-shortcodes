@@ -9,7 +9,7 @@
  * ----------     -------------
  * oik-plugins    find ALL the hooks linked to the plugin through "_oik_hook_plugin"
  * oik_hook       find all the functions that this hook calls (implementers) and is called by (invokers)
- * other          Do nothing 
+ * other          see if we can find a _plugin_ref field and use that
  *
  */
 function oikho_listhooks( $atts ) {
@@ -28,10 +28,15 @@ function oikho_listhooks( $atts ) {
       e( bw_navi( $atts ) );
     } elseif ( $post->post_type == "oik_hook" ) {
       oikho_list_callers_callees( $post->ID );
-    } else {  
-      // Not the right post_type to list hooks
+    } else { 
+      $id = get_post_meta( $post->ID, "_plugin_ref", true );
+      if ( $id ) {
+        $atts['post_type'] = "oik_hook"; 
+        $atts['meta_key' ] = "_oik_hook_plugin";
+        $atts['meta_value'] = $id;
+        e( bw_navi( $atts ) );
+      }
     }
-    
   } else { 
     // Don't expect this! 
   }

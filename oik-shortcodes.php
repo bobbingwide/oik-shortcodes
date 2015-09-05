@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
 Depends: oik base plugin, oik fields
-Version: 1.23
+Version: 1.24
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -63,7 +63,6 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "file", "oikai_fileref", oik_path( "shortcodes/oik-file.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
-  // @TODO - hook - link to a specifc action hook or filter
   bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
   // @TODO - methods 
 }

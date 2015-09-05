@@ -636,6 +636,39 @@ function oikai_concoct_hook_name2( $tokens ) {
   return( $hook_name );  
 } 
 
+
+/**
+ * Return an API name from the dummy_TCES
+ *
+ * The API name is the concatenation of the tokens with "::"s separating them
+ * We really don't expect any more than two tokens to have been saved
+ * AND if it's only one then we remove the leading "::"
+ *
+ * @param array $tokens - the tokens
+ * @return string $hook_name - which may be ''
+ *  
+ */
+function oikai_concoct_api_name2( $tokens ) {
+  $TCESes = bw_context( "dummy_TCES" );
+  //bw_trace2( $TCESes, "TCESes", false );
+  $api_name = '';
+  if ( is_array( $TCESes) && count( $TCESes ) ) {
+    foreach ( $TCESes as $TCES ) {
+      //bw_trace2( $TCES, "TCES", false ); 
+      if ( is_array( $tokens[$TCES] ) ) {
+        $api_name .= "::" . trim( $tokens[$TCES][1], "\"'" );
+      }  
+    }
+  }  
+  bw_trace2( $api_name, "api_name", false );
+  
+  $api_name = ltrim( $api_name, ":" );
+  bw_trace2( $api_name, "API_name" );
+  return( $api_name );  
+} 
+
+
+
 /**
  * Set a link on each relevant token in the dummy TCES
  * 
@@ -756,7 +789,8 @@ function oikai_set_context( $value=null ) {
  * Then it becomes the post ID of the hook
  * When it's called with the post_id it means we now know the name of the function
  * that is being associated to the hook
- * oikai_concoct_hook_name2() is misused to return the previously stored function name
+ * oikai_concoct_hook_name2() was misused to return the previously stored function name
+ * we now call oikai_concoct_api_name2() 
  * which oikai_handle_token_T_STRING() uses to determine the function name.
  * 
  * @param string $value - the string literal being processed
@@ -778,7 +812,7 @@ function oikai_handle_association( $key, $value, &$tokens, $add_ ) {
         
     default:  // The value of add_ is the post_id of the hook
       // we need to obtain the value for the function ( T_STRING )
-      $func = oikai_concoct_hook_name2( $tokens );
+      $func = oikai_concoct_api_name2( $tokens );
       //br( "handling $key,$value,$add_,#$func#" );
       if ( $func ) {
         $func = trim( $func, "\"'" );
@@ -1045,6 +1079,21 @@ function oikai_handle_token_T_VARIABLE( $key, $token, $tokens ) {
 }
 
 /**
+ * Handle a T_FUNC_C 
+ *
+ * We detect __FUNCTION__ and convert this to a link to the current function
+ * the name of which is stored in "func" context.
+ *
+ */
+function oikai_handle_token_T_FUNC_C( $key, $token, &$tokens ) {
+  // What's the current function name? 
+  $func = bw_context( "func" );
+  //e( $func );
+  bw_trace2();
+  oikai_handle_token_T_STRING( $key, $func, $tokens );
+}
+
+/**
  * Match the function type, if it's a defined function
  * 
  * @param array $defined_functions - array of defined functions
@@ -1120,6 +1169,8 @@ function oikai_concoct_api_name( $value ) {
   } elseif ( $literal && $operator ) { 
     //bw_trace2( $literal, "literal" );
     $api_name = "$literal::$value";
+  } elseif ( $variable && $class ) {
+    $api_name = str_replace( $variable, $class, $value ); 
   } else {
     $api_name = $value;
   }
@@ -1189,37 +1240,51 @@ function oikai_handle_char_( $key, $char, &$tokens ) {
 /**
  * Handle a parameter to a hook definition or invocation
  * 
- * 
+ * We only handle a comma when we're NOT handling an array.
+ * $operator
  *
  */ 
 function oikai_handle_char_comma( $key, $char, &$tokens ) {
   $hook = bw_context( "hook" );
   $add_ = bw_context( "add_" );
-  // br( "Processing TCES,$key,$char,$hook,$add_," );
-  if ( $hook || $add_ ) {
-    //$value = bw_context( "dummy_TCES" );
-    //if ( $value ) {
-      $value = oikai_concoct_hook_name2( $tokens ); 
-      //br( "value $value" );
-      //oikai_handle_token_T_CONSTANT_ENCAPSED_STRING( $key, $value, $tokens );
-      
-      oikai_handle_dummy_TCES( $key, $value, $tokens );
-      //oikai_handle_dummy_TCES( $value );
-      if ( $hook ) {
-        oikai_set_context();
-      }  
-    //}
-  }
-  bw_context( "dummy_TCES", false );
+  $operator = bw_context( "operator" );
+  bw_trace2( $operator, "operator");
+  if ( $operator == "array" ) {
+    // wait until we get to a ')' before we actually do something
     
+  } else {
+    // br( "Processing TCES,$key,$char,$hook,$add_," );
+    if ( $hook || $add_ ) {
+      //$value = bw_context( "dummy_TCES" );
+      //if ( $value ) {
+        $value = oikai_concoct_hook_name2( $tokens ); 
+        //br( "value $value" );
+        //oikai_handle_token_T_CONSTANT_ENCAPSED_STRING( $key, $value, $tokens );
+        
+        oikai_handle_dummy_TCES( $key, $value, $tokens );
+        //oikai_handle_dummy_TCES( $value );
+        if ( $hook ) {
+          oikai_set_context();
+        }  
+      //}
+    }
+    bw_context( "dummy_TCES", false );
+  }  
 }
 
 /**
  * Handle the last parameter to a hook definition or invocation 
  *
- * Treat as if this was another comma
+ * If we were processing the array 'operator' then we now turn that off
+ * indicating that we're done with array logic processing.
+ * Here we assume that we don't need to count open and closed parentheses.
+ * 
  */
 function oikai_handle_char_rparen( $key, $char, &$tokens ) {
+  $operator = bw_context( "operator" );
+  if ( "array" == $operator ) {
+    bw_context( "operator", false );
+  }
   oikai_handle_char_comma( $key, $char, $tokens );
 }
 
@@ -1592,6 +1657,7 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  */
 function oikai_build_apiref( $funcname, $sourcefile=null, $plugin="oik", $classname=null, $post_id ) {
   $func = oikai_get_func( $funcname, $classname );
+  bw_context( "func", $func );
   $class = oikai_get_class( $funcname, $classname );
   bw_context( "classname", $class );
   // p( "Class: $class" );

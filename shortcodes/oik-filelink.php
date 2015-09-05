@@ -10,7 +10,7 @@
  * oik-theme      find ALL the files linked to the theme through 
  * oik_api        find all the files that this API includes  @TODO
  * oik-file       find all the files that this file includes @TODO
- * other          Do nothing 
+ * other          see if we can find a _plugin_ref field and use that 
  *
  * @param array $atts - shortcode parameters
  */
@@ -33,7 +33,13 @@ function oikai_listfiles( $atts ) {
     } elseif ( $post->post_type == "oik_file" ) {
       //oikai_list_callers_callees( $post->ID );
     } else {  
-      // Not the right post_type to list APIs
+      $id = get_post_meta( $post->ID, "_plugin_ref", true );
+      if ( $id ) {
+        $atts['post_type'] = "oik_file"; 
+        $atts['meta_key' ] = "_oik_api_plugin";
+        $atts['meta_value'] = $id;
+        e( bw_navi( $atts ) );
+      }
     }
     
   } else { 

@@ -11,7 +11,7 @@
  * oik-themes     find ALL the apis linked to the theme through "_oik_api_plugin"
  * oik_class      find ALL the methods linked to the class through "_oik_api_class"
  * oik_api        find all the apis that this API calls and is called by
- * other          Do nothing 
+ * other          see if we can find a _plugin_ref field and use that  
  *
  * @param array $atts - shortcode parameters
  */
@@ -45,7 +45,13 @@ function oikai_listapis( $atts ) {
     } elseif ( $post->post_type == "oik_api" ) {
       oikai_list_callers_callees( $post->ID );
     } else {  
-      // Not the right post_type to list APIs
+      $id = get_post_meta( $post->ID, "_plugin_ref", true );
+      if ( $id ) {
+        $atts['post_type'] = "oik_api"; 
+        $atts['meta_key' ] = "_oik_api_plugin";
+        $atts['meta_value'] = $id;
+        e( bw_navi( $atts ) );
+      }
     }
     
   } else { 

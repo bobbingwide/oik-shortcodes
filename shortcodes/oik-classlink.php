@@ -9,7 +9,7 @@
  * oik-plugins    find ALL the classes linked to the plugin through "_oik_api_plugin"
  * oik-themes     find ALL the classes linked to the plugin through "_oik_api_plugin"
  * oik_class      find ALL the classes which extend this class - using bw_tree. 
- * other          Do nothing 
+ * other          see if we can find a _plugin_ref field and use that 
  *
  * Note: There should be no real need for using [classes] on an "oik_class" page,
  * as the default display shows the Extends and Extended by lists
@@ -36,7 +36,13 @@ function oikai_listclasses( $atts ) {
       oik_require( "shortcodes/oik-tree.php" ); 
       e( bw_tree( $atts ) );
     } else {  
-      // Not the right post_type to list APIs
+      $id = get_post_meta( $post->ID, "_plugin_ref", true );
+      if ( $id ) {
+        $atts['post_type'] = "oik_class"; 
+        $atts['meta_key' ] = "_oik_api_plugin";
+        $atts['meta_value'] = $id;
+        e( bw_navi( $atts ) );
+      }
     }
     
   } else { 
