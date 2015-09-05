@@ -251,7 +251,9 @@ function oik_register_oik_shortcode_example() {
  *
  */
 function oiksc_api_types() {
-  static $types = array( "shortcode"
+	bw_backtrace();
+	if ( oik_require_lib( "bobbfunc" ) ) {
+		static $types = array( "shortcode"
                 , "filter"
                 , "action"
                 , "public"
@@ -262,7 +264,10 @@ function oiksc_api_types() {
                 , "method"
                 , "file" 
                 );
-  return( bw_assoc( $types) );              
+		return( bw_assoc( $types) );              
+	} else { 
+		gob();
+	}
 }
 
 /**
@@ -271,6 +276,9 @@ function oiksc_api_types() {
  * @return array - currently only contains "action" and "filter"
  */
 function oiksc_hook_types() {
+
+	bw_backtrace();
+	//var_dump( debug_backtrace() );
   $types = bw_assoc( bw_as_array( "action,filter" ));
   return( $types );
 }
@@ -1127,7 +1135,7 @@ function oiksc_status_report() {
  */
 function oik_shortcodes_loaded() {
   add_action( 'oik_fields_loaded', 'oik_shortcodes_init' );
-  add_action( "admin_notices", "oik_shortcodes_activation" );
+  add_action( "admin_notices", "oik_shortcodes_activation", 11 );
   add_action( "wp_ajax_oiksc_create_api", "oiksc_ajax_oiksc_create_api" );
   add_action( "wp_ajax_nopriv_oiksc_create_api", "oiksc_ajax_nopriv_oiksc_create_api" );
   
