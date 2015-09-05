@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2014
+<?php // (C) Copyright Bobbing Wide 2012-2015
 /** 
  * Automagically determine the file list
  *
@@ -35,6 +35,8 @@ function oikai_listfiles( $atts ) {
     } else {  
       $id = get_post_meta( $post->ID, "_plugin_ref", true );
       if ( $id ) {
+			
+				oik_require( "shortcodes/oik-navi.php" ); 
         $atts['post_type'] = "oik_file"; 
         $atts['meta_key' ] = "_oik_api_plugin";
         $atts['meta_value'] = $id;
