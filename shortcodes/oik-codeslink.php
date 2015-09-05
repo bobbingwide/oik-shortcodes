@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012-2015
 
 /** 
  * Automagically determine the shortcode list
@@ -17,7 +17,7 @@
       $atts['post_type'] = "oik_shortcode";
       $atts['include'] = $id;
  */
-function oikai_listcodes() {
+function oikai_listcodes( $atts ) {
   global $post;
   if ( $post ) {
     oik_require( "shortcodes/oik-list.php" ); 
@@ -107,7 +107,7 @@ function oikai_codeslink( $atts=null, $hmm, $tag ) {
       p( "Cannot find shortcode(s):" . implode( ",", $shortcodes) );
     } 
   } else {
-    oikai_listcodes(); 
+    oikai_listcodes( $atts ); 
   }
   return( bw_ret()); 
 }

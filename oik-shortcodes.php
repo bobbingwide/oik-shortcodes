@@ -2,14 +2,14 @@
 /*
 Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
-Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
+Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.26
+Version: 1.27
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2012 - 2014 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012 - 2015 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -67,6 +67,7 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
   bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
+  bw_add_shortcode( "md", "oikai_markdown", oik_path( "shortcodes/oik-markdown.php", "oik-shortcodes" ), false );
 }
 
 /** 
@@ -127,7 +128,7 @@ function oik_register_oik_shortcodes() {
  */
 function oik_shortcodes_columns( $columns, $arg2=null ) {
   $columns["_oik_sc_plugin"] = __("Plugin"); 
-  bw_trace2();
+  // bw_trace2();
   return( $columns ); 
 } 
 
@@ -678,6 +679,7 @@ function oiksc_load_component( $plugin, $component_type ) {
  * 
  */
 function oiksc_ajax_oiksc_create_api() {
+  do_action( "oik_loaded" );
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -729,6 +731,8 @@ function oiksc_ajax_oiksc_create_api() {
  * 
  */
 function oiksc_ajax_oiksc_create_file() {
+
+  do_action( "oik_loaded" );
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -816,6 +820,8 @@ function oiksc_ajax_nopriv_oiksc_create_file() {
 
 /**
  * Implement "admin_notices" action for oik-shortcodes" 
+ *
+ * - v1.27 now dependent upon oik v2.4
  */ 
 function oik_shortcodes_activation() {
   static $plugin_basename = null;
@@ -826,7 +832,7 @@ function oik_shortcodes_activation() {
       require_once( "admin/oik-activation.php" );
     }
   }  
-  $depends = "oik:2.3-alpha,oik-fields:1.36,oik-plugins:1.10,oik-sc-help";
+  $depends = "oik:2.4,oik-fields:1.36,oik-plugins:1.10,oik-sc-help";
   oik_plugin_lazy_activation( __FILE__, $depends, "oik_plugin_plugin_inactive" );
 }
 

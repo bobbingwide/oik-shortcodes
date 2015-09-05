@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 3.9
-Tested up to: 4.0
-Stable tag: 1.26
+Tested up to: 4.1.1
+Stable tag: 1.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ It provides the following shortcodes:
 * [files] - list of files
 * [hook] - link to selected hook(s)
 * [hooks] - links to action / filter hooks
+* [md] - markdown
 
 It provides an admin page where APIs can be added
 BUT is more useful when invoked using oik-batch, a WP-CLI like interface 
@@ -88,6 +89,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.27 = 
+Improvements for oik-plugins.
+
 = 1.26 =
 Improvements for WP-a2z and oik-plugins. 
 
@@ -193,6 +197,12 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.27 =
+* Added: [md] shortcode - to format content originally written as 'markdown' 
+* Changed: [codes] shortcode now supports pagination; passes the $atts parameter to oikai_listcodes() 
+* Changed: AJAX create API and create file functions now invoke the "oik_loaded" action
+* Changed: Dependency on oik now v2.4 or higher.
+
 = 1.26 =
 * Added: TO DO section when @todo tags are present in API docblocks
 * Added: Test to see if opcache processing prevents dynamic extraction of docblock information from already loaded functions
