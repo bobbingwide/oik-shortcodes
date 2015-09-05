@@ -2168,6 +2168,7 @@ function oikai_oik_class_parent( $class, $plugin, $file ) {
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
   bw_trace2();
   $parent_id = 0;
+  oik_require( "admin/oik-apis.php", "oik-shortcodes" );
   
   $plugin_name = _oiksc_get_plugin();
   $component_type = oiksc_query_component_type( $plugin );
