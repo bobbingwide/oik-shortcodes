@@ -3,8 +3,8 @@
 Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
-Depends: oik base plugin, oik fields
-Version: 1.25
+Depends: oik base plugin, oik fields, oik-sc-help
+Version: 1.26
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -53,6 +53,9 @@ function oik_shortcodes_init() {
  * Implement "oik_add_shortcodes" action for oik-shortcodes
  *
  * Register our lazy smart shortcodes
+ *
+ * @TODO - Add a shortcode for *methods*
+ *  
  */
 function oik_shortcodes_add_shortcodes() { 
   bw_add_shortcode( "bw_api", "oikai_apiref", oik_path( "shortcodes/oik-api-importer.php", "oik-shortcodes" ), false );
@@ -64,7 +67,6 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
   bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
-  // @TODO - methods 
 }
 
 /** 
@@ -307,7 +309,7 @@ function oik_register_file() {
   bw_register_field( "_oik_api_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes") )); 
   //bw_register_field( "_oik_file_passes", "numeric", "Parse count", array( "#theme" => false )); 
   bw_register_field( "_oik_file_deprecated_cb", "checkbox", "Deprecated?"); 
-  bw_register_field( "_oik_api_calls", "noderef", "Uses APIs", array( "#type" => "oik_api", "#multiple" => true, "#optional" => true, '#theme' => false ));
+  bw_register_field( "_oik_api_calls", "noderef", "Uses APIs", array( "#type" => "oik_api", "#multiple" => true, "#optional" => true, '#theme' => false, '#length' => 80 ));
   bw_register_field( "_oik_api_hooks", "noderef", "Uses hooks", array( "#type" => "oik_hook", "#multiple" => true, "#optional" => true, '#theme' => false ));
   
   bw_register_field_for_object_type( "_oik_file_name", $post_type );

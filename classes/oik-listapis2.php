@@ -131,16 +131,15 @@ function oiksc_load_file( $file=null, $component_type_p=null ) {
  * 
  * @param string $file - plugin source file name
  * @param string $component_type - "plugin"|"theme"
- * @return array $functions - array of implemented classes, methods and functions - 
- *
+ * @return array $functions - array of implemented classes, methods and functions. 
+ * 
  * In format:
  *
- * "Class::" - class name only
- * "Class::Method" - methods defined for the class
- * "Function" - standalone functions
- 
+ * - "Class::" - class name only
+ * - "Class::Method" - methods defined for the class
+ * - "Function" - standalone functions
  *
- * Tokens are documented in @links http://php.net/manual/en/tokens.php 
+ * Tokens are documented in http://php.net/manual/en/tokens.php 
  *
  * The values vary depending on PHP version, so we have to use the constant names. e.g. T_STRING, T_OBJECT_OPERATOR, T_FUNCTION, T_CLASS
  *
@@ -172,11 +171,12 @@ function oiksc_list_file_functions2( $file, $component_type ) {
  * 
  * So do we extract the class and then search for functions using this logic? 
  * OR do we just extend this loop to look for methods within classes.
- *  
+ * 
+ * @TODO Now that we're also storing the token for the docblock do we need to stored the docblock contents as well?  
  * 
  * @param array $tokens - array of PHP tokens
  * @param string $get_token - the token type we're looking for T_CLASS/T_FUNCTION
- * @return array of oiksc_token_object
+ * @return array of oiksc_token_object instances
  * 
  */    
 function _oiksc_list_classes2( $tokens, $get_token=T_CLASS ) {
@@ -193,12 +193,14 @@ function _oiksc_list_classes2( $tokens, $get_token=T_CLASS ) {
   $thismethod = null;
   $methods = array();
   $docblock = null;
+  $docblock_token = null;
   
   $open_curlies = 0;
   while ( $t < $count ) {
     $new_docblock = _oiksc_get_token( $tokens, $t, T_DOC_COMMENT );
     if ( $new_docblock ) {
       $docblock = $new_docblock;
+      $docblock_token = $tokens[$t];
     }  
       
     $class = _oiksc_get_token_object( $tokens, $t, $get_token );
@@ -220,7 +222,8 @@ function _oiksc_list_classes2( $tokens, $get_token=T_CLASS ) {
           }
         }
         $class->open_curlies = $open_curlies;
-        $class->docblock = $docblock; 
+        $class->docblock = $docblock;
+        $class->docblock_token = $docblock_token; 
         $thisclass = $class; 
         //print_r( $thisclass );
         $functions[] = $thisclass;
@@ -237,7 +240,8 @@ function _oiksc_list_classes2( $tokens, $get_token=T_CLASS ) {
       $function->methodname = _oiksc_get_token( $tokens, $t, T_STRING ); 
       if ( $function->methodname ) {
         $function->open_curlies = $open_curlies;
-        $function->docblock = $docblock; 
+        $function->docblock = $docblock;
+        $function->docblock_token = $docblock_token; 
         if ( $thisclass && $thisclass->classname ) {
           $function->classname = $thisclass->classname;
         }  

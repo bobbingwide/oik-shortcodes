@@ -7,6 +7,7 @@
  * @param string $type parameter type. e.g. string, integer, array, mixed, post or an object type
  * @param string $name parameter name - should match $param->getName()
  * @param string $description parameter description
+ * The parameter description ends with *dot* **space** *dot* space dot?
  * 
  */
 function oikai_print_param_info( $param, $type="mixed", $name=null, $description=null ) {
@@ -41,15 +42,20 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
   $dd .= ( $optional ) ? "<i>optional</i>" : "<i>required</i>" ;
   $dd .= " ";
   $dd .= ( $default )  ? "default: " . $default : "";
-  $dd .= " ";
-  $dd .= esc_html( substr( $description, 0, -5 ));
+  $dd .= " - ";
+  //$dd .= esc_html( substr( $description, 0, -5 ));
   e( $dd );
+  $description = substr( $description, 0, -5 );
+  $description = ltrim( $description, "- " );
+  
+  oikai_format_description( $description );
   etag( "dd" );
 } 
 
 /**
  * Print a parameter 
  *
+ * `
  * Parameter #1 [ <optional> $parm2 = NULL ]DocBlock Object
    (
     [short_description:protected] => relect on me a while
@@ -70,6 +76,7 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
         )
 
    )
+ * `  
  * @param object $param - refFunc parameter object 
  * @param object $docblock - docBlock for the function
  *  
@@ -104,6 +111,8 @@ function oikai_print_param( $param, $docblock ) {
 
 /**
  * Print the return field information
+ *
+ * Now formats the description of the return value
  * 
  * @param string $type - the type of data returned
  * @param string $description - the description of the return value
@@ -113,7 +122,12 @@ function oikai_print_return_info( $type="void", $description=null ) {
   h2( "Returns" );
   $type = ( $type ) ? $type : "void";
   e( "<i>$type</i> " );
-  e( substr( $description, 0, -5 ));
+  //e( substr( $description, 0, -5 ));
+  
+  $description = substr( $description, 0, -5 );
+  $description = ltrim( $description, "- " );
+  
+  oikai_format_description( $description );
 }
 
 /**
@@ -146,18 +160,82 @@ function oikai_print_return( $refFunc, $docblock, $print=true ) {
 }
 
 /**
+ * Print information about the @TODO tags, if any
+ *
+ * @param object $refFunc - a Reflection Function object
+ * @param object $docBlock - a DocBlock object
+ */
+function oikai_print_todos( $refFunc, $docblock ) {
+  $tags = $docblock->getTags();
+  foreach ( $tags as $tag ) {
+    //bw_trace2( $tag );
+    list( $tagname, $description ) = explode( " ", $tag . " . . .", 2 );
+    if ( substr( strtolower( $tagname ), 0, 5 ) == "@todo" ) {
+      oikai_print_todo_info( $description );
+    }
+  }
+}
+
+/**
+ * Print information about a TODO 
+ *
+ * There may be more than one TODO in a docblock. 
+ * However, we shouldn't expect any. So, we format each TODO separately.
+ * @param string $description
+ *
+ */ 
+function oikai_print_todo_info( $description ) {
+  sdiv( "todo" );
+  h2( "TO DO" );
+ 
+  $description = substr( $description, 0, -5 );
+  $description = ltrim( $description, "- " );
+  
+  oikai_format_description( $description );
+  ediv();
+}
+/**
+ * Check to see if opcache is being used
+ *
+ * If it is then we will not be able to read the docblock using $refFunc->getDocComment()
+ * against a function which is already loaded. Instead we use the dummy load and reflect technique
+ * 
+ * Prior to PHP 5.5.5 we can't find out anything about opcache
+ * so we have to make it up.
+ * WP Engine sets some constants which we might be able to use
+ * BUT what we'll actually do is to see if we can get our own docBlock
+ * written right here.
+ *
+ * @return bool - true if we believe that opcache processing is being used 
+ */   
+function oikai_using_opcache() {
+  //$ini = ini_get_all();
+  //bw_trace2( $ini, "PHP ini", false );
+  $using_opcache = false;
+  $refFunc = oikai_reflect( __FUNCTION__ );
+  if ( $refFunc ) { 
+    $docComment = $refFunc->getDocComment(); 
+    bw_trace2( $docComment, "docComment" );
+    if ( $docComment === false ) {
+      $using_opcache = true;
+    }
+  }
+  return( $using_opcache ); 
+}
+
+/**
  * Attempt to create a reflection function / reflection method for this API
  *
- * Processing depends on whether or not the function or method is defined 
+ * When using opcache we have to use oikai_load_and_reflect()
+ * Otherwise processing depends on whether or not the function or method is already defined 
  * 
- * classname class_exists function or     Reflect using?
- *                        method exists
- * --------- ------------ --------------- ----------------
- * null      n/a          yes             oikai_reflect()
- * null      n/a          no              oikai_load_and_reflect()
- * set       no           n/a             oikai_load_and_reflect()
- * set       yes          no              oikai_load_and_reflect()
- * set       yes          yes             oikai_reflect_method()
+ * classname | class_exists| function or method exists |     Reflect using?
+ * --------- | ------------| --------------- | ----------------
+ * null      |    n/a      |       yes       |  oikai_reflect()
+ * null      |    n/a      |       no        |  oikai_load_and_reflect()
+ * set       |    no       |       n/a       |  oikai_load_and_reflect()
+ * set       |    yes      |       no        |  oikai_load_and_reflect()
+ * set       |    yes      |       yes       |  oikai_reflect_method()
  *
  * @param string $funcname - the API name
  * @param string $sourcefile - the full file name for this API
@@ -168,23 +246,30 @@ function oikai_print_return( $refFunc, $docblock, $print=true ) {
 function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null ) {
   //bw_trace2();
   $refFunc = null;
-  if ( $classname ) {
-    if ( class_exists( $classname ) ) {
-      if ( method_exists( $classname, $funcname ) ) {
-        $refFunc = oikai_reflect_method( $classname, $funcname );
+  $using_opcache = oikai_using_opcache();
+  if ( $using_opcache ) {
+    $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
+  } else {
+    if ( $classname ) {
+      if ( class_exists( $classname ) ) {
+        if ( method_exists( $classname, $funcname ) ) {
+          $refFunc = oikai_reflect_method( $classname, $funcname );
+        } else {
+          $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
+        }   
       } else {
         $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
-      }   
+      }  
     } else {
-      $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
-    }  
-  } else {
-    if ( function_exists( $funcname ) ) {
-      $refFunc = oikai_reflect( $funcname );
-    } else {
-      $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
+      if ( function_exists( $funcname ) ) {
+        $refFunc = oikai_reflect( $funcname );
+      } else {
+        $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
+      }
     }
   }
+  
+  bw_trace2( $refFunc, "refFunc" );
   return( $refFunc );
 }
 
@@ -228,7 +313,7 @@ function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
  */   
 function oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname ) {
   $refFunc = null;    
-  bw_trace2();
+  //bw_trace2();
   if ( $sourcefile ) { 
     // oik_require( $sourcefile, $plugin );
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
@@ -275,7 +360,6 @@ function oikai_reflect( $funcname ) {
   //bw_trace2( $refFunc );
   return( $refFunc );
 }
-
   
 /**
  * Return the ReflectionFunction for a method
@@ -291,7 +375,6 @@ function oikai_reflect( $funcname ) {
 function oikai_reflect_method( $classname, $funcname ) {
   try {
     $refFunc = new ReflectionMethod( $classname, $funcname );
-  
   } catch (Exception $e) {
     bw_trace2( $e->getMessage(), "Caught exception" );
     $refFunc = null;
@@ -362,36 +445,509 @@ function oikai_reflect_etc( $refFunc ) {
 
 /**
  * Return the docBlock from the Reflection function
+ *
+ * @param object $refFunc - a Reflection function object
+ * @return object - a DocBlock object for the Reflection function's DocComment
  */
 function oikai_reflect_docblock( $refFunc ) {
-  $docComment = $refFunc->getDocComment();
+  $docComment = $refFunc->getDocComment(); 
   oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
   $docblock = new DocBlock( $docComment );
+  //bw_trace2( $docblock );
   return( $docblock );
 } 
-
 
 /**
  * Display the API descriptions
  *
- * Display the short description then the long description
- * @TODO: Handle markdown and other attempts at formatting the notes such as plain tables,
- * the following being an example
+ * Display the short description then the long description.
+ * 
+ * Content | How to deal with it
+ * ------- | --------------------
+ * @ TODO  | Refer to a TODO CPT
+ * @ link  | Convert the link into a link
+ * other   | How do we handle something like this?
+ * 
  *
- * Content How to deal with it
- * ------- --------------------
- * @TODO   Refer to a TODO CPT
- * @link   Convert the link into a link
- * other   How do we handle something like this?
- *  
+ * @TODO: Properly handle TODO's and links - these are stored separately from the long description
+ * in the 
+ * `
+     [tags:protected] => Array
+        (
+            [0] => @TODO: Handle markdown and other attempts at formatting the notes such as plain tables
+            [1] => @TODO: Properly handle TODO's and links - these are stored separately from the long description!
+            [2] => @param object $docblock - the docBlock object
+        )
+ * `
+ * 
  * @param object $docblock - the docBlock object
  * 
  */ 
 function oikai_reflect_descriptions( $docblock ) {
   h2( "Description" );
   p( esc_html( $docblock->getShortDescription() ) );
-  p( esc_html( $docblock->getLongDescription() ) );
+  //p( esc_html( $docblock->getLongDescription() ) );
+  sp();
+  oikai_format_description( $docblock->getLongDescription() );
+  ep();
+  //bw_trace2( $docblock );
 }
+
+/**
+ * Format markdown list
+ *
+ * Decide what to do when we see a blank line?
+ * We won't know if we're starting actually starting a list until we see the first '-' 
+ * But a blank line will end the list. We need to know the list type.
+ * 
+ * 
+ * @param integer $list - whether or not we think we're in a list. false, true, next list item
+ * @return integer - new value
+ *
+ */
+function oikai_format_markdown_list( $list ) {
+  if ( $list >= 1 ) {
+    etag( oikai_list_type() );
+    $list = 0;
+  } else {
+    //$list = (int) !$list;
+    $list = 0;
+  } 
+  //e( __FUNCTION__ . $list );
+  return( $list );
+}
+
+function oikai_list_type( $type = null ) {
+  static $list_type = null;
+  if ( $type ) {
+    $list_type = $type;
+  }
+  return( $list_type );
+}
+
+/**  
+ * 
+ */
+function oikai_format_markdown_list_hyphen( $list ) {
+  $rlist = $list;
+  //bw_trace2();
+  if ( 0 === $rlist ) {
+  //  e( "$rlist = 1 ");
+    stag( oikai_list_type( "ul" ) );
+  //} else {
+  //  e( "$rlist not = 1" );
+  }
+  $rlist++;
+  //e( $rlist );
+  //if ( $rlist === $list ) { 
+  //  e( "Not expected" );
+  //} else {
+  //  e( "good" ); 
+    
+ // }  
+ // e( "$rlist ?= $list ");
+  bw_trace2( $rlist, "list++", false );
+  return( $rlist ); 
+}
+
+
+/**  
+ * 
+ */
+function oikai_format_markdown_list_number( $list ) {
+  if ( 0 === $list ) {
+    stag( oikai_list_type( "ol" ) );
+  }
+  $list++;
+  return( $list ); 
+}
+
+/**
+ * End the list we've started
+ *
+ * @param integer $list -
+ * @returm integer 0
+ */
+function oikai_format_markdown_list_end( $list ) {
+  if ( $list >= 1 ) {
+    etag( "ul" );
+  }
+  $list = (int) 0;
+  return( $list );  
+}
+
+/**
+ * Create a heading taking into account number of #'s
+ *
+ * @param string $line - with one or more leading #####
+ * 
+ */ 
+function oikai_format_markdown_heading( $line ) {
+  $len = strlen( $line );
+  $line = ltrim( $line, "#" );
+  $level = $len - strlen( $line );
+  $line = ltrim( $line );
+  stag( "h$level" );
+  e( esc_html( $line . " " ) );
+  etag( "h$level" );
+ 
+}
+
+/**
+ * Preprocess a line for subsequent formatting
+ *
+ * When the line appears to be a table line then prepend a pipe character followed by a space
+ * @TODO Allow for left, right and centred alignment
+ * @TODO Allow for table lines like " | fred " - where there's an intentional blank in cell 1.
+ * 
+ * @param string $line - the line from the docblock
+ * @return string - the preprocessed line
+ */
+ 
+function oikai_format_preprocess_line( $line ) {
+  $pos = strpos( $line, " | " );
+  if ( $pos !== false ) {
+    $line = ltrim( $line, "| ");
+    $line = "| " . $line; 
+    //e( "tr: $line" );
+  }
+  return( $line );   
+
+}
+
+/**
+ * Handle the end of a table
+ * 
+ * Are tables as simple to end as lists?
+ */
+function oikai_format_markdown_table( $table ) {
+  if ( $table > 1 ) {
+    etag( "table" );
+  }
+  $table = 0;
+  return( $table );
+}
+
+
+/**
+ * Handle a line which appears to be part of a table
+ *
+ * Do we need to look ahead to the next line to find out if we really are processing a table?
+ *
+ * @param integer $table - where we are in the table processing
+ * @param string $line - the line with "| " prepended, if required
+ * 
+ */
+function oikai_format_markdown_table_line( $table, $line ) {
+  //static $th = null;
+  
+  switch ( $table ) {
+    case 0:
+      oik_require( "bobbforms.inc" );
+      stag( "table" );
+      stag( "thead" );
+      $line = ltrim( $line, "|" );
+      $cols = str_getcsv( $line, "|" );
+      bw_trace2( $cols, "cols" );
+      bw_tablerow( $cols, "tr", "th" );
+      etag( "thead" );
+      break;
+      
+    case 1:
+      // Do nothing yet
+      // We might generate some special CSS for alignment
+      break;
+      
+    default:
+      $line = ltrim( $line, "|" );
+      $cols = str_getcsv( $line, "|" );
+      bw_trace2( $cols, "cols" );
+      bw_tablerow( $cols, "tr", "td" );
+  }
+  $table++;
+  return( $table );
+}
+
+/**
+ * Format a markdown line 
+ *
+ * The line may not end in a blank so we append one to make up for the new line character we've stripped off
+ *
+ * Now we have to decide about this esc_html() call.
+ * There's no point doing it if we're about to add some HTML 
+ * so obviously we need to esc_html() first then apply the markdown
+ * 
+ * Wrapper | Becomes
+ * ------- | ---------
+ *  _      | <em>
+ *  *      | <em>
+ * __      | <strong>
+ * **      | <strong>
+ *  `      | <code>
+ * {@link  | http://
+ * {@see   | http://
+ * 
+ * @param string $line
+ */ 
+function oikai_format_markdown_line( $line ) {
+  $line = esc_html( $line );
+  $line .= " ";
+  $line = paired_replacements( " **", "** ", " <strong>", "</strong> ", $line );
+  $line = paired_replacements( " *",  "* ",  " <em>", "</em> ", $line );
+  $line = paired_replacements( " __", "__ ", " <strong>", "</strong> ", $line );
+  $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
+  $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
+  $line = paired_replacements( " {@link ", "} ", "http://", " ", $line );
+  $line = paired_replacements( " {@see ", "} ", "http://", " ", $line );
+  $line = URL_autolink( $line );
+  e( $line );
+}
+
+/**
+ * Autolink an URL
+ * 
+ * We don't expect more than one URL per line
+ *
+ * @param string $line - which may contain an URL
+ * @return string - line with autolinked URL
+ */
+function URL_autolink( $line ) {
+  $url = strpos( $line, "http://" );
+  if ( $url === false ) {
+    $url = strpos( $line, "https://" );
+  }
+  if ( $url !== false ) {
+    $left = substr( $line, 0, $url ); 
+    $midright = substr( $line, $url );
+    $rpos = strpos( $midright, " " );
+    if ( $rpos !== false ) {
+      $middle = substr( $midright, 0, $rpos );
+      $niceurl = str_replace( "https:", "http:", $middle );
+      $niceurl = str_replace( "http://", "", $niceurl );
+      $right = substr( $midright, $rpos );
+      $line = $left . retlink( null, $middle, $niceurl ) . $right;
+    }
+  }
+  return( $line );  
+}
+
+/**
+ * Perform replacements of paired markup strings
+ *
+ * Note: This logic requires the paired replacements to appear on the same line.
+ * It should cater for nested pairs. 
+ *
+ * @param string $before - the start of the markdown string
+ * @param string $after - the end of the markdown string
+ * @param string $beforetag - the string to replace before 
+ * @param string $aftertag - the string to replace after 
+ * @param string $line - the string to be searched
+ * @return string - the updated string  
+ */
+function paired_replacements( $before, $after, $beforetag, $aftertag, $line ) {
+  $spos = strpos( $line, $before );
+  while ( $spos !== false ) {
+    $epos = strpos( $line, $after );
+    if ( $epos > $spos ) {
+      $line = replace_at( $epos, $after, $aftertag, $line );
+      $line = replace_at( $spos, $before, $beforetag, $line );
+      $spos = strpos( $line, $before );
+    } else {
+      $spos = false;
+    }
+  }
+  return( $line );
+}
+
+/** 
+ * Replace the instance of $source at $pos with $replace
+ * 
+ * 
+ *
+ * @param integer $pos - the position of the first character of source, starting from 0
+ * @param string $source - the string to be replaced e.g. " *"
+ * @param string $target - the string to replace the source with
+ * @param string $line - the original line
+ * @return string - the new line
+ */ 
+function replace_at( $pos, $source, $replace, $line ) {
+  $left = substr( $line, 0, $pos );
+  $right = substr( $line, $pos + strlen( $source ) ); 
+  $line = $left . $replace . $right;
+  return( $line );   
+}  
+
+/**
+ * Format the long description
+ *
+ * It's been nicely typed in with a few formatting choices and we want to make it fairly readable.
+ 
+ * First thing we want to do is handle single backticks to create a pre.
+ * `
+ * So this would be unformatted
+ *  Does it work? Note the leading space.
+ * `
+ * What happens afterwards?
+ *
+ * #### For an unordered list
+ *
+ * - A blank line
+ * - Followed by a series of lines prefixed with "- " 
+ * * or they could be "* "
+ * - And another blank line at the end 
+ *
+ * #### For an ordered list
+ *  
+ * 9. Prefix with a number
+ * 2. Doesn't matter what numbering
+ * 0123 So long as it starts with a digit, which includes 0
+ * 1. Not sure what to do about dots after the number. Assume we can strip them.
+ * 
+ * #### For a heading
+ *
+ * The number of #'s indicate the heading level. This is an atx-style header.
+ * 
+ * #### Styled text
+ * 
+ *  _Wrapped_ stuff:
+ *  
+ * - Single `_underscores_` for _italics_  i.e. emphasis <em>
+ * - Or single `*stars*` for *emphasis*  
+ * - Double `**stars**` for **bold** i.e. <strong>
+ * - Or double `__underscores__` for __strong__
+ * - Nested stuff **Everyone _must_ attend the meeting at 5 o'clock today.**
+ * 
+ * #### URL links
+  
+ * - http://example.com 
+ * - inline `{@see example.com}` - {@see example.com} 
+ * - inline `{@link example.com}` - {@link example.com} 
+ *
+ * 
+ * #### TODO
+ * 
+ * - > for blockquotes
+ * - inline `{@todo todo item}`
+ *
+ * #### For reference
+ * 
+ * - https://help.github.com/articles/markdown-basics/
+ * - https://help.github.com/articles/github-flavored-markdown/
+ * 
+ * #### Tables
+ * 
+ * First header | Second header
+ * ------------ | ------------
+ * First cell   | Second cell
+ * 
+ * Initially we'll work with lines prefixed by the pipe character.
+ * If we find a line that contains a space pipe space then we'll prefix it
+ * 
+ * 
+   
+ *  
+ * @param string $long_description
+ */ 
+function oikai_format_description( $long_description ) {
+  //stag( "pre" );
+  $lines = explode( "\n", $long_description );
+  bw_trace2( $lines, count( $lines ), false );
+  //sp();
+  $backtick = false;
+  $list = 0;
+  $table = 0;
+  foreach ( $lines as $line ) {
+  
+    $line = oikai_format_preprocess_line( $line );
+    
+    if ( strlen( $line ) ) {
+      $char = $line[0];
+    } else {
+      $char = null;
+    }  
+    switch ( $char ) {
+      case null: 
+        e( "\n" );
+        
+        $list = oikai_format_markdown_list( $list );
+        $table = oikai_format_markdown_table( $table );
+        break;
+        
+      case '`':
+        //bw_trace2( $backtick, "backtick", false ) ;
+        $backtick = !$backtick;
+        //bw_trace2( $backtick, "! backtick", false );
+        if ( $backtick ) {
+          stag( "pre" );
+        } else {
+        //gobang();
+          etag( "pre" );
+        }
+      break;
+      
+      case '-':
+      case '*':
+        $list = oikai_format_markdown_list_hyphen( $list );
+        if ( $list ) {
+          stag( "li" );
+        }
+        $line = ltrim( $line, "*- " );
+        //e( esc_html( $line . " " ) );
+        oikai_format_markdown_line( $line );
+        if ( $list ) {
+          etag( "li" );
+        }  
+        break;
+        
+      case '0';  
+      case ctype_digit( $char ):
+        $list = oikai_format_markdown_list_number( $list );
+        if ( $list ) {
+          stag( "li" );
+        }
+        $line = ltrim( $line, "0123456789. " );
+        //e( esc_html( $line . " " ) );
+        oikai_format_markdown_line( $line );
+        if ( $list ) {
+          etag( "li" );
+        }  
+        break;
+        
+        
+      case '|':
+        $table = oikai_format_markdown_table_line( $table, $line );
+        break;
+        
+      case '#':
+        $list = oikai_format_markdown_list_end( $list );
+        $table = oikai_format_markdown_table( $table );
+        $hn = oikai_format_markdown_heading( $line );
+        break;
+       
+    
+      default: 
+        $list = oikai_format_markdown_list_end( $list );
+        //e( esc_html( $line . " " ) );
+        oikai_format_markdown_line( $line );
+        if ( $backtick ) { 
+          e( "\n" );
+        }  
+        
+    }
+  }
+  /**
+   * End any tags we may have started 
+   */
+  $list = oikai_format_markdown_list_end( $list );
+  $table = oikai_format_markdown_table( $table );
+  if ( $backtick ) {
+    etag( "pre" );
+  }
+  //e( count( $lines ) );
+  //ep();
+  //p( esc_html( $long_description ) );
+  //etag( "pre" );
+}  
 
 /**
  * List the function parameters
@@ -447,13 +1003,13 @@ function oikai_load_from_file( $fileName, $refFunc ) {
  * but when we're parsing it for real we do the lot.
  * Whether or not we update the parsed source after parsing depends on how we were doing it. 
  * 
- * $parsed_source context( "paged" ) processing                update parsed source
- * -------------- ------------------ ---------------------     --------------------  
- * latest         false              Parse the full source     Yes     
- * latest         other              Use the parsed source     No
- * not latest     false              Parse the full source     Yes
- * not latest     true               Parse part of the source  No
- *
+ * $parsed_source | context( "paged" ) | processing                | update parsed source
+ * -------------- | ------------------ | ---------------------     | --------------------  
+ * latest         | false              | Parse the full source     | Yes     
+ * latest         | other              | Use the parsed source     | No
+ * not latest     | false              | Parse the full source     | Yes
+ * not latest     | true               | Parse part of the source  | No
+ *                                                                 
  * 
  * 
  * Once we've got the source then we can do the "navi" bit.
@@ -1688,10 +2244,12 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * Automatically create the API reference 
  *
  * Create the API reference information for:
- * Usage
- * Parameters
- * Return
- * Sourcefile
+ * - Short and long description
+ * - Usage
+ * - Parameters
+ * - Return
+ * - TO DO(s) 
+ * - Sourcefile
  * 
  * Then show the dynamically generated Syntax
  *
@@ -1714,6 +2272,7 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $c
     oikai_reflect_usage( $refFunc, $docblock, $funcname );
     oikai_reflect_parameters( $refFunc, $docblock );
     oikai_print_return( $refFunc, $docblock );
+    oikai_print_todos( $refFunc, $docblock );
     oikai_reflect_filename( $refFunc, $sourcefile, $plugin_slug );
     // bw_flush();
     //bw_push();

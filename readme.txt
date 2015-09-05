@@ -2,9 +2,9 @@
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-Requires at least: 3.8
-Tested up to: 4.0-beta3
-Stable tag: 1.25
+Requires at least: 3.9
+Tested up to: 4.0
+Stable tag: 1.26
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.26 =
+Improvements for WP-a2z and oik-plugins. 
+
 = 1.25 =
 Bug fixes for wp-a2z.com and oik-plugins. Added pagination for "parsed_source" display. 
 
@@ -190,14 +193,25 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.26 =
+* Added: TO DO section when @todo tags are present in API docblocks
+* Added: Test to see if opcache processing prevents dynamic extraction of docblock information from already loaded functions
+* Changed: Add docblock_token to oiksc_token_object to support docblock stripping from files
+* Changed: Now formats Descriptions using something similar to GitHub Flavoured Markdown
+* Changed: Improved some docblocks now that markdown is supported
+* Changed: Limit length of "Uses APIs" select box to 80 characters
+* Changed: Strip docblocks that precede functions in file displays
+* Changed: _oiksc_list_classes2() sets docblock_token
+* Changed: Sections now ordered by title: Called by, Invoked by, Calls, Call hooks
+
 = 1.25 = 
 * Changed: Added pagination support for parsed source display.
+* Changed: Commented out some bw_trace/bw_backtrace calls
+* Changed: Improved some docblock comments
+* Changed: New API oikai_load_from_file() to help simplify the restructured oikai_listsource()
+* Changed: oik-batch createapis2 will force updates even when parsed_source timestamp is set.
 * Fixed: Problem with the callees, hooks and hook associations being removed when source was dynamically reparsed.
 * Fixed: Problems due to use of bw_flush() when WordPress-SEO was attempting to find the excerpt to populate social media descriptions.
-* Changed: oik-batch createapis2 will force updates even when parsed_source timestamp is set.
-* Changed: Improved some docblock comments
-* Changed: Commented out some bw_trace/bw_backtrace calls
-* Changed: New API oikai_load_from_file() to help simplify the restructured oikai_listsource()
 * Tested: With WordPress 4.0-beta3
 
 = 1.24 =

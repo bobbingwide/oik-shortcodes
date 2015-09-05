@@ -71,17 +71,17 @@ function oikai_check_class_method_or_function( $string ) {
  * @param string $string - the passed string literal
  * @return string - the determined reference type
  *
- * Value     Meaning
- * --------  -------
- * internal  This is a PHP function
- * user      This is a currently active application function
- * T_STRING  We couldn't decide
- * constant  It's a defined constant name ( currently active )
- * T_ other  It's a PHP token such as T_REQUIRE, T_REQUIRE_ONCE, etc 
- * class     It's a class 
- * function  It's a function - but it's not active otherwise we'd have received "user" or "internal"
- * method    It's a method ( with class name ) 
- * null      Not expected at the end of this processing
+ * Value    | Meaning
+ * -------- | -------
+ * internal | This is a PHP function
+ * user     | This is a currently active application function
+ * T_STRING | We couldn't decide
+ * constant | It's a defined constant name ( currently active )
+ * T_ other | It's a PHP token such as T_REQUIRE, T_REQUIRE_ONCE, etc 
+ * class    | It's a class 
+ * function | It's a function - but it's not active otherwise we'd have received "user" or "internal"
+ * method   | It's a method ( with class name ) 
+ * null     | Not expected at the end of this processing
  */     
 function oikai_determine_reference_type( $string ) {
   $reference_type = oikai_determine_function_type( $string );

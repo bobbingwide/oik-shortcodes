@@ -88,6 +88,8 @@ class DocBlock //implements \Reflector
 
         $this->namespace = $namespace;
         $this->namespace_aliases = $namespace_aliases;
+        //bw_trace2( $this, "wofdb" );
+        //bw_backtrace();
     }
 
     /**

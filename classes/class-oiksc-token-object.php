@@ -13,6 +13,7 @@
 class oiksc_token_object {
   var $token;     // The token for the class, method or function
   var $docblock;  // The most recent docblock
+  var $docblock_token; // The token for the most recent docblock
   var $extends;           // parent class name
   var $implements;  
   var $extended_or_implemented;

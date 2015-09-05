@@ -4,14 +4,14 @@
  *
  * If no functions have been passed then we can determine the list of APIs from the context of the current post
  *
- * post_type      action
- * ----------     -------------
- * oik-shortcodes find the API from "_oik_sc_func"
- * oik-plugins    find ALL the apis linked to the plugin through "_oik_api_plugin"
- * oik-themes     find ALL the apis linked to the theme through "_oik_api_plugin"
- * oik_class      find ALL the methods linked to the class through "_oik_api_class"
- * oik_api        find all the apis that this API calls and is called by
- * other          see if we can find a _plugin_ref field and use that  
+ * post_type     | action
+ * ----------    | -------------
+ * oik-shortcodes| find the API from "_oik_sc_func"
+ * oik-plugins   | find ALL the apis linked to the plugin through "_oik_api_plugin"
+ * oik-themes    | find ALL the apis linked to the theme through "_oik_api_plugin"
+ * oik_class     | find ALL the methods linked to the class through "_oik_api_class"
+ * oik_api       | find all the apis that this API calls and is called by
+ * other         | see if we can find a _plugin_ref field and use that  
  *
  * @param array $atts - shortcode parameters
  */
@@ -60,7 +60,14 @@ function oikai_listapis( $atts ) {
 }
 
 /** 
- * List the callers and callees for the selected oik_api including information about hooks 
+ * List the callers and callees for the selected oik_api including information about hooks
+ *
+ * Sections displayed:
+ *
+ * - Called by - the callers of this API
+ * - Invoked by - the hooks which cause this function to be invoked
+ * - Calls - the functions this API calls
+ * - Call hooks - the action and filters this API invokes 
  * 
  * @param ID $post_id - the ID of the oik_api
  */
@@ -86,22 +93,23 @@ function oikai_list_callers_callees( $post_id ) {
 /**
  * List callers of the selected API
  *
- * The possible callers now includes "oik_file" as well as "oik_api", so we use post_type="any"
- * 2014/07/10 - now changed to use the defined post types
+ * The possible callers now includes "oik_file" as well as "oik_api"
+ *
+ * * Originally we used post_type="any"
+ * * 2014/07/10 - now changed to use the defined post types
+ * * 2014/11/11 - Now orders by post title
  *
  * @param ID $post_id - of the API that's being called
  *
  */
 function oikai_list_callers( $post_id ) {
   oik_require( "shortcodes/oik-navi.php" );
-  // $atts['post_type'] = "oik_api"; 
   $atts['post_type'] = "oik_api,oik_file";  
   $atts['meta_key' ] = "_oik_api_calls";
   $atts['meta_value'] = $post_id;
-  //$atts['posts_per_page'] = get_option( "posts_per_page" );
+  $atts['orderby'] = "title";
+  $atts['order'] = "ASC"; 
   e( bw_navi( $atts ) );
-  //e( bw_shortcode_event( $atts, null, "bw_list" ) );
-  
 }
 
 /**
@@ -116,54 +124,76 @@ function oikai_list_invokers( $post_id ) {
   $atts['post_type'] = "oik_hook"; 
   $atts['meta_key' ] = "_oik_hook_calls";
   $atts['meta_value'] = $post_id;
+  $atts['orderby'] = "title";
+  $atts['order'] = "ASC"; 
   e( bw_navi( $atts ) );
-  //e( bw_shortcode_event( $atts, null, "bw_list" ) );
 }
 
 /**
  * List callees of the selected API
  * 
- * Callees are the functions that this API calls directly
+ * Callees are the functions that this API calls directly.
+ * 
+ * * 2014/11/11 Changed from using bw_navi_ids() to using bw_navi() since this allows us to list the posts sorted by title.
  * 
  * @param ID $post_id - of the API that's doing the calling
  */
 function oikai_list_callees( $post_id ) {
   $values = get_post_meta( $post_id, "_oik_api_calls" ); 
-  bw_trace2( $values, "values" );
-  //bw_theme_field( "_oik_api_calls", $values );
-  ///bw_format_field( array( "_oik_api_calls" => $values ) );
-  
-  bw_navi_ids( $values );
+  if ( $values ) {
+    oik_require( "shortcodes/oik-navi.php" );
+    // $atts['post_type'] = "oik_api"; 
+    $atts['post_type'] = "oik_api";  
+    $atts['post__in'] = $values;
+    $atts['orderby'] = "title";
+    $atts['order'] = "ASC"; 
+    e( bw_navi( $atts ) );
+  }
 }
 
 /**
  * List hooks invoked by the selected API
  *
- * Hooks are the action or filter hooks invoked using do_action(), do_action_ref_array(),
- * apply_filters() and apply_filters_ref_array()
+ * Hooks are the action or filter hooks invoked using
+ * 
+ * - do_action(), 
+ * - do_action_ref_array(),
+ * - apply_filters(), 
+ * - apply_filters_ref_array()
+ * 
+ * Change log:
+ * 
+ * * 2014/11/11 Changed from using bw_navi_ids() to using bw_navi() since this allows us to list the posts sorted by title.
  *
  * @param ID $post_id - of the API that's doing the hooking
  */
 function oikai_list_hooks( $post_id ) {
   $values = get_post_meta( $post_id, "_oik_api_hooks" ); 
-  //bw_format_field( array( "_oik_api_hooks" => $values ) );
-  
-  bw_navi_ids( $values );
+  //bw_trace2( $values, "values" );
+  //bw_navi_ids( $values );
+  if ( $values ) {
+    oik_require( "shortcodes/oik-navi.php" );
+    $atts['post_type'] = "oik_hook"; 
+    $atts['post__in'] = $values;
+    $atts['orderby'] = "title";
+    $atts['order'] = "ASC"; 
+    e( bw_navi( $atts ) );
+  }
 } 
 
 /**
  * Implement [apis] shortcode - links to a list of APIs
  * 
  * Examples:
- * [apis api=functionname]
- * [apis func=functionname]   - not yet implemented! 
+ * `[apis api=functionname]`
+ * `[apis func=functionname]`   - not yet implemented! 
  * 
  * alternatively
- * [apis bbboing_sc fiddle] will return the values in $atts[0] and $atts[1] 
+ * `[apis bbboing_sc fiddle]` will return the values in $atts[0] and $atts[1] 
  * so we can get the API names from there!
  * 
  * How about? 
- * [apis "bbboing_sc fiddle" ]  
+ * `[apis "bbboing_sc fiddle" ]`  
  *
  * @param array $atts - shortcode parameters
  * @param string $content - not expected

@@ -10,7 +10,7 @@
 function oiksc_listfile_strip_apis( $contents_arr, $apis ) {
   foreach ( $apis as $api ) {
     $contents_arr = oiksc_contents_strip( $contents_arr, $api->getStartLine(), $api->getEndLine() ); 
-    $contents_arr = oiksc_contents_strip_docblock( $contents_arr, $api->getStartLine(), $api->getEndLine() );
+    $contents_arr = oiksc_contents_strip_docblock( $contents_arr, $api->getStartLine(), $api->getEndLine(), $api );
     $contents_arr = oiksc_contents_link( $contents_arr, $api );
     //print_r( $contents_arr );
   }
@@ -32,8 +32,32 @@ function oiksc_contents_strip( $contents_arr, $start, $end ) {
   return( $contents_arr );
 }
 
-function oiksc_contents_strip_docblock( $contents_arr, $start, $end ) {
-  oiksc_contents_strip( $contents_arr, $start, $end );
+/**
+ * Strip the preceeding docblock
+ * 
+ * We know where the api starts and the size of the docblock
+ * so we could attempt to  determine which lines to strip
+ * e.g.
+ * docblock lines = 5
+ *  
+ * start = 10
+ * ....ddddds
+ * But this assumes that the docblock actually starts there.
+ * We either need to match it up by checking the first line
+ * OR obtain the start information from the docblock_token. 
+ * 
+ */
+ 
+function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
+  bw_trace2();
+  $docblock = $api->docblock;
+  $docblock_lines = explode( "\n", $docblock ); 
+  $docblock_size = count( $docblock_lines );
+  //$docblock_start = $start - $docblock_size;
+  //bw_trace2( $docblock_size, "docblock_size", false );
+  $docblock_start = $api->docblock_token[2];
+  $docblock_end = $docblock_start + $docblock_size - 1; 
+  $contents_arr = oiksc_contents_strip( $contents_arr, $docblock_start, $docblock_end );
   return( $contents_arr );
 }
 
