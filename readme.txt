@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 3.8
 Tested up to: 3.9.1
-Stable tag: 1.21
+Stable tag: 1.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,14 @@ It provides an admin page where APIs can be added
 BUT is more useful when invoked using oik-batch, a WP-CLI like interface 
 
 In order for the Calls and Called by trees to be maintained you have to process each API twice.
+
+New in version 1.22
+* Parsed APIs and files are stored to improve display performance. Parsed classes will be added later.
+* The first time that the API or file is parsed then a new post is created, with a link to the source post.
+* The second parse will update the version, setting the _oik_parse_count field to the timestamp of the source file.
+* Subsequent parses will only update the saved version if the source file has changed, or been touched.
+* Display of APIs or files will check if the saved version is the latest.
+* Note: Cached parsed output is currently NOT paginated. 
 
 New in version 1.20
 * Support for themes, using on oik-themes server
@@ -75,6 +83,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.22 =
+Performance improvements for wp-a2z.com. Some bug fixes.
+
 = 1.21 =
 Improvements for wp-a2z.com - to document the themes
 
@@ -165,6 +176,19 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.22 =
+* Added: new CPT "oik_parsed_source" which is used to store the parsed version of an API or file.
+* Deleted: Removed some unused fields: _oik_api_example, _oik_api_notes
+* Changed: Needed to use bw_flush() to ensure that the parsed content was the only output in the "oik_parsed_source" post_content
+* Added: The "oik_parsed_source" _oik_parse_count field
+* Fixed: First called function in a method was not being handled correctly
+* Added: Parsed output is currently NOT paginated.
+* Added: classes/class-oiksc-parsed-source.php - but not written as OO code! 
+* Changed: Extracted oiksc_real_file() from oiksc_load_file(). It's still a messy hack 
+* Fixed: "wordpress" files should display content. 
+* Fixed: Changed oik_pathw() to set detect plugin= "wordpress" as the "wordpress" component type
+* Added: Some more docBlock comments 
+
 = 1.21 =
 * Changed: _oik_api_plugin noderef can now refer to oik-themes as well as oik-plugins
 * Added: Logic to detect the component type: "plugin" or "theme"

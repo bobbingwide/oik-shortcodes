@@ -1,8 +1,4 @@
 <?php // (C) Copyright Bobbing Wide 2012-2014
-
-// Additional functions for the oik_api type
-// 
-
 /**
  * Display the "Create API" admin page
  */
@@ -104,7 +100,8 @@ function _oiksc_get_apis( $file=null, $reload=false ) {
       oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
       $plugin = _oiksc_get_plugin();
       $plugin = oiksc_get_plugin_slug( $plugin );
-      $apis = oiksc_list_file_functions2( $file );
+      $component_type = oiksc_query_component_type( $plugin );
+      $apis = oiksc_list_file_functions2( $file, $component_type );
       $apis = _oiksc_apis_list( $apis );
     } else {
       $apis = array();
@@ -139,6 +136,8 @@ function _oiksc_get_apis2( $file=null, $reload=false, $component_type ) {
 
 /**
  * Get the selected API type
+ *
+ * @TODO The API type should probably become a taxonomy. But first we need to improve the method of setting it.
  *
  * @return string - the selected api_type
  *
@@ -303,8 +302,8 @@ function oiksc_create_api() {
   $create = bw_array_get( $_REQUEST, "_oiksc_create_api", null );
   if ( $create ) {
     // $plugins = _oiksc_get_plugins(); 
-    $plugin = _oiksc_get_plugin(); 
-    $files = _oiksc_get_files( $plugin );
+    $plugin_id = _oiksc_get_plugin(); 
+    $files = _oiksc_get_files( $plugin_id );
     
     array_unshift( $files, 0 );
     
@@ -313,9 +312,18 @@ function oiksc_create_api() {
     $api = _oiksc_get_api();
     $type = _oiksc_get_type();
     // $code = _oiksc_get_shortcode(); **?**
-    if ( $type && $api && $file && $plugin ) {
+    if ( $type && $api && $file && $plugin_id ) {
       oik_require( "includes/bw_posts.inc" ); 
-      $post_id = _oiksc_create_api( $plugin, $api, $files[$file], $type ); // Note: No $title 
+      $post_id = _oiksc_create_api( $plugin_id, $api, $files[$file], $type ); // Note: No $title 
+      
+      $content = bw_ret();
+      oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+      $plugin_slug = get_post_meta( $plugin_id, "_oikp_slug", true );
+      $component_type = oiksc_query_component_type( $plugin_slug );
+      global $plugin;
+      $plugin = $plugin_slug;
+      bw_update_parsed_source( $post_id, $content, oiksc_real_file( $files[$file], $component_type) );
+      echo $content; 
       oiksc_report( $post_id, "API", "creation" );      
     }
   }
@@ -445,8 +453,6 @@ function oiksc_handle_association_differences( $previous, $current, $force=false
   }
 }  
 
-
-
 /**
  * Create or update an "oik_api" post_type
  * 
@@ -478,12 +484,12 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
   $class = oikai_get_class( $api );
   p( "Class $class" );
   bw_context( "classname", $class );
-  bw_context( "variable", "this" );
-  bw_context( "operator", "function" );
+  //bw_context( "variable", "this" );
+  //bw_context( "operator", "function" );
   
   bw_context( "paged", false );
   
-  oiksc_build_callees( $api, $file, $plugin );
+  oiksc_build_callees( $api, $file, $plugin, $post_id );
   oikai_save_callees( $post_id );
   
   oiksc_save_hooks( $post_id );
@@ -493,19 +499,21 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
 
 /**
  * Build the callees for this API
+ * 
  * @param string $api - the API name
  * @param string $file - the source file for this API
- * @param ID $plugin - the plugin for this API  
+ * @param ID $plugin - the plugin for this API
+ * @param ID $post_id - the post ID for this API  
  * 
  */ 
-function oiksc_build_callees( $api, $file, $plugin ) {
+function oiksc_build_callees( $api, $file, $plugin, $post_id ) {
   add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
   add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
   add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 ); 
   //add_action( "oikai_handle_token_T_ENCAPSED_STRING", "oikai_add_hook" );
   $slug = get_post_meta( $plugin, "_oikp_slug", true );
   oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-  oikai_build_apiref( $api, $file, $slug );
+  oikai_build_apiref( $api, $file, $slug, null, $post_id );
 }
 
 /** 
@@ -708,7 +716,7 @@ function oiksc_query_component_type( $plugin ) {
 function oiksc_load_files( $plugin, $component_type ) {       
   switch ( $component_type ) {
     case "wordpress":
-      oik_require( "oik-load-wordpress-files.php", "oik-batch" );
+      oik_require( "oik-list-wordpress-files.php", "oik-batch" );
       $files = _la_get_wordpress_files();
       $plugin = null;
       break;

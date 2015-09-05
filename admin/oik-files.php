@@ -84,44 +84,59 @@ function oiksc_listfile_create_dummy_function( $contents_arr, $component_type ) 
  * @TODO - Add caller/callee tree - or does this go elsewhere
  *
  * @param string $file - the name of the file
+ * @param string $component_type
+ * @param ID $post_id - the ID of the file post
  */
-function oiksc_display_oik_file( $file, $component_type ) {
-  oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-  oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-  $apis = oiksc_list_file_functions2( $file, $component_type );
-  //var_dump( $apis );
-  $contents_arr = oiksc_load_file( $file, $component_type );
-  $contents_arr = oiksc_listfile_strip_apis( $contents_arr, $apis );
-  $contents = oiksc_listfile_create_dummy_function( $contents_arr, $component_type );
+function oiksc_display_oik_file( $file, $component_type, $post_id ) {
+   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
+  if ( $post_id ) {
+    oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+    //$parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
+    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id );
+  } else {
+    $parsed_source = null;
+  }
   
-  /**
-   * And now we can parse the $tempfile object
-     and do oikai_easy_tokens();
+  if ( $parsed_source ) {
+    oikai_navi_parsed_source( $parsed_source );
+  } else { 
+    oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+    $apis = oiksc_list_file_functions2( $file, $component_type );
+    //var_dump( $apis );
+    $contents_arr = oiksc_load_file( $file, $component_type );
+    $contents_arr = oiksc_listfile_strip_apis( $contents_arr, $apis );
+    $contents = oiksc_listfile_create_dummy_function( $contents_arr, $component_type );
+  
+    /**
+     * And now we can parse the $tempfile object
+       and do oikai_easy_tokens();
      
- [function_obj] =>
- [dummy_function_name] => oiksc_dummy_function_0
- [filename] => C:\apache\htdocs\wordpress\wp-content\plugins\oik-batch\listfile.php
- [plugin] =>
- [tempnam] => C:\Users\Herb\AppData\Local\Temp\oik57CF.tmp
-   */
-  //print_r( $tempfile );
-  oik_require( "bobbfunc.inc" );
-  //require( ABSPATH . WPINC . "/link-template.php" );
-  oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
+       [function_obj] =>
+       [dummy_function_name] => oiksc_dummy_function_0
+       [filename] => C:\apache\htdocs\wordpress\wp-content\plugins\oik-batch\listfile.php
+       [plugin] =>
+       [tempnam] => C:\Users\Herb\AppData\Local\Temp\oik57CF.tmp
+     */
+    oik_require( "bobbfunc.inc" );
+    //require( ABSPATH . WPINC . "/link-template.php" );
+    oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
   
-  if ( !function_exists( "wp_enqueue_style" ) ) {
-    function wp_enqueue_style() {} 
-  } 
-  
-  //$contents_arr = oiksc_load_file( $tempfile->tempnam );
-  
-  oikai_syntax_source( $contents, 0, false  );
-  
-  
+    if ( !function_exists( "wp_enqueue_style" ) ) {
+      function wp_enqueue_style() {} 
+    } 
+    //$contents_arr = oiksc_load_file( $tempfile->tempnam );
+    oikai_syntax_source( $contents, 0, false  );
+    
+    // parsed_source was null so now we can update it? 
+    /** 
+     * Update the oik_parsed_source
+     */
+    $content = bw_ret();
+    oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+    bw_update_parsed_source( $post_id, $content, $file );
+    e( $content ); 
+  }  
 }
-
-
-
 
 /**
  * Create or update an "oik_file" post_type
@@ -132,6 +147,7 @@ function oiksc_display_oik_file( $file, $component_type ) {
  */
 function _oikai_create_file( $plugin, $file ) {
   p( "Creating file: $file" );
+  bw_flush();
   $post = oiksc_get_oik_file_byname( $plugin, $file );
   bw_trace2( $post, "post" );
   if ( !$post ) {
@@ -241,7 +257,7 @@ function oiksc_create_oik_file( $plugin, $file ) {
   //oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
   $_POST['_oik_file_name'] = $file;
   $_POST['_oik_api_plugin'] = $plugin;
-  $_POST['_oik_file_passes'] = 0; // We've created the file but not yet parsed it. So passes = 0;
+  //$_POST['_oik_file_passes'] = 0; // We've created the file but not yet parsed it. So passes = 0;
   $_POST['_oik_file_deprecated_cb'] = false;
   /* We don't know these values yet:
      _oik_api_calls

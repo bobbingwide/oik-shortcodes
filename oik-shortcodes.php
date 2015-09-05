@@ -2,9 +2,9 @@
 /*
 Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
-Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [apis], [codes] and [hooks] shortcodes
+Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files] and [classes] shortcodes
 Depends: oik base plugin, oik fields
-Version: 1.21
+Version: 1.22
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -34,7 +34,6 @@ License: GPL2
  * 
  */
 function oik_shortcodes_init() {
-
   oik_register_oik_shortcodes();
   oik_register_oik_sc_param();
   oik_register_oik_shortcode_example();
@@ -43,6 +42,7 @@ function oik_shortcodes_init() {
   oik_register_class();
   oik_register_hook();
   oik_register_api();
+  oik_register_parsed_source();
   add_action( 'the_content', "oiksc_the_content", 1, 1 );
   add_action( 'oik_admin_menu', 'oiksc_admin_menu' );
   add_filter( 'wp_insert_post_data', 'oiksc_wp_insert_post_data', 10, 2 );
@@ -63,7 +63,7 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "file", "oikai_fileref", oik_path( "shortcodes/oik-file.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
-  // @TODO - files
+  // @TODO - hook - link to a specifc action hook or filter
   // @TODO - methods 
 }
 
@@ -271,8 +271,6 @@ function oiksc_hook_types() {
   $types = bw_assoc( bw_as_array( "action,filter" ));
   return( $types );
 }
-
- 
   
 /**
  * Register custom post type: oik_file
@@ -285,12 +283,6 @@ function oiksc_hook_types() {
  *   Unique within the plugin but may be part of multiple plugins.
  *
  * _oik_api_plugin - noderef to an oik-plugins or oik-themes post type
- *
- * _oik_file_passes - the number of times the file has been parsed. 
- *  0 - never - initial state
- *  1 - once - meaning each class, method or function should have been found
- *  2 - twice - the caller/callee tree and hook associations for this file should now be known  
- *  more - meaning we should only need to parse this file if the file's timestamp is greater than the last update date (post_modified / post_modified_gmt )
  * _oik_file_deprecated_cb - Checked if the file is deprecated ( or even deleted )
  * 
  * _oik_api_calls - noderef to functions the main file invokes 
@@ -313,14 +305,14 @@ function oik_register_file() {
   
   bw_register_field( "_oik_file_name", "text", "File name" , array( "#length" => 80 ));
   bw_register_field( "_oik_api_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes") )); 
-  bw_register_field( "_oik_file_passes", "numeric", "Parse count", array( "#theme" => false )); 
+  //bw_register_field( "_oik_file_passes", "numeric", "Parse count", array( "#theme" => false )); 
   bw_register_field( "_oik_file_deprecated_cb", "checkbox", "Deprecated?"); 
   bw_register_field( "_oik_api_calls", "noderef", "Uses APIs", array( "#type" => "oik_api", "#multiple" => true, "#optional" => true, '#theme' => false ));
   bw_register_field( "_oik_api_hooks", "noderef", "Uses hooks", array( "#type" => "oik_hook", "#multiple" => true, "#optional" => true, '#theme' => false ));
   
   bw_register_field_for_object_type( "_oik_file_name", $post_type );
   bw_register_field_for_object_type( "_oik_api_plugin", $post_type );
-  bw_register_field_for_object_type( "_oik_file_passes", $post_type );
+  //bw_register_field_for_object_type( "_oik_file_passes", $post_type );
   bw_register_field_for_object_type( "_oik_file_deprecated_cb", $post_type );
   bw_register_field_for_object_type( "_oik_api_calls", $post_type );
   bw_register_field_for_object_type( "_oik_api_hooks", $post_type );
@@ -423,6 +415,8 @@ function oik_register_hook() {
  *   this should be obvious from the prototype
  * - BUT someone might want to specify the expected priority in the body
  * - _oik_api_hooks is a serialized structure that is not exposed to the end user. Herb 2013/10/23
+ * - 2014/07/08 We no longer register _oik_api_example or _oik_api_notes - if required these should be created as separate post types
+ * - oik_api_source has become redundant
  */
 function oik_register_API() {
   $post_type = 'oik_api';
@@ -438,8 +432,8 @@ function oik_register_API() {
   bw_register_field( "_oik_api_source", "text", "Sourcefile" , array( "#length" => 80 ));
   bw_register_field( "_oik_fileref", "noderef", "File ref", array( "#type" => "oik_file" )); 
   bw_register_field( "_oik_api_type", "select", "API type", array( "#options" => oiksc_api_types(), "#optional" => true ) );
-  bw_register_field( "_oik_api_example", "textarea", "Examples", array( '#theme' => false, '#form' => false ) ); 
-  bw_register_field( "_oik_api_notes", "textarea", "Notes", array( '#theme' => false, '#form' => false ) ); 
+  //bw_register_field( "_oik_api_example", "textarea", "Examples", array( '#theme' => false, '#form' => false ) ); 
+  //bw_register_field( "_oik_api_notes", "textarea", "Notes", array( '#theme' => false, '#form' => false ) ); 
   bw_register_field( "_oik_api_deprecated_cb", "checkbox", "Deprecated?" ); 
   
   //bw_register_field( "_oik_api_calls", "noderef", "Uses APIs", array( "#type" => "oik_api", "#multiple" => true, "#optional" => true, '#theme' => false ));
@@ -451,8 +445,8 @@ function oik_register_API() {
   bw_register_field_for_object_type( "_oik_api_source", $post_type );
   bw_register_field_for_object_type( "_oik_fileref", $post_type );
   bw_register_field_for_object_type( "_oik_api_type", $post_type );
-  bw_register_field_for_object_type( "_oik_api_example", $post_type );
-  bw_register_field_for_object_type( "_oik_api_notes", $post_type );
+  //bw_register_field_for_object_type( "_oik_api_example", $post_type );
+  //bw_register_field_for_object_type( "_oik_api_notes", $post_type );
   bw_register_field_for_object_type( "_oik_api_deprecated_cb", $post_type );
   bw_register_field_for_object_type( "_oik_api_calls", $post_type );
   bw_register_field_for_object_type( "_oik_api_hooks", $post_type );
@@ -460,7 +454,52 @@ function oik_register_API() {
   if ( function_exists( "oikp_columns_and_titles" ) ) {
     oikp_columns_and_titles( $post_type );
   }    
-} 
+}
+
+/**
+ * Register Custom Post Type: oik_parsed_source
+ *
+ * The parsed source CPT contains the parsed source for an API, file or class
+ * Whenever the [bw_api] shortcode is expanded to display the parsed source
+ * we look for a parsed source version and use that in preference to dynamically parsing the source.
+ * 
+ * Logic will exist to check if the parsed source is the latest 
+ * If it's not then the source will be reparsed and the call trees and hook invocations rebuilt
+ * We therefore need to store private information about the API, file and class that we've parse
+ * in order to be able to determine whether or not to re-parse the code
+ * 
+ * Reasons for reparsing the code are:
+ * 1. Updated plugin producing new logic - here we just force the parsing
+ * 2. Some other component has now been parsed - which may affect the links we create to "APIs", "WordPress a2z", PHP
+ * 3. Change to the source PHP
+ *
+ * title: "Parsed $post_title of the referenced object
+ * post_content: the parsed content
+ * post_content_filtered: Not a good idea to use this field as WordPress cleans it out regularly
+ * post_excerpt: might be an idea?
+ * last_update_date: date when last parsed? - we probably can't trust this
+ * 
+ */
+function oik_register_parsed_source() {
+  $post_type = 'oik_parsed_source';
+  $post_type_args = array();
+  $post_type_args['label'] = 'Parsed Source';
+  $post_type_args['description'] = 'Pre-parsed APIs, files and classes';
+  $post_type_args['exclude_from_search'] = true;
+  $post_type_args['show_in_nav_menus'] = false;
+  $post_type_args['has_archive'] = false;
+  bw_register_post_type( $post_type, $post_type_args );
+  
+  bw_register_field( "_oik_sourceref", "noderef", "Source ref", array( "#type" => array( "oik_api", "oik_file", "oik_class" ) ) );
+  bw_register_field( "_oik_parse_count", "timestamp", "Parse count / Source file date" );
+   
+  bw_register_field_for_object_type( "_oik_sourceref", $post_type );
+  bw_register_field_for_object_type( "_oik_parse_count", $post_type );
+  
+  if ( function_exists( "oikp_columns_and_titles" ) ) {
+    oikp_columns_and_titles( $post_type );
+  }
+}    
 
 /**
  * Add some content before other 'the_content' filtering is performed
@@ -640,7 +679,7 @@ function oiksc_ajax_oiksc_create_api() {
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
-  global $plugin_post;
+  global $plugin_post, $plugin;
   
   $type = bw_array_get( $_REQUEST, "type", null );
   $api = bw_array_get( $_REQUEST, "api", null );
@@ -669,6 +708,15 @@ function oiksc_ajax_oiksc_create_api() {
       } else {
         $post_id = oikai_get_classref( $api, null, $plugin_post->ID, $file );
       }
+      
+      /** 
+       * Update the oik_parsed_source
+       */
+      $content = bw_ret();
+      oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+      oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
+      bw_update_parsed_source( $post_id, $content, oiksc_real_file( $file, $component_type ) );
+      echo $content; 
     } else {
       e( "Invalid plugin: $plugin ");
     }    
@@ -680,21 +728,18 @@ function oiksc_ajax_oiksc_create_api() {
   exit();    
 }
 
-
 /**
  * Implement "wp_ajax_oiksc_create_file" action for oik-shortcodes
  *
  * Create or update an "oik_file" post AND parse all the classes, methods and APIs implemented, including the main file,
- * using logic similar to  createapi2
- *
- *
+ * using logic similar to createapi2
  * 
  */
 function oiksc_ajax_oiksc_create_file() {
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
-  global $plugin_post;
+  global $plugin_post, $plugin;
   
   $file = bw_array_get( $_REQUEST, "file", null );
   $plugin = bw_array_get( $_REQUEST, "plugin", null );
@@ -722,11 +767,19 @@ function oiksc_ajax_oiksc_create_file() {
       add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
       add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 );
        
-      oiksc_display_oik_file( $filename, $component_type );
+      oiksc_display_oik_file( $filename, $component_type, $file_id );
       oikai_save_callees( $file_id );
   
       oiksc_save_hooks( $file_id );
       oiksc_save_associations( $file_id );
+      
+      /** 
+       * Update the oik_parsed_source
+       */
+      //$content = bw_ret();
+      //oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+      //bw_update_parsed_source( $file_id, $content, $filename );
+      //echo $content; 
       
     } else {
       e( "Invalid component: $plugin, type: $component_type ");
@@ -735,6 +788,7 @@ function oiksc_ajax_oiksc_create_file() {
     bw_trace2();
     e( "missing stuff :$file:$plugin:" );
   }
+  
   bw_flush(); 
   exit();    
 }
@@ -857,6 +911,7 @@ function oiksc_wp_insert_post_data( $data, $postarr ) {
 
 /** 
  * Add filters for the $post_type
+ * 
  * @param string $post_type - the Custom Post type name
  */ 
 if ( !function_exists( "oikp_columns_and_titles" ) ) {
@@ -984,6 +1039,34 @@ function oik_file_fields( $fields, $arg2 ) {
  */
 function oik_file_titles( $titles, $arg2=null, $fields=null ) {
   $titles = oik_file_columns( $titles, $arg2 );
+  return( $titles );
+}
+
+/**
+ * Implement "manage_edit-oik_parsed_source_columns" filter for "oik_parsed_source" 
+ * 
+ */
+function oik_parsed_source_columns( $columns, $arg2=null ) {
+  $columns['_oik_sourceref'] = __( "Source ref" );
+  $columns['_oik_parse_count'] = __( "Parse count / file date" );
+  return( $columns ); 
+}
+
+/**
+ * Implement "oik_table_fields_oik_parsed_source" filter for oik_parsed_source 
+ */ 
+function oik_parsed_source_fields( $fields, $arg2 ) {
+  $fields['_oik_sourceref'] = '_oik_sourceref';
+  return( $fields );
+}
+
+/**
+ * Implement "oik_table_titles" filter for oik_parsed_source
+ * 
+ * Titles are remarkably similar to columns for the admin pages
+ */
+function oik_parsed_source_titles( $titles, $arg2=null, $fields=null ) {
+  $titles = oik_parsed_source_columns( $titles, $arg2 );
   return( $titles );
 }
 

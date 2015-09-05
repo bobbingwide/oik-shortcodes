@@ -68,7 +68,7 @@ function oikai_fileref( $atts=null, $content=null, $tag=null ) {
     list( $file, $component_type ) = oikai_get_current_post_filename();
     $file_id = bw_global_post_id(); 
     if ( $file ) {
-      oiksc_display_oik_file( $file, $component_type );
+      oiksc_display_oik_file( $file, $component_type, $file_id );
     } else {
       bw_trace2( $file, "Unable to determine file to display" );
     }

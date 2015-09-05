@@ -48,16 +48,15 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
 } 
 
 /**
-
- * print the parameter 
- 
-Parameter #1 [ <optional> $parm2 = NULL ]DocBlock Object
-(
+ * Print a parameter 
+ *
+ * Parameter #1 [ <optional> $parm2 = NULL ]DocBlock Object
+   (
     [short_description:protected] => relect on me a while
     [long_description:protected] => Function to test the reflection logic to parse phpDoc comments and function prototypes
-If this works we can use this to dynamically generate content on the webpage
-BUT, since it may be dependent upon a certain version of PHP we might just have
-to create or update an oik_api record with the information
+    If this works we can use this to dynamically generate content on the webpage
+    BUT, since it may be dependent upon a certain version of PHP we might just have
+    to create or update an oik_api record with the information
     [tags:protected] => Array
         (
             [0] => @link http://www.oik-plugins/
@@ -70,7 +69,10 @@ to create or update an oik_api record with the information
         (
         )
 
-)
+   )
+ * @param object $param - refFunc parameter object 
+ * @param object $docblock - docBlock for the function
+ *  
  */
 function oikai_print_param( $param, $docblock ) {
   $parm = bw_array_get( $param, "name" );
@@ -102,6 +104,10 @@ function oikai_print_param( $param, $docblock ) {
 
 /**
  * Print the return field information
+ * 
+ * @param string $type - the type of data returned
+ * @param string $description - the description of the return value
+ *
  */
 function oikai_print_return_info( $type="void", $description=null ) {
   h2( "Returns" );
@@ -112,6 +118,12 @@ function oikai_print_return_info( $type="void", $description=null ) {
 
 /**
  * Print information about the @return value
+ * 
+ * @param object $refFunc - the reference function
+ * @param object $docblock - the docBlock
+ * @param bool $print - whether or not to print the output
+ * @return type - the data type returned by the function 
+ * 
  */
 function oikai_print_return( $refFunc, $docblock, $print=true ) {
   // $returnsref = $refFunc->returnsReference();
@@ -146,8 +158,12 @@ function oikai_print_return( $refFunc, $docblock, $print=true ) {
  * set       no           n/a             oikai_load_and_reflect()
  * set       yes          no              oikai_load_and_reflect()
  * set       yes          yes             oikai_reflect_method()
- 
- * 
+ *
+ * @param string $funcname - the API name
+ * @param string $sourcefile - the full file name for this API
+ * @param string $plugin - the plugin/theme name
+ * @param string $classname - the classname if not part of $funcname
+ * @return object - a refFunc object 
  */
 function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null ) {
   //bw_trace2();
@@ -178,11 +194,12 @@ function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null 
  * @param string $sourcefile -
  * @param string $plugin - plugin or theme name
  * @param string $component_type
- * 
- * 
- * 
+ * @return string - full file name of the WordPress file, plugin file or theme file
  */
 function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
+  if ( $plugin == "wordpress" ) {
+    $component_type = "wordpress";
+  }
   switch( $component_type ) { 
     case "wordpress":
       $path = ABSPATH . $sourcefile;
@@ -196,7 +213,6 @@ function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
   }
   return( $path );
 }
-  
 
 /** 
  * Create a dummy reflection object for the API
@@ -300,6 +316,14 @@ function oikai_reflect_filename( $refFunc, $sourcefile, $plugin ) {
   e( "File name: " . $plugin. '/' . $sourcefile );
 }
 
+/**
+ * Display the Syntax for calling the API
+ *
+ * @param object $refFunc - reflection object
+ * @param object $docblock - the docblock object
+ * @param string $funcname - the function or method name
+ * 
+ */
 function oikai_reflect_usage( $refFunc, $docblock, $funcname ) {
   h2( "Usage");
   stag( "pre", null, null, "lang=PHP" );
@@ -322,8 +346,11 @@ function oikai_reflect_usage( $refFunc, $docblock, $funcname ) {
   }  
   e ( ");" );   
   etag( "pre" );
-}  
+}
 
+/**
+ * echo some other stuff
+ */  
 function oikai_reflect_etc( $refFunc ) {
   $startLine = $refFunc->getStartLine();
   echo "Start line: $startLine";
@@ -333,13 +360,33 @@ function oikai_reflect_etc( $refFunc ) {
   echo PHP_EOL;
 }
 
+/**
+ * Return the docBlock from the Reflection function
+ */
 function oikai_reflect_docblock( $refFunc ) {
   $docComment = $refFunc->getDocComment();
   oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
   $docblock = new DocBlock( $docComment );
   return( $docblock );
-}  
+} 
 
+
+/**
+ * Display the API descriptions
+ *
+ * Display the short description then the long description
+ * @TODO: Handle markdown and other attempts at formatting the notes such as plain tables,
+ * the following being an example
+ *
+ * Content How to deal with it
+ * ------- --------------------
+ * @TODO   Refer to a TODO CPT
+ * @link   Convert the link into a link
+ * other   How do we handle something like this?
+ *  
+ * @param object $docblock - the docBlock object
+ * 
+ */ 
 function oikai_reflect_descriptions( $docblock ) {
   h2( "Description" );
   p( esc_html( $docblock->getShortDescription() ) );
@@ -367,12 +414,14 @@ function oikai_reflect_parameters( $refFunc, $docblock ) {
 /**
  * List the source of the function
  * 
- * @param object $refFunc 
+ * @param object $refFunc
+ * @param ID $post_id 
  * 
  */
-function oikai_listsource( $refFunc ) {
+function oikai_listsource( $refFunc, $post_id=null, $component_type ) {
   $fileName = $refFunc->getFileName();
   $file = file( $fileName );
+  bw_trace2( $file );
   $start = $refFunc->getStartLine();
   $sources = array();
   $end = $refFunc->getEndLine();
@@ -388,15 +437,27 @@ function oikai_listsource( $refFunc ) {
     //e( $line+1 . " " . $sourceline );
   }  
   //etag( "pre" );
-  $paged = bw_context( "paged" );
-  if ( $paged === false ) {
-    set_time_limit( 40 );
-    oikai_syntax_source( $sources, 1 );
+  
+  if ( $post_id ) {
+    oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+    // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
+    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id );
   } else {
-    oikai_navi_source( $sources );
+    $parsed_source = null;
   }
+  
+  if ( $parsed_source ) {
+    oikai_navi_parsed_source( $parsed_source );
+  } else {
+    $paged = bw_context( "paged" );
+    if ( $paged === false ) {
+      set_time_limit( 40 );
+      oikai_syntax_source( $sources, 1 );
+    } else {
+      oikai_navi_source( $sources );
+    }
+  }  
 }
-
 
 /**
  * List the source of a function using pagination
@@ -429,6 +490,11 @@ function oikai_navi_source( $sources ) {
   bw_navi_paginate_links( $bwscid, $page, $pages );
 } 
 
+/**
+ * Simple function to syntax hilight PHP source
+ * 
+ * Possibly redundant?
+ */
 function oikai_highlight_source( $sources ) {
   $content = "<?php\n";
   $content .= implode( "", $sources );
@@ -843,6 +909,8 @@ function oikai_handle_token_T_STRING_VARNAME( $key, $token, &$tokens ) {
  * @return ID - post_id of the API if it's one of ours, or null
  */ 
 function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) {
+  //gobang();
+  bw_trace2();
   if ( is_array( $token ) ) {
     $value = $token[1];
   } else { 
@@ -977,7 +1045,12 @@ function oikai_handle_token_T_VARIABLE( $key, $token, $tokens ) {
 }
 
 /**
+ * Match the function type, if it's a defined function
  * 
+ * @param array $defined_functions - array of defined functions
+ * @param string $type - the required function type: "internal"|"user"
+ * @param string $funcname - the function name
+ * @param string - the function type for the function, if it's defined 
  */
 function oikai_query_function_type( $defined_functions, $type, $funcname ) {
   $set = bw_array_get( $defined_functions, $type, null );
@@ -995,6 +1068,7 @@ function oikai_query_function_type( $defined_functions, $type, $funcname ) {
 
 /**
  * Determine the function type
+ * 
  * @param string $funcname - the function name
  * @return string function type: "internal", "user" or original funcname
  */
@@ -1017,6 +1091,7 @@ function oikai_determine_function_type( $funcname ) {
  * - $this
  * - classname
  * - parent
+ * - __CLASS__
  *
  * variable operator  concocted name
  * -------- --------  --------------
@@ -1025,6 +1100,8 @@ function oikai_determine_function_type( $funcname ) {
  *                    $value
  *
  * When we discover we don't have a class name then we strip the leading "::"
+ *
+ * Use the "o,v,c,l,v" trace record when debugging. 
  *
  * @param string $value - the function/method part of the name
  * @return string - the concocted API name
@@ -1035,7 +1112,7 @@ function oikai_concoct_api_name( $value ) {
   $class = bw_context( "classname" );
   $literal = bw_context( "literal" );
   
-  //br( __FUNCTION__ . ",$operator,$variable,$class,$literal,$value" );
+  bw_trace2( "$operator,$variable,$class,$literal,$value,", "o,v,c,l,v"  );
   
   if ( $variable && $operator ) {
     //bw_trace2( $class, "class" );
@@ -1053,11 +1130,16 @@ function oikai_concoct_api_name( $value ) {
               
 /**
  * Handle this specific token
- * @param array $token - token array 
+ *
+ * If it exists we invoke a function generated from the token_name(),
+ * passing the given parameters 
+ *  
+ * @param integer $key - the index to the $tokens array
+ * @param array $token - token array - the actual token
+ * @param array $tokens - the full tokens array
  */ 
 function oikai_handle_token( $key, $token, &$tokens ) {
   $tn = token_name( $token[0] );
-  
   $funcname = "oikai_handle_token_$tn";
   if ( function_exists( $funcname ) ) {
     //span( $tn );
@@ -1097,7 +1179,8 @@ function oikai_handle_char( $key, $char, &$tokens ) {
 }
 
 /**
- *
+ * Default handling for a character
+ * 
  */
 function oikai_handle_char_( $key, $char, &$tokens ) {
   oikai_dummy_TCES( $key, $char, $tokens );
@@ -1421,7 +1504,7 @@ function oikai_oik_class_parent( $class, $plugin, $file ) {
   
   $plugin_name = _oiksc_get_plugin();
   $component_type = oiksc_query_component_type( $plugin );
-  $filename = oik_pathw( $sourcefile, $plugin, $component_type );
+  $filename = oik_pathw( $file, $plugin, $component_type );
   // $filename = oik_path( $file, $plugin_name );
   if ( file_exists( $filename ) ) {
     $functions = oiksc_list_file_functions2( $filename, $component_type );
@@ -1489,8 +1572,6 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
   $_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
   wp_update_post( $post );
 }  
- 
-
 
 /**
  * Automatically create the API reference 
@@ -1503,13 +1584,13 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * 
  * Then show the dynamically generated Syntax
  *
- * @param string funcname - the function name - @TODO which may be classname::funcname
- * @param string sourcefile - the source file
- * @param string plugin - the plugin slug
- * @param string classname - the class name for a method
- * 
+ * @param string $funcname - the function name - @TODO which may be classname::funcname
+ * @param string $sourcefile - the source file
+ * @param string $plugin - the plugin slug
+ * @param string $classname - the class name for a method
+ * @param ID $post_id - the post ID for the "api" 
  */
-function oikai_build_apiref( $funcname, $sourcefile=null, $plugin="oik", $classname=null ) {
+function oikai_build_apiref( $funcname, $sourcefile=null, $plugin="oik", $classname=null, $post_id ) {
   $func = oikai_get_func( $funcname, $classname );
   $class = oikai_get_class( $funcname, $classname );
   bw_context( "classname", $class );
@@ -1522,7 +1603,10 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin="oik", $classn
     oikai_reflect_parameters( $refFunc, $docblock );
     oikai_print_return( $refFunc, $docblock );
     oikai_reflect_filename( $refFunc, $sourcefile, $plugin );
-    oikai_listsource( $refFunc ); 
+    bw_flush();
+    oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+    $component_type = oiksc_query_component_type( $plugin );
+    oikai_listsource( $refFunc, $post_id, $component_type ); 
     // oikai_reflect_links( $refFunc );
   } else { 
     p( "No API information available for: " . $funcname );
@@ -1628,7 +1712,7 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
       }  
     }  
     if ( $funcname ) {
-      oikai_build_apiref( $funcname, $sourcefile, $plugin, $classname );
+      oikai_build_apiref( $funcname, $sourcefile, $plugin, $classname, $post_id );
       if ( $post_id ) { 
         oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
         oikai_list_callers_callees( $post_id );
@@ -1651,6 +1735,8 @@ function bw_api__help() {
 
 /**
  * Syntax hook for [bw_api] shortcode
+ *
+ * @TODO - check if we can actually support these parameters
  */
 function bw_api__syntax( $shortcode="bw_api" ) {
   $syntax = array( "funcname" => bw_skv( null, "<i>function</i>" , "Name of the function" )
@@ -1659,13 +1745,6 @@ function bw_api__syntax( $shortcode="bw_api" ) {
                  );
   return( $syntax ); 
 }
-
-                 
-
-
-
- 
-
 
 /**
  * Converts named entities into numbered entities.

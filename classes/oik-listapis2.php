@@ -61,6 +61,51 @@ function _oiksc_get_endline( $tokens, $t ) {
 }
 
 /**
+ * Return the "real file" name
+ *
+ * **?** This is a pretty hideous piece of code 
+ * sometimes it gets passed a full file name
+ * and other times it doesn't
+ * 
+ * @param $file - file name 
+ * @param $component_type_p - the component type - "plugin"|"theme"| ?
+ */ 
+function oiksc_real_file( $file=null, $component_type_p=null ) {
+  global $plugin, $filename, $component_type ;
+  if ( $file ) {
+    $filename = $file;
+  }
+  if ( file_exists( $filename ) ) {
+    $real_file = $filename;  
+  } else {
+    if ( $component_type_p ) {
+      $component_type = $component_type_p;
+    }
+    //echo "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" . PHP_EOL;   
+    if ( $plugin ) {
+      if ( $plugin == "wordpress" ) {
+        $real_file = ABSPATH . $filename; 
+      } else {
+        if ( $component_type == "plugin" ) {
+          if ( defined( 'OIK_BATCH_DIR' ) ) { 
+            $real_file = OIK_BATCH_DIR . '/' . $plugin . '/' . $filename;
+          } else { 
+            $real_file = WP_PLUGIN_DIR . '/' . $plugin . '/' . $filename;
+          }
+        } else {
+          $real_file = get_theme_root() . '/' . $plugin . '/' . $filename; 
+        }  
+      }
+    } else { 
+      $real_file = ABSPATH . $filename;
+    } 
+  }
+  bw_trace2( $real_file, "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" );
+  bw_backtrace();
+  return( $real_file );
+}
+
+/**
  * Load the full file into an array 
  * 
  * @TODO - Allow the file to be loaded from the specified directory when invoked by oik-batch
@@ -70,33 +115,7 @@ function _oiksc_get_endline( $tokens, $t ) {
  * @return array - the file contents
  */
 function oiksc_load_file( $file=null, $component_type_p=null ) { 
-  global $plugin, $filename, $component_type ;
-  if ( $file ) {
-    $filename = $file;
-  }
-  if ( $component_type_p ) {
-    $component_type = $component_type_p;
-  }
-  //echo "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" . PHP_EOL;   
-  if ( $plugin ) {
-    if ( $plugin == "wordpress" ) {
-      $real_file = ABSPATH . $filename; 
-    } else {
-      if ( $component_type == "plugin" ) {
-        if ( defined( 'OIK_BATCH_DIR' ) ) { 
-          $real_file = OIK_BATCH_DIR . '/' . $plugin . '/' . $filename;
-        } else { 
-          $real_file = WP_PLUGIN_DIR . '/' . $plugin . '/' . $filename;
-        }
-      } else {
-        $real_file = get_theme_root() . '/' . $plugin . '/' . $filename; 
-      }  
-    }   
-  } else { 
-    $real_file = $filename;
-  }
-  bw_backtrace();
-  bw_trace2( $real_file, "Plugin: $plugin! Filename: $filename!" );
+  $real_file = oiksc_real_file( $file, $component_type_p );
   $contents_arr = file( $real_file );
   return( $contents_arr );
 }
