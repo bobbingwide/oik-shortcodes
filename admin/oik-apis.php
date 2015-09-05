@@ -748,9 +748,10 @@ function oiksc_load_files( $plugin, $component_type ) {
  * @param array $files - 
  * @param string $plugin - the component name
  * @param string $component_type - the component type
- * @param $callback - callback function to invoke
+ * @param string $callback - callback function to invoke
+ * @param integer $start first function to process 
  */
-function oiksc_do_files( $files, $plugin, $component_type, $callback ) {
+function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 ) {
   $count = 0;
   foreach ( $files as $file ) {
     //echo oiksc_relative_filename( $file ) . PHP_EOL;
@@ -774,7 +775,7 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback ) {
     $count++;   
     //echo "File:$count,$rfile" . PHP_EOL;
     //echo 
-    call_user_func( $callback, $rfile, $plugin, $component_type  );
+    call_user_func( $callback, $rfile, $plugin, $component_type, $start  );
   }
 }   
 
