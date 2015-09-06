@@ -105,6 +105,7 @@ function oik_register_oik_shortcodes() {
                          , "#hint" => "virtual field"
                          ); 
   bw_register_field( "_oik_sc_the_title_cb", "virtual", "Expands in 'the_title'?", $the_title_args );
+	bw_register_field( "_oik_sc_shortcake_cb", "checkbox", "Compatible with shortcake?" );
   
   bw_register_field_for_object_type( "_oik_sc_code", $post_type );
   bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
@@ -114,6 +115,7 @@ function oik_register_oik_shortcodes() {
   bw_register_field_for_object_type( "_oik_sc_snippet_cb", $post_type );
   bw_register_field_for_object_type( "_oik_sc_endcode_cb", $post_type );
   bw_register_field_for_object_type( "_oik_sc_the_title_cb", $post_type );
+  bw_register_field_for_object_type( "_oik_sc_shortcake_cb", $post_type );
   
   add_filter( "manage_edit-${post_type}_columns", "oik_shortcodes_columns", 10, 2 );
   add_action( "manage_${post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
