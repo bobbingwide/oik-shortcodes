@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.27
+Version: 1.27.1
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -535,7 +535,7 @@ function oiksc_the_post_oik_shortcodes( $post ) {
     $additional_content = "[bw_code"; 
     $additional_content .= kv( "shortcode", $code );
     $additional_content .= kv( "help", "N" );
-    $additional_content .= kv( "syntax", "Y" );
+    $additional_content .= kv( "syntax", "N" );
     $additional_content .= kv( "example", $example );
     $additional_content .= kv( "live", $live_example );
     $additional_content .= kv( "snippet", $snippet );
@@ -582,27 +582,27 @@ function oiksc_the_post_oik_class( $post ) {
 /**
  * Implement 'the_content' filter specifically for the oik_shortcodes or oik_class post types
  *
+ * Note: Since this function can be invoked recursively we have to stop it happening.
+ * We do this by 
+ * - testing if we need to append additional content
+ * - updating the global post with this additional content.
+ *
  * @param string $content - the current content of the post
  * @return string $content - the filtered content of the post
  * 
- * Note: this function can be invoked recursively - not sure why - so we have to stop it happening
  */
 function oiksc_the_content( $content ) {
-  global $post;
-  //bw_backtrace();
-  //bw_trace2( $post, "global post" );
-  static $recursed = false;
-  if ( !$recursed ) {
-    if ( $post && $post->post_type == "oik_shortcodes" ) {
-      $content .= oiksc_the_post_oik_shortcodes( $post );
-    }
-    
-    if ( $post && $post->post_type == "oik_class" ) {
-      $content .= oiksc_the_post_oik_class( $post );
-    }
-  }
-  $recursed = true;  
-  return( $content );
+	global $post;
+	bw_trace2( $post, "global post", false, BW_TRACE_DEBUG );
+	if ( $post ) {
+		if ( ( $post->post_type == "oik_shortcodes" ) && ( false === strpos( $content, "[bw_code ") ) ) {
+			$content .= oiksc_the_post_oik_shortcodes( $post );
+		}	elseif ( ( $post->post_type == "oik_class" ) && ( false === strpos( $content, "[") ) ) {
+			$content .= oiksc_the_post_oik_class( $post );
+		}
+		$post->post_content = $content;
+	}
+	return( $content );
 }
 
 /**
