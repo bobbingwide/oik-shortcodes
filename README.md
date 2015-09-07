@@ -2,9 +2,9 @@
 * Contributors: bobbingwide
 * Donate link: http://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-* Requires at least: 3.9
-* Tested up to: 4.1.1
-* Stable tag: 1.27
+* Requires at least: 4.2
+* Tested up to: 4.3
+* Stable tag: 1.27.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,28 +32,37 @@ BUT is more useful when invoked using oik-batch, a WP-CLI like interface
 
 In order for the Calls and Called by trees to be maintained you have to process each API twice.
 
-New in version 1.23
-* [hook] shortcode to display an inline link to a hook
+
+Features
+* Advanced shortcodes to display content
+* Parsed APIs and files are stored to improve display performance.  (v1.22)
+* Parses WordPress core, plugins and themes (v1.20)
+* Pagination of long lists
+* 'Compatible with Shortcake' checkbox?
 
 
 New in version 1.22
-* Parsed APIs and files are stored to improve display performance. Parsed classes will be added later.
+
 * The first time that the API or file is parsed then a new post is created, with a link to the source post.
 * The second parse will update the version, setting the _oik_parse_count field to the timestamp of the source file.
 * Subsequent parses will only update the saved version if the source file has changed, or been touched.
 * Display of APIs or files will check if the saved version is the latest.
 * Note: Cached parsed output is currently NOT paginated.
 
+
 New in version 1.20
+
 * Support for themes, using on oik-themes server
 
 New in version 1.19
+
 * [files] shortcode to list files delivered by a plugin
 * [file] shortcode for links to files
 * [classes] shortcode to list classes implemented in a plugin
 * Support for pagination of long lists
 
 New in version 1.15
+
 * Support for recording files in the "oik_file" CPT
 * [file] shortcode to display the logic implemented in a file, ignoring classes, methods and APIs
 
@@ -89,6 +98,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.27.1 
+Improvements for oik-plugins and WP-a2z. Fixes missing information for classes and shortcodes.
+
 # 1.27 
 Improvements for oik-plugins.
 
@@ -197,6 +209,14 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.27.1 
+* Added: Compatible with shortcake checkbox for shortcodes
+* Changed: Add $start parameter to oiksc_do_files
+* Changed: Now using semantic versioning
+* Fixed: Improved 'the_content' filtering for oik_shortcodes and oik_class post types
+* Fixed: oikai_listfiles() needs to load shortcodes/oik-navi.php
+* Fixed: oikai_oik_class_parent() needs to load admin/oik-apis.php
+
 # 1.27 
 * Added: [md] shortcode - to format content originally written as 'markdown'
 * Changed: [codes] shortcode now supports pagination; passes the $atts parameter to oikai_listcodes()
