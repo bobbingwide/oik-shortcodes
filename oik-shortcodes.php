@@ -43,10 +43,57 @@ function oik_shortcodes_init() {
   oik_register_hook();
   oik_register_api();
   oik_register_parsed_source();
+	
   add_action( 'the_content', "oiksc_the_content", 1, 1 );
   add_action( 'oik_admin_menu', 'oiksc_admin_menu' );
   add_filter( 'wp_insert_post_data', 'oiksc_wp_insert_post_data', 10, 2 );
   add_action( "oik_add_shortcodes", "oik_shortcodes_add_shortcodes" );
+	
+	/**
+	 * We could move this logic to oik
+	 * but since we need oik-plugins, oik-themes and oik-shortcodes
+	 * all together it's just as good here as any.
+	 */
+	remove_filter( "get_the_excerpt", "wp_trim_excerpt" );
+	add_filter( "get_the_excerpt", "oik_get_the_excerpt" );
+}
+
+/**
+ * Implement "get_the_excerpt" for oik-shortcodes
+ *
+ * WordPress SEO ( Yoast SEO ) has a nasty habit of asking for the Excerpt if you don't set a Meta description.
+ * This can invoke a whole bunch of filters. We don't need this. 
+ * While it quite easy to type the Meta description when you hand create content, it may not be created
+ * for automatically generated stuff. 
+ * This filter will return an excerpt either from the excerpt or the part of the content before any comment
+ * This allows for <!--more and <!--page tags
+ * If there isn't one we return the full post content.
+ * That can be dealt with by the subsequent filters. 
+ * 
+ * @param string $excerpt
+ * @return string the excerpt we think will do
+ */
+function oik_get_the_excerpt( $excerpt=null ) {
+	global $post;
+	bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
+	if ( !$excerpt ) {
+		if ( $post ) {
+			if ( $post->post_excerpt ) {
+				$excerpt = $post->post_excerpt;
+				
+			} else {
+				$pos_more = strpos( $post->post_content, "<!--" );
+				if ( $pos_more ) {
+					$excerpt = substr( $post->post_content, 0, $pos_more );
+				} else {
+					$excerpt = $post->post_content;
+				}
+			} 
+				
+			
+		}
+	}
+	return( $excerpt );
 }
 
 /**
@@ -582,10 +629,17 @@ function oiksc_the_post_oik_class( $post ) {
 /**
  * Implement 'the_content' filter specifically for the oik_shortcodes or oik_class post types
  *
- * Note: Since this function can be invoked recursively we have to stop it happening.
- * We do this by 
+ * Note: Since this function can be invoked multiple times we have to stop it from going recursive
+ * on us when other routines invoke the 'the_content' filter.
+ 
+ * We would like to do this by
+ * - testing to see if the content being filtered is the current post 
  * - testing if we need to append additional content
  * - updating the global post with this additional content.
+ *
+ * But this doesn't work when we're processing inside "get_the_excerpt" and/or when
+ * the $content has already been filtered to change the <!--more--> tag! 
+ 
  *
  * @param string $content - the current content of the post
  * @return string $content - the filtered content of the post
@@ -593,14 +647,19 @@ function oiksc_the_post_oik_class( $post ) {
  */
 function oiksc_the_content( $content ) {
 	global $post;
-	bw_trace2( $post, "global post", false, BW_TRACE_DEBUG );
+	static $contented = null;
+	bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
 	if ( $post ) {
-		if ( ( $post->post_type == "oik_shortcodes" ) && ( false === strpos( $content, "[bw_code ") ) ) {
+		if ( ( $post->post_type == "oik_shortcodes" ) && $contented === null && ( false === strpos( $content, "[bw_code ") ) ) {
+			$contented = $content;
 			$content .= oiksc_the_post_oik_shortcodes( $post );
-		}	elseif ( ( $post->post_type == "oik_class" ) && ( false === strpos( $content, "[") ) ) {
+			//$post->post_content = $content;
+		}	elseif ( ( $post->post_type == "oik_class" ) && $contented === null && ( false === strpos( $content, "[") ) ) {
+		
+			$contented = $content;
 			$content .= oiksc_the_post_oik_class( $post );
+			//$post->post_content = $content;
 		}
-		$post->post_content = $content;
 	}
 	return( $content );
 }
