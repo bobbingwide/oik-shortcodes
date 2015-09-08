@@ -2348,6 +2348,7 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
   $sourcefile = bw_array_get( $atts, "sourcefile", null );
   $plugin = bw_array_get( $atts, "plugin", null );
   $classname = null;
+	$post_id = null;
   if ( $content ) {
     oikai_build_dynamic_docs( $content );
   } else { 
