@@ -2020,6 +2020,13 @@ function oikai_handle_token2( $key, $token ) {
   } elseif ( $token[0] == T_DOC_COMMENT ) {
     e( "\n" );
     e( esc_html( str_replace( "\t", "",  $token[1] ) ) );
+	} elseif ( $token[0] == T_CONSTANT_ENCAPSED_STRING ) {
+		//$token[1] = esc_html( $token[1] );
+		//$token[1] = htmlentities( $token[1] );
+		$token[1] = str_replace( '&', '&amp;', $token[1] );
+		$token[1] = str_replace( '<', '&lt;', $token[1] );
+		$token[1] = str_replace( '>', '&gt;', $token[1] );
+		e( $token[1] );
   } else { 
     e( esc_html( $token[1] ) );
   }
@@ -2289,6 +2296,8 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $c
  * Build some dynamic documentation from the embedded content 
  *
  * With a bit of luck and a following wind, as Kieran O'Shea once put it...
+ *
+ * @TODO Determine how much of this pre-processing is still needed
  * 
  * @param string $content - some PHP source to dynamically format
  */ 
@@ -2299,14 +2308,16 @@ function oikai_build_dynamic_docs( $content ) {
   $dec = str_replace( "&rsquo;", "'", $dec );
   $dec = str_replace( "&ldquo;", '"', $dec );
   $dec = str_replace( "&rdquo;", '"', $dec );
-  $dec = str_replace( "<br />", "", $dec );
-  $dec = str_replace( "<p>", "", $dec );
-  $dec = str_replace( "</p>", "", $dec );
+	// Can we get away with not doing this if we now run autop after?
+  //$dec = str_replace( "<br />", "", $dec );
+  //$dec = str_replace( "<p>", "", $dec );
+  //$dec = str_replace( "</p>", "", $dec );
   $parseme  = "<?php ";
   $parseme .= $dec;
   $startline = 1;
-  bw_trace2( $parseme, "parseme" );
+  bw_trace2( $parseme, "parseme", true, BW_TRACE_DEBUG );
   $tokens = token_get_all( $parseme );
+	bw_trace2( $tokens, "tokens", false, BW_TRACE_DEBUG );
   oikai_easy_tokens( $tokens, $startline, true );
 }
 
