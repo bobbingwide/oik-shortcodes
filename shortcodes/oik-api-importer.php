@@ -2014,6 +2014,10 @@ function oikai_handle_token2( $key, $token ) {
   if ( isset( $token[3] ) ) {
     e( $token[3] );
   } elseif ( $token[0] == T_COMMENT ) {
+	
+		$token[1] = str_replace( '&', '&amp;', $token[1] );
+		$token[1] = str_replace( '<', '&lt;', $token[1] );
+		$token[1] = str_replace( '>', '&gt;', $token[1] );
     e( $token[1] );
   } elseif ( $token[0] == T_WHITESPACE ) {
     e( str_replace( "\t", "  ", $token[1] ) ) ;
