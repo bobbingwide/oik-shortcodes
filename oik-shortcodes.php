@@ -624,7 +624,29 @@ function oiksc_the_post_oik_class( $post ) {
   }       
   bw_trace2( $additional_content, "additional content" );
   return( $additional_content );
-}  
+}
+
+ 
+/**
+ * Add some content before other 'the_content' filtering is performed
+ *
+ * For an oik_sc_param we want to display:
+ * - Fields
+ * 
+ * @param post $post
+ * @return string additional content
+ *
+ */
+function oiksc_the_post_oik_sc_param( $post ) {
+  if ( false === strpos( $post->post_content, "[") ) {
+		$additional_content = "<!--more-->";
+		//$additional_content .= "[bw_fields]";
+		$additional_content .= "[bw_code name=.]";
+	} else {
+		$additional_content = null;
+	}
+	return( $additional_content ); 
+}
 
 /**
  * Implement 'the_content' filter specifically for the oik_shortcodes or oik_class post types
@@ -655,10 +677,12 @@ function oiksc_the_content( $content ) {
 			$content .= oiksc_the_post_oik_shortcodes( $post );
 			//$post->post_content = $content;
 		}	elseif ( ( $post->post_type == "oik_class" ) && $contented === null && ( false === strpos( $content, "[") ) ) {
-		
 			$contented = $content;
 			$content .= oiksc_the_post_oik_class( $post );
 			//$post->post_content = $content;
+		}	elseif ( ( $post->post_type == "oik_sc_param" ) && $contented === null && ( false === strpos( $content, "[") ) ) { 
+			$contented = $content;
+			$content .= oiksc_the_post_oik_sc_param( $post );
 		}
 	}
 	return( $content );

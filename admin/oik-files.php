@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014, 2015
 
 /**
  * Strip all the classes, methods and APIs from the file
@@ -49,7 +49,7 @@ function oiksc_contents_strip( $contents_arr, $start, $end ) {
  */
  
 function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
-  bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $docblock = $api->docblock;
   $docblock_lines = explode( "\n", $docblock ); 
   $docblock_size = count( $docblock_lines );
@@ -63,11 +63,17 @@ function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
 
 /**
  * Convert the stripped out class or function into a link to the class, method, or function
+ *
+ * Here we create special lines which are detected in the output so that the links are treated as links
+ *
+ * @param array $contents_arr
+ * @param string $api
+ * @return updated contents_arr
  */
 function oiksc_contents_link( $contents_arr, $api ) {
   //print_r( $api );
   $index = $api->getStartLine();
-  $line = "/* ";
+  $line = "/*";
   $api_name = $api->getApiName();
   oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
   if ( $api->methodname ) {
