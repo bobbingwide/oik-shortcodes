@@ -2009,15 +2009,22 @@ function oikai_process_tokens2( $tokens ) {
  * @param array $token - token array 
  */ 
 function oikai_handle_token2( $key, $token ) {
+	bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $tn = token_name( $token[0] );
   span( $tn, $key );
   if ( isset( $token[3] ) ) {
     e( $token[3] );
   } elseif ( $token[0] == T_COMMENT ) {
+		if ( strpos( $token[1], "/* function <a" ) === 0 ) {
+			// Let this through unchanged
+		} elseif ( strpos( $token[1], "/* class <a" ) === 0 ) {
+		  // Let this through unchanged
+		} else {	
 	
-		$token[1] = str_replace( '&', '&amp;', $token[1] );
-		$token[1] = str_replace( '<', '&lt;', $token[1] );
-		$token[1] = str_replace( '>', '&gt;', $token[1] );
+			$token[1] = str_replace( '&', '&amp;', $token[1] );
+			$token[1] = str_replace( '<', '&lt;', $token[1] );
+			$token[1] = str_replace( '>', '&gt;', $token[1] );
+		}
     e( $token[1] );
   } elseif ( $token[0] == T_WHITESPACE ) {
     e( str_replace( "\t", "  ", $token[1] ) ) ;
