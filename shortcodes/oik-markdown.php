@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014, 2015
 
 /**
  * Implement [md] shortcode for Markdown 
@@ -21,4 +21,12 @@ function oikai_markdown( $atts=null, $content=null, $tag=null ) {
     oikai_format_description( $content );
   }
   return( bw_ret() );
+}
+
+function md__help( $shortcode="md" ) {
+	return( "Format Markdown" );
+}
+
+function md__syntax( $shortcode="md" ) {
+	return( array() );
 }
