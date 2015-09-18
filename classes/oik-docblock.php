@@ -1,6 +1,6 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2013-2015
 /**
- * phpDocumentor
+ * Code originally imported from phpDocumentor
  *
  * PHP Version 5
  *
@@ -8,8 +8,16 @@
  * @copyright 2010-2011 Mike van Riel / Naenius (http://www.naenius.com)
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
+ * 
  * original source: c:\apache\htdocs\phpDocumentor2\vendor\phpdocumentor\reflection-docblock\src\phpDocumentor\Reflection\DocBlock.php
-
+ * latest source, for parts of the code: c:\github\phpDocumentor\ReflectionDocBlock\src\DocBlockFactory.php
+ * 
+ * Some new versions of the code imported from [github phpDocumentor ReflectionDocBlock] ( on 2015/09/18 ) 
+ * since I was getting a WSOD. But it turned out it was a stack size problem, with my stack being only 1MB. 
+ * So I upped it to 8MB and the problem went away.
+ * 
+ * {@link http://stackoverflow.com/questions/5058845/how-do-i-increase-the-stack-size-for-apache-running-under-windows-7}
+ *
  */
 
 //namespace phpDocumentor\Reflection;
@@ -68,6 +76,7 @@ class DocBlock //implements \Reflector
     public function __construct(
         $docblock, $namespace = '\\', $namespace_aliases = array()
     ) {
+				//bw_trace2();
         if (is_object($docblock)) {
             if (!method_exists($docblock, 'getDocComment')) {
                 throw new \InvalidArgumentException(
@@ -77,114 +86,134 @@ class DocBlock //implements \Reflector
             }
 
             $docblock = $docblock->getDocComment();
+						//bw_trace2( $docblock );
+						
         }
+				
+        $docblock = $this->stripDocComment($docblock);
+				
+				//bw_trace2( $docblock, "After stripDocComment", false, BW_TRACE_VERBOSE );
 
-        $docblock = $this->cleanInput($docblock);
-
-        list($short, $long, $tags) = $this->splitDocBlock($docblock);
+        $matches = $this->splitDocBlock( $docblock );
+				
+				//bw_trace2( $matches, "After splitDocBlock", false, BW_TRACE_VERBOSE ); 
+				
+				// We now get 4 parts
+				list( $template_marker, $short, $long, $tags) =	 $matches;
         $this->short_description = $short;
         $this->long_description = $long; // new DocBlock\LongDescription($long);
         $this->parseTags($tags);
+				
 
         $this->namespace = $namespace;
         $this->namespace_aliases = $namespace_aliases;
         //bw_trace2( $this, "wofdb" );
         //bw_backtrace();
     }
-
-    /**
+		
+		/**
      * Strips the asterisks from the DocBlock comment.
      *
      * @param string $comment String containing the comment text.
      *
      * @return string
      */
-    protected function cleanInput($comment)
+    private function stripDocComment($comment)
     {
-        $comment = trim(
-            preg_replace(
-                '#[ \t]*(?:\/\*\*|\*\/|\*)?[ \t]{0,1}(.*)?#u', '$1', $comment
-            )
-        );
+        $comment = trim(preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ \t]{0,1}(.*)?#u', '$1', $comment));
 
         // reg ex above is not able to remove */ from a single line docblock
         if (substr($comment, -2) == '*/') {
             $comment = trim(substr($comment, 0, -2));
         }
 
-        // normalize strings
-        $comment = str_replace(array("\r\n", "\r"), "\n", $comment);
-
-        return $comment;
+        return str_replace(array("\r\n", "\r"), "\n", $comment);
     }
 
     /**
-     * Splits the DocBlock into a short description, long description and
-     * block of tags.
+     * Splits the DocBlock into a template marker, summary, description and block of tags.
      *
      * @param string $comment Comment to split into the sub-parts.
      *
-     * @author RichardJ Special thanks to RichardJ for the regex responsible
-     *     for the split/
+     * @author Richard van Velzen (@_richardJ) Special thanks to Richard for the regex responsible for the split.
+     * @author Mike van Riel <me@mikevanriel.com> for extending the regex with template marker support.
      *
-     * @return string[] containing the short-, long description and an element
-     *     containing the tags.
+     * @return string[] containing the template marker (if any), summary, description and a string containing the tags.
      */
-    protected function splitDocBlock($comment)
+    private function splitDocBlock($comment)
     {
+        // Performance improvement cheat: if the first character is an @ then only tags are in this DocBlock. This
+        // method does not split tags so we return this verbatim as the fourth result (tags). This saves us the
+        // performance impact of running a regular expression
         if (strpos($comment, '@') === 0) {
-            $matches = array('', '', $comment);
-        } else {
-            // clears all extra horizontal whitespace from the line endings
-            // to prevent parsing issues
-            $comment = preg_replace('~(?m)\h*$~u', '', $comment);
-
-            /*
-             * Splits the docblock into a short description, long description and
-             * tags section
-             * - The short description is started from the first character until
-             *   a dot is encountered followed by a whitespace OR
-             *   two consecutive newlines (horizontal whitespace is taken into
-             *   account to consider spacing errors)
-             * - The long description, any character until a new line is
-             *   encountered followed by an @ and word characters (a tag).
-             *   This is optional.
-             * - Tags; the remaining characters
-             *
-             * Big thanks to RichardJ for contributing this Regular Expression
-             */
-            preg_match(
-                '/(?x)
-        \A (
-          [^\n.]+
-          (?:
-            (?! \. \s | \n{2} ) # disallow the first seperator here
-            [\n.] (?! [ \t]* @\pL ) # disallow second seperator
-            [^\n.]+
-          )*
-          \.?
-        )
-        (?:
-          \s* # first seperator (actually newlines but it\'s all whitespace)
-          (?! @\pL ) # disallow the rest, to make sure this one doesn\'t match,
-          #if it doesn\'t exist
-          (
-            [^\n]+
-            (?: \n+
-              (?! [ \t]* @\pL ) # disallow second seperator (@param)
-              [^\n]+
-            )*
-          )
-        )?
-        (\s+ [\s\S]*)? # everything that follows
-        /u', $comment, $matches
-            );
-            array_shift($matches);
+            return array('', '', '', $comment);
         }
+				//bw_trace2( "after strpos" );
+				//bw_backtrace( BW_TRACE_DEBUG );
 
-        while (count($matches) < 3) {
+        // clears all extra horizontal whitespace from the line endings to prevent parsing issues
+        $comment = preg_replace('/\h*$/Sum', '', $comment);
+				//bw_trace2( $comment, "comment", false, BW_TRACE_DEBUG );
+
+        /*
+         * Splits the docblock into a template marker, summary, description and tags section.
+         *
+         * - The template marker is empty, #@+ or #@- if the DocBlock starts with either of those (a newline may
+         *   occur after it and will be stripped).
+         * - The short description is started from the first character until a dot is encountered followed by a
+         *   newline OR two consecutive newlines (horizontal whitespace is taken into account to consider spacing
+         *   errors). This is optional.
+         * - The long description, any character until a new line is encountered followed by an @ and word
+         *   characters (a tag). This is optional.
+         * - Tags; the remaining characters
+         *
+         * Big thanks to RichardJ for contributing this Regular Expression
+         */
+        preg_match(
+            '/
+            \A
+            # 1. Extract the template marker
+            (?:(\#\@\+|\#\@\-)\n?)?
+
+            # 2. Extract the summary
+            (?:
+              (?! @\pL ) # The summary may not start with an @
+              (
+                [^\n.]+
+                (?:
+                  (?! \. \n | \n{2} )     # End summary upon a dot followed by newline or two newlines
+                  [\n.] (?! [ \t]* @\pL ) # End summary when an @ is found as first character on a new line
+                  [^\n.]+                 # Include anything else
+                )*
+                \.?
+              )?
+            )
+
+            # 3. Extract the description
+            (?:
+              \s*        # Some form of whitespace _must_ precede a description because a summary must be there
+              (?! @\pL ) # The description may not start with an @
+              (
+                [^\n]+
+                (?: \n+
+                  (?! [ \t]* @\pL ) # End description when an @ is found as first character on a new line
+                  [^\n]+            # Include anything else
+                )*
+              )
+            )?
+
+            # 4. Extract the tags (anything that follows)
+            (\s+ [\s\S]*)? # everything that follows
+            /ux',
+            $comment,
+            $matches
+        );
+        array_shift($matches);
+
+        while (count($matches) < 4) {
             $matches[] = '';
         }
+
         return $matches;
     }
 
@@ -197,7 +226,7 @@ class DocBlock //implements \Reflector
      */
     protected function parseTags($tags)
     {
-      //bw_trace23( $tags, "tags" );
+      //bw_trace2( $tags, "tags" );
         $result = array();
         foreach (explode("\n", trim($tags)) as $tag_line) {
             if (trim($tag_line) === '') {

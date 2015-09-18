@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2014
+<?php // (C) Copyright Bobbing Wide 2012-2015
 
 /**
  * Print a function's parameters in a definition list 
@@ -209,17 +209,16 @@ function oikai_print_todo_info( $description ) {
  * @return bool - true if we believe that opcache processing is being used 
  */   
 function oikai_using_opcache() {
-  //$ini = ini_get_all();
-  //bw_trace2( $ini, "PHP ini", false );
   $using_opcache = false;
   $refFunc = oikai_reflect( __FUNCTION__ );
   if ( $refFunc ) { 
     $docComment = $refFunc->getDocComment(); 
-    bw_trace2( $docComment, "docComment" );
+    bw_trace2( $docComment, "docComment", false, BW_TRACE_VERBOSE );
     if ( $docComment === false ) {
       $using_opcache = true;
     }
   }
+	bw_trace2( $using_opcache, "using_opcache", false, BW_TRACE_DEBUG );
   return( $using_opcache ); 
 }
 
@@ -244,7 +243,7 @@ function oikai_using_opcache() {
  * @return object - a refFunc object 
  */
 function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null ) {
-  //bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $refFunc = null;
   $using_opcache = oikai_using_opcache();
   if ( $using_opcache ) {
@@ -263,13 +262,14 @@ function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null 
     } else {
       if ( function_exists( $funcname ) ) {
         $refFunc = oikai_reflect( $funcname );
+				//bw_trace2( $refFunc, "refFunc", true, BW_TRACE_VERBOSE );
       } else {
         $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
+				//bw_trace2( $refFunc, "refFunc", true, BW_TRACE_VERBOSE );
       }
     }
   }
-  
-  bw_trace2( $refFunc, "refFunc" );
+  bw_trace2( $refFunc, "refFunc", true, BW_TRACE_VERBOSE );
   return( $refFunc );
 }
 
@@ -313,7 +313,7 @@ function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
  */   
 function oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname ) {
   $refFunc = null;    
-  //bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   if ( $sourcefile ) { 
     // oik_require( $sourcefile, $plugin );
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
@@ -350,14 +350,17 @@ function oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname ) {
  * 
  */
 function oikai_reflect( $funcname ) {
+	bw_trace2( null, null, true, BW_TRACE_VERBOSE );
   try {
     $refFunc = new ReflectionFunction( $funcname );
+		
+		bw_trace2( $refFunc, "refFunc", true, BW_TRACE_VERBOSE );
   
   } catch (Exception $e) {
-    bw_trace2( $e->getMessage(), "Caught exception" );
+    bw_trace2( $e->getMessage(), "Caught exception", true, BW_TRACE_ERROR );
     $refFunc = null;
   }
-  //bw_trace2( $refFunc );
+  bw_trace2( $refFunc, "refFunc", true, BW_TRACE_DEBUG );
   return( $refFunc );
 }
   
@@ -376,7 +379,7 @@ function oikai_reflect_method( $classname, $funcname ) {
   try {
     $refFunc = new ReflectionMethod( $classname, $funcname );
   } catch (Exception $e) {
-    bw_trace2( $e->getMessage(), "Caught exception" );
+    bw_trace2( $e->getMessage(), "Caught exception", true, BW_TRACE_ERROR );
     $refFunc = null;
   }
   //bw_trace2( $refFunc );
@@ -450,9 +453,26 @@ function oikai_reflect_etc( $refFunc ) {
  * @return object - a DocBlock object for the Reflection function's DocComment
  */
 function oikai_reflect_docblock( $refFunc ) {
-  $docComment = $refFunc->getDocComment(); 
+	$docComment = null;
+	if ( method_exists( $refFunc, "getDocComment" ) ) {
+		$docComment = $refFunc->getDocComment(); 
+	} else {
+		bw_trace2( $refFunc, "getDocComment does not exist", false, BW_TRACE_ERROR );
+	}
+	bw_trace2( $docComment, "docComment", false, BW_TRACE_DEBUG );
+	if ( class_exists( "DocBlock" ) ) {
+		bw_trace2( "DocBlock already loaded?", null, false, BW_TRACE_VERBOSE );
+	}
   oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
-  $docblock = new DocBlock( $docComment );
+	//bw_trace2( "required", "oik-docblock", false, BW_TRACE_DEBUG );
+	
+	if ( class_exists( "DocBlock" ) ) {
+		bw_trace2( "Creating new DocBlock", null, false, BW_TRACE_VERBOSE );
+		$docblock = new DocBlock( $docComment );
+	} else {
+		bw_trace2( "DocBlock does not exist", null, false, BW_TRACE_ERROR );
+		$docblock = null;
+	}
   //bw_trace2( $docblock );
   return( $docblock );
 } 
@@ -526,32 +546,22 @@ function oikai_list_type( $type = null ) {
 }
 
 /**  
- * 
+ * Format a markdown list started with a hyphen
+ *  
  */
 function oikai_format_markdown_list_hyphen( $list ) {
   $rlist = $list;
-  //bw_trace2();
   if ( 0 === $rlist ) {
-  //  e( "$rlist = 1 ");
     stag( oikai_list_type( "ul" ) );
-  //} else {
-  //  e( "$rlist not = 1" );
   }
   $rlist++;
-  //e( $rlist );
-  //if ( $rlist === $list ) { 
-  //  e( "Not expected" );
-  //} else {
-  //  e( "good" ); 
-    
- // }  
- // e( "$rlist ?= $list ");
-  bw_trace2( $rlist, "list++", false );
+  bw_trace2( $rlist, "list++", false, BW_TRACE_DEBUG );
   return( $rlist ); 
 }
 
 
 /**  
+ * Format a markdown list started with a number
  * 
  */
 function oikai_format_markdown_list_number( $list ) {
@@ -590,7 +600,6 @@ function oikai_format_markdown_heading( $line ) {
   stag( "h$level" );
   e( esc_html( $line . " " ) );
   etag( "h$level" );
- 
 }
 
 /**
@@ -603,7 +612,6 @@ function oikai_format_markdown_heading( $line ) {
  * @param string $line - the line from the docblock
  * @return string - the preprocessed line
  */
- 
 function oikai_format_preprocess_line( $line ) {
   $pos = strpos( $line, " | " );
   if ( $pos !== false ) {
@@ -648,7 +656,7 @@ function oikai_format_markdown_table_line( $table, $line ) {
       stag( "thead" );
       $line = ltrim( $line, "|" );
       $cols = str_getcsv( $line, "|" );
-      bw_trace2( $cols, "cols" );
+      bw_trace2( $cols, "cols", true, BW_TRACE_VERBOSE );
       bw_tablerow( $cols, "tr", "th" );
       etag( "thead" );
       break;
@@ -661,7 +669,7 @@ function oikai_format_markdown_table_line( $table, $line ) {
     default:
       $line = ltrim( $line, "|" );
       $cols = str_getcsv( $line, "|" );
-      bw_trace2( $cols, "cols" );
+      bw_trace2( $cols, "cols", true, BW_TRACE_VERBOSE );
       bw_tablerow( $cols, "tr", "td" );
   }
   $table++;
@@ -851,7 +859,7 @@ function replace_at( $pos, $source, $replace, $line ) {
 function oikai_format_description( $long_description ) {
   //stag( "pre" );
   $lines = explode( "\n", $long_description );
-  bw_trace2( $lines, count( $lines ), false );
+  bw_trace2( $lines, count( $lines ), false, BW_TRACE_DEBUG );
   //sp();
   $backtick = false;
   $list = 0;
@@ -943,10 +951,6 @@ function oikai_format_description( $long_description ) {
   if ( $backtick ) {
     etag( "pre" );
   }
-  //e( count( $lines ) );
-  //ep();
-  //p( esc_html( $long_description ) );
-  //etag( "pre" );
 }  
 
 /**
@@ -968,12 +972,16 @@ function oikai_reflect_parameters( $refFunc, $docblock ) {
 }
 
 /**
- * 
+ * Load a function from the source file
+ *
+ * @param string $fileName
+ * @param object $refFunc
+ * @return array lines from the source file
  */ 
 function oikai_load_from_file( $fileName, $refFunc ) {
  
   $file = file( $fileName );
-  bw_trace2( $file );
+  bw_trace2( $file, null, false, BW_TRACE_DEBUG );
   $start = $refFunc->getStartLine();
   $sources = array();
   $end = $refFunc->getEndLine();
