@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.27.2
+Version: 1.27.3
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -133,6 +133,7 @@ function oik_register_oik_shortcodes() {
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcodes';
   $post_type_args['description'] = 'Shortcode definitions';
+  $post_type_args['has_archive'] = true;
   bw_register_post_type( $post_type, $post_type_args );
   add_post_type_support( $post_type, 'publicize' );
   
