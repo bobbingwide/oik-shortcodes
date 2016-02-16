@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 4.2
-Tested up to: 4.3
-Stable tag: 1.27.2
+Tested up to: 4.3.1
+Stable tag: 1.27.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.27.3 =
+Improvements for oik-plugins and WP-a2z.
+
 = 1.27.2 =
 Improvements for oik-plugins and WP-a2z.
 
@@ -212,6 +215,10 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.27.3 =
+* Changed: oik-shortcode has archive
+* Added: help and syntax for [md] shortcode
+ 
 = 1.27.2 =
 Added: Improve display of shortcode parameters ( Issue #3 )
 Changed: Better support for &#nn; characters and HTML inside strings ( Issue #4 )

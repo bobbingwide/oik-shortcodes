@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2014
+<?php // (C) Copyright Bobbing Wide 2012-2015
 
 // Admin functions for oik_shortcodes
 // We will provide an entry field to allow us to generate known shortcodes that have the appropriate filters
@@ -13,6 +13,7 @@ function oiksc_lazy_admin_menu() {
   // register_setting( 'oik_workingfeedback_options', 'bw_workingfeedback', 'oik_plugins_validate' ); // No validation for oik-workingfeedback
   add_submenu_page( 'oik_menu', 'Create shortcode', "Create shortcode", 'manage_options', 'oik_shortcodes', "oiksc_options_do_page" );
   add_submenu_page( 'oik_menu', 'Create API(s)', "Create APIs", "manage_options", "oik_apis", "oiksc_api_do_page" );
+	//add_submenu_page( 'oik_menu', 'Shortcode server options', 'Shortcode server options", "manage_options", "oiksc_options", "oiksc_options_do_page" );
 }
 
 /**
@@ -551,10 +552,14 @@ function oiksc_update_oik_api( $post, $plugin, $func, $file, $type, $title ) {
 /**
  * Update the post data and meta data for an oik_hook post_type
  *
+ * @TODO We need to stop cache invalidation occurring when this happens. Can we simple define( 'WPLOCKDOWN', '1' ) ?
  * @param post $post - the oik_hook object
  * 
  */
 function oiksc_update_oik_hook( $post, $hook, $context ) {
+	if ( !is_user_logged_in() ) {
+		return;
+	}
   //bw_backtrace();
   $type = oiksc_get_hook_type( $context );
   $post->post_title = oiksc_oik_hook_post_title( $hook, $type );
@@ -661,7 +666,7 @@ function oiksc_options() {
   
   bw_form();
   stag( "table" );
-  bw_form_field_noderef( "plugin", "", "Select the plugin", "", array( "#type" => "oik-plugins" ));
+  bw_form_field_noderef( "plugin", "", "Select the plugin or theme", "", array( "#type" => array("oik-plugins", "oik-themes") ));
   oiksc_code_list();
   oiksc_func_list();
   bw_textfield( "code", 40, "Type the shortcode name", "" );

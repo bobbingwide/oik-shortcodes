@@ -766,6 +766,7 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 )
         break;
       case "theme":
         //echo $file;
+				oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
         $rfile = oiksc_theme_basename( $file ); 
         //echo $rfile;
       break;

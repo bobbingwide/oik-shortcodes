@@ -1,0 +1,331 @@
+# Copyright (C) 2015 oik shortcodes server
+# This file is distributed under the same license as the oik shortcodes server package.
+msgid ""
+msgstr ""
+"Project-Id-Version: oik shortcodes server 1.27.2\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/oik-shortcodes\n"
+"POT-Creation-Date: 2015-09-15 13:16:16+00:00\n"
+"MIME-Version: 1.0\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"Language: fr_FR\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+#: admin/oik-apis.php:6
+msgid "APIs"
+msgstr ""
+
+#: admin/oik-apis.php:7
+msgid "Create API"
+msgstr ""
+
+#: admin/oik-apis.php:257
+msgid ""
+"Choose 'List' each time you make a choice of plugin or file then 'Create "
+"API' when you have selected the API."
+msgstr ""
+
+#: admin/oik-apis.php:258
+msgid "To process all the APIs in a plugin use the oik-batch plugin"
+msgstr ""
+
+#: admin/oik-shortcodes.php:25
+msgid "shortcodes options"
+msgstr ""
+
+#: admin/oik-shortcodes.php:26
+msgid "Create shortcode"
+msgstr ""
+
+#: admin/oik-shortcodes.php:337
+msgid "No post id returned "
+msgstr ""
+
+#: admin/oik-shortcodes.php:340
+msgid "Missing code"
+msgstr ""
+
+#: admin/oik-shortcodes.php:657
+msgid ""
+"This form should magically create an oik_shortcode (Shortcodes) and the "
+"required Shortcode parameters ( oik_sc_param ) and SC param mappings "
+"( oik_sc_mapping )"
+msgstr ""
+
+#: admin/oik-shortcodes.php:658
+msgid ""
+"Just write the code for the shortcode using the oik APIs and let the code "
+"take care of the rest "
+msgstr ""
+
+#: admin/oik-shortcodes.php:667
+msgid "Type the shortcode name"
+msgstr ""
+
+#: admin/oik-shortcodes.php:668
+msgid "Type the shortcode help"
+msgstr ""
+
+#: admin/oik-shortcodes.php:669
+msgid "Type the shortcode's implementing function"
+msgstr ""
+
+#: classes/class-oiksc-parsed-source.php:265
+#: shortcodes/oik-api-importer.php:1089
+msgid "Lines: "
+msgstr ""
+
+#: classes/class-oiksc-token-object.php:138
+msgid "Function does not exist"
+msgstr ""
+
+#: oik-shortcodes.php:139 oik-shortcodes.php:246
+msgid "Shortcode"
+msgstr ""
+
+#: oik-shortcodes.php:140 oik-shortcodes.php:367 oik-shortcodes.php:407
+#: oik-shortcodes.php:442 oik-shortcodes.php:491
+msgid "Plugin ref"
+msgstr ""
+
+#: oik-shortcodes.php:141
+msgid "API ref"
+msgstr ""
+
+#: oik-shortcodes.php:142
+msgid "Generate the programmed example?"
+msgstr ""
+
+#: oik-shortcodes.php:143
+msgid "Generate examples using Live data?"
+msgstr ""
+
+#: oik-shortcodes.php:144
+msgid "Generate snippets?"
+msgstr ""
+
+#: oik-shortcodes.php:145
+msgid "Enclosed content shortcode? Needs [<i>/code</i>]?"
+msgstr ""
+
+#: oik-shortcodes.php:154
+msgid "Expands in 'the_title'?"
+msgstr ""
+
+#: oik-shortcodes.php:155
+msgid "Compatible with shortcake?"
+msgstr ""
+
+#: oik-shortcodes.php:179 oik-shortcodes.php:1007 oik-shortcodes.php:1036
+#: oik-shortcodes.php:1065 oik-shortcodes.php:1095
+msgid "Plugin"
+msgstr "Extension"
+
+#: oik-shortcodes.php:196
+msgid "Yes"
+msgstr "Oui"
+
+#: oik-shortcodes.php:198
+msgid "No"
+msgstr "Non"
+
+#: oik-shortcodes.php:247
+msgid "Parameter name"
+msgstr ""
+
+#: oik-shortcodes.php:248
+msgid "Parameter type"
+msgstr ""
+
+#: oik-shortcodes.php:249
+msgid "Default"
+msgstr "Valeur par défaut"
+
+#: oik-shortcodes.php:250
+msgid "Other values"
+msgstr ""
+
+#: oik-shortcodes.php:251
+msgid "Notes"
+msgstr "Commentaires"
+
+#: oik-shortcodes.php:366
+msgid "File name"
+msgstr ""
+
+#: oik-shortcodes.php:369 oik-shortcodes.php:446 oik-shortcodes.php:497
+msgid "Deprecated?"
+msgstr ""
+
+#: oik-shortcodes.php:370
+msgid "Uses APIs"
+msgstr ""
+
+#: oik-shortcodes.php:371
+msgid "Uses hooks"
+msgstr ""
+
+#: oik-shortcodes.php:406
+msgid "Class name"
+msgstr ""
+
+#: oik-shortcodes.php:408 oik-shortcodes.php:443 oik-shortcodes.php:492
+msgid "Sourcefile"
+msgstr ""
+
+#: oik-shortcodes.php:440
+msgid "Hook name"
+msgstr ""
+
+#: oik-shortcodes.php:441
+msgid "Hook type"
+msgstr ""
+
+#: oik-shortcodes.php:444 oik-shortcodes.php:493
+msgid "File ref"
+msgstr ""
+
+#: oik-shortcodes.php:445
+msgid "Docblock"
+msgstr ""
+
+#: oik-shortcodes.php:452
+msgid "Implementers"
+msgstr ""
+
+#: oik-shortcodes.php:489
+msgid "Function name"
+msgstr ""
+
+#: oik-shortcodes.php:490
+msgid "Class ref"
+msgstr ""
+
+#: oik-shortcodes.php:494
+msgid "API type"
+msgstr ""
+
+#: oik-shortcodes.php:553 oik-shortcodes.php:1122
+msgid "Source ref"
+msgstr ""
+
+#: oik-shortcodes.php:554
+msgid "Parse count / Source file date"
+msgstr ""
+
+#: oik-shortcodes.php:879
+msgid "Missing oik_apikey"
+msgstr ""
+
+#: oik-shortcodes.php:1037 oik-shortcodes.php:1066
+msgid "Type"
+msgstr ""
+
+#: oik-shortcodes.php:1123
+msgid "Parse count / file date"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2437
+msgid "<i>function</i>"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2437
+msgid "Name of the function"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2438
+msgid "<i>sourcefile</i>"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2438
+msgid "Sourcefile containing the function"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2439
+msgid "<i>plugin</i>"
+msgstr ""
+
+#: shortcodes/oik-api-importer.php:2439
+msgid "Implementing plugin slug"
+msgstr ""
+
+#: shortcodes/oik-api.php:257
+msgid "<i>api</i>"
+msgstr ""
+
+#: shortcodes/oik-api.php:257
+msgid "API name"
+msgstr ""
+
+#: shortcodes/oik-apilink.php:259
+msgid "<i>function-name</i>"
+msgstr ""
+
+#: shortcodes/oik-apilink.php:259
+msgid "Function name e.g. bw_get_posts"
+msgstr ""
+
+#: shortcodes/oik-classlink.php:122
+msgid "<i>class-name</i>"
+msgstr ""
+
+#: shortcodes/oik-classlink.php:122
+msgid "Class names e.g. WP_Widget"
+msgstr ""
+
+#: shortcodes/oik-codeslink.php:120
+msgid "<i>shortcode</i>"
+msgstr ""
+
+#: shortcodes/oik-codeslink.php:120
+msgid "Shortcode name list e.g. bw_pages"
+msgstr ""
+
+#: shortcodes/oik-file.php:94
+msgid "<i>file</i>"
+msgstr ""
+
+#: shortcodes/oik-file.php:94
+msgid "plugin file name"
+msgstr ""
+
+#: shortcodes/oik-filelink.php:120
+msgid "<i>filename</i>"
+msgstr ""
+
+#: shortcodes/oik-filelink.php:120
+msgid "File name e.g. shortcodes/oik-filelink.php"
+msgstr ""
+
+#: shortcodes/oik-hookslink.php:164
+msgid "<i>hook name</i>"
+msgstr ""
+
+#: shortcodes/oik-hookslink.php:164
+msgid "Hook name e.g. oik_admin_menu"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "oik shortcodes server"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.oik-plugins.com/oik-plugins/oik-shortcodes"
+msgstr "http://www.oik-plugins.com/oik-plugins/oik-shortcodes"
+
+#. Description of the plugin/theme
+msgid ""
+"oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], "
+"[codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "bobbingwide"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.bobbingwide.com"
+msgstr "http://www.bobbingwide.com"
+
