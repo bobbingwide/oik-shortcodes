@@ -1340,7 +1340,7 @@ function oikai_set_links( $post_id, $title, $context, &$tokens ) {
   $TCESes = bw_context( "dummy_TCES" );
   //bw_trace2( $TCESes, "TCESes", false );
   if ( is_array( $TCESes) && count( $TCESes ) ) {
-    $permalink = get_permalink( $post_id );
+    $permalink = oiksc_get_permalink( $post_id );
     $title_text = get_the_title( $post_id );
     foreach ( $TCESes as $TCES ) {
       //bw_trace2( $TCES, "TCES", false ); 
@@ -1623,7 +1623,7 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
         $post_id = $post->ID;
         //$value = $post_id;
         if ( is_array( $tokens[$key] ) ) {
-          $tokens[$key][3] = retlink( null, get_permalink( $post_id ), $tokens[$key][1], get_the_title( $post_id ) );
+          $tokens[$key][3] = retlink( null, oiksc_get_permalink( $post_id ), $tokens[$key][1], get_the_title( $post_id ) );
         } else {
           oikai_set_links( $post_id, $api_name, "API", $tokens );
         } 
@@ -2772,3 +2772,25 @@ function ncr2ent($text) {
 	return str_replace( array_values($to_ncr), array_keys($to_ncr), $text );
 }
 
+/**
+ * Return a permalink
+ *
+ * @param ID $post_id 
+ * @return string permalink - with or without the home_url prefix
+ */
+function oiksc_get_permalink( $post_id=null ) {
+	//oik_require( "classes/class-oiksc-link-map.php", "oik-shortcodes" );
+	$lib_autoload = oik_require_lib( "oik-autoload" );
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload();
+		$link_map = oiksc_link_map::instance();
+	}	else {
+		gob();
+	}
+	
+	bw_trace2( $link_map, "link-map" );
+	
+	$permalink = $link_map->get_permalink( $post_id );
+	return( $permalink );
+	
+}

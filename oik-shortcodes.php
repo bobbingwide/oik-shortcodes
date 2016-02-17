@@ -4,12 +4,12 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.27.3
+Version: 1.27.4
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2012 - 2015 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2016 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -26,6 +26,8 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
+
+oik_shortcodes_loaded();  
 
 /** 
  * Implement "oik_fields_loaded" action for oik-shortcodes
@@ -1232,6 +1234,10 @@ function oik_shortcodes_loaded() {
   add_action( "wp_ajax_oiksc_create_file", "oiksc_ajax_oiksc_create_file" );
   add_action( "wp_ajax_nopriv_oiksc_create_file", "oiksc_ajax_nopriv_oiksc_create_file" );
   //add_action( "shutdown", "oiksc_status_report" );
+	
+	
+	
+	add_filter( "oik_query_autoload_classes" , "oiksc_oik_query_autoload_classes" );
   
 }
 
@@ -1259,4 +1265,15 @@ function oiksc_request( $request ) {
 	return( $request );
 }
 
-oik_shortcodes_loaded();  
+function oiksc_oik_query_autoload_classes( $classes ) {
+	bw_trace2();
+	$classes[] = array( "class" => "oiksc_link_map"
+										, "plugin" => "oik-shortcodes"
+										, "path" => "classes" 
+                    , "file" => "classes/class-oiksc-link-map.php" 
+										);
+	return( $classes );								
+
+}
+
+
