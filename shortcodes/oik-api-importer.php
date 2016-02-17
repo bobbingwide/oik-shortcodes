@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2015
+<?php // (C) Copyright Bobbing Wide 2012-2016
 
 /**
  * Print a function's parameters in a definition list 
@@ -47,7 +47,6 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
   e( $dd );
   $description = substr( $description, 0, -5 );
   $description = ltrim( $description, "- " );
-  
   oikai_format_description( $description );
   etag( "dd" );
 } 
@@ -76,35 +75,59 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
         )
 
    )
- * `  
+ * `
+ * 
+ * When the param is an array then we may document the array with a series of @type tags
+ * which should also be formatted for the given param
+ * We stop processing the @type fields when we come across another @param tag
+ *   
  * @param object $param - refFunc parameter object 
  * @param object $docblock - docBlock for the function
  *  
  */
 function oikai_print_param( $param, $docblock ) {
+	//bw_trace2();
+	//bw_backtrace();
   $parm = bw_array_get( $param, "name" );
   $parm = "$". $parm;
   $tags = $docblock->getTags();
-  
-  //bw_trace2( $parm );
-  //bw_trace2( $tags ); 
-  $name = null;
+	$found = null;
+  //bw_trace2( $parm, "parm", true, BW_TRACE_VERBOSE );
+  //bw_trace2( $tags, "tags", false, BW_TRACE_VERBOSE ); 
+  $processed = null;
+	$starteddl = false;
   foreach ( $tags as $tag ) {
     //bw_trace2( $tag, "tag" );
     list( $tagname, $type, $name, $description ) = explode( " ", $tag . " . . .", 4 );
-    if ( ( $tagname == "@param" ) ) { 
+    if ( $tagname == "@param" ) { 
       if ( $name == $parm ) {
         oikai_print_param_info( $param, $type, $name, $description );
-        break;
+				$found = $name;
+				$processed = $name;
+        //break;
       } else {
-        $name = null;
+				$found = null;
         //bw_trace2( $name, "wrong param $parm " );
       }
+		} elseif ( $tagname == "@type" ) {
+			if ( $found == $parm ) {
+				if ( !$starteddl ) {
+					stag( "dl" );
+					$starteddl = true;
+				}
+        oikai_print_param_info( $param, $type, $name, $description );
+			}
     } else {
-      $name = null;
-    }  
+			
+      break;
+    } 
+		
   }
-  if ( null == $name ) {
+	
+	if ( $starteddl ) {
+		etag( "dl" );
+	}
+  if ( null == $processed ) {
     oikai_print_param_info( $param );
   }
 } 
@@ -689,8 +712,8 @@ function oikai_format_markdown_table_line( $table, $line ) {
  * ------- | ---------
  *  _      | <em>
  *  *      | <em>
- * __      | <strong>
- * **      | <strong>
+ *  __     | <strong>
+ *  **     | <strong>
  *  `      | <code>
  * {@link  | http://
  * {@see   | http://
@@ -698,6 +721,7 @@ function oikai_format_markdown_table_line( $table, $line ) {
  * @param string $line
  */ 
 function oikai_format_markdown_line( $line ) {
+	//bw_trace2( $line, "line", false );
   $line = esc_html( $line );
   $line .= " ";
   $line = paired_replacements( " **", "** ", " <strong>", "</strong> ", $line );
@@ -705,8 +729,8 @@ function oikai_format_markdown_line( $line ) {
   $line = paired_replacements( " __", "__ ", " <strong>", "</strong> ", $line );
   $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
   $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
-  $line = paired_replacements( " {@link ", "} ", "http://", " ", $line );
-  $line = paired_replacements( " {@see ", "} ", "http://", " ", $line );
+  $line = paired_replacements( "{@link ", "} ", "http://", " ", $line );
+  $line = paired_replacements( "{@see ", "} ", "http://", " ", $line );
   $line = URL_autolink( $line );
   e( $line );
 }
@@ -715,6 +739,11 @@ function oikai_format_markdown_line( $line ) {
  * Autolink an URL
  * 
  * We don't expect more than one URL per line
+ *
+ * These are for testing
+ * 
+ * {@link http://qw/oikcom }
+ * {@link http://qw/oikcom } better
  *
  * @param string $line - which may contain an URL
  * @return string - line with autolinked URL
@@ -828,8 +857,8 @@ function replace_at( $pos, $source, $replace, $line ) {
  * #### URL links
   
  * - http://example.com 
- * - inline `{@see example.com}` - {@see example.com} 
- * - inline `{@link example.com}` - {@link example.com} 
+ * - inline {@see example.com} -  {@see example.com} 
+ * - inline {@link example.com} -  {@link example.com}
  *
  * 
  * #### TODO
@@ -857,11 +886,13 @@ function replace_at( $pos, $source, $replace, $line ) {
  * @param string $long_description
  */ 
 function oikai_format_description( $long_description ) {
+	//bw_trace2();
   //stag( "pre" );
   $lines = explode( "\n", $long_description );
   bw_trace2( $lines, count( $lines ), false, BW_TRACE_DEBUG );
   //sp();
   $backtick = false;
+	$curlybrace = false;
   $list = 0;
   $table = 0;
   foreach ( $lines as $line ) {
@@ -931,7 +962,21 @@ function oikai_format_description( $long_description ) {
         $table = oikai_format_markdown_table( $table );
         $hn = oikai_format_markdown_heading( $line );
         break;
-       
+			 
+      case '{':
+				$curlybrace = true;
+        oikai_format_markdown_line( $line );
+        break;
+			
+			case '}':
+				$curlybrace = false;
+        oikai_format_markdown_line( $line );
+				break;
+				
+      case '@':
+				bw_trace( $line, "Logic error. @ not expected", true, BW_TRACE_ERROR );
+        oikai_format_markdown_line( $line );
+			 	break;
     
       default: 
         $list = oikai_format_markdown_list_end( $list );
@@ -2368,7 +2413,12 @@ function oikai_get_noderef_value( $post_id, $noderef_name, $field_name ) {
  * If we find the funcname (and sourcefile and plugin) then we can build the apiref
  * including the callers and callees  
  * 
- * @param array $atts - shortcode parameters
+ * @param array $atts { shortcode parameters
+ *  @type string $funcname the API function name
+ *                         which may be class::method ?  
+ *  @type string $sourcefile the implementing sourcefile
+ *  @type string $plugin the implementing plugin
+ * }
  * @param string $content - PHP source to be dynamically documented
  * @param string $tag - the shortcode name
  * @return string - generated HTML
