@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2016
 
 /**
  * Implement the dummy file for Reflection
@@ -44,7 +44,11 @@ class oiksc_file_loader extends oiksc_function_loader {
   /**
    * Extract the source of a file to a temporary file
    *
-   * 
+   * Note: We don't need to worry about Fatal messages from parent:: or self::
+	 * when no class scope is active.
+	 *
+	 * @TODO: Find out why not! Maybe we don't ever read the file! 
+	 * 
    */
   function extract_to_tmp() { 
     $this->tempnam = tempnam( "/tmp", "oikscloa");
@@ -55,6 +59,8 @@ class oiksc_file_loader extends oiksc_function_loader {
     $this->contents = array();
     foreach ( $this->contents_arr as $line ) {
       if ( $line != "" ) {
+				//$line = str_replace( "parent::", "Quarent::", $line );
+				//$line = str_replace( "self::", "Telf::", $line );
         $this->write( $line );
         $this->contents[] = $line ;
       }
