@@ -780,6 +780,13 @@ function oiksc_load_component( $plugin, $component_type ) {
  */
 function oiksc_ajax_oiksc_create_api() {
   do_action( "oik_loaded" );
+	
+	// Enabling autoloading requires oik v3.0.0-beta.xxxx or higher
+	
+	$lib_autoload = oik_require_lib( "oik-autoload" );
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload();
+	}
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -833,6 +840,12 @@ function oiksc_ajax_oiksc_create_api() {
 function oiksc_ajax_oiksc_create_file() {
 
   do_action( "oik_loaded" );
+	
+	$lib_autoload = oik_require_lib( "oik-autoload" );
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload();
+	}
+	
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -1265,12 +1278,26 @@ function oiksc_request( $request ) {
 	return( $request );
 }
 
+
+/**
+ * Implement "oik_query_autoload_classes" for oik-shortcodes
+ *
+ * Respond with our set of classes that can be autoloaded
+ *
+ * @param array $classes {@see OIK_Autoload::}
+ */
+
 function oiksc_oik_query_autoload_classes( $classes ) {
 	bw_trace2();
 	$classes[] = array( "class" => "oiksc_link_map"
 										, "plugin" => "oik-shortcodes"
 										, "path" => "classes" 
                     , "file" => "classes/class-oiksc-link-map.php" 
+										);
+	$classes[] = array( "class" => "oiksc_api_cache"
+										, "plugin" => "oik-shortcodes"
+										, "path" => "classes"
+										, "file" => "classes/class-oiksc-api-cache.php"
 										);
 	return( $classes );								
 

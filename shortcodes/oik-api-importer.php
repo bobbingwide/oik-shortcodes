@@ -1616,11 +1616,11 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
     $tokens[$key][3] = oikai_link_to_php( $api_name );
     $post_id = null;
   } else {
-    $post = oikai_get_oik_apis_byname( $api_name );
-    if ( $post ) { 
-      $post = bw_array_get( $post, 0, null );   
-      if ( $post ) {
-        $post_id = $post->ID;
+    $post_ids = oikai_get_oik_api_byname( $api_name );
+    if ( $post_ids ) { 
+      $post_id = bw_array_get( $post_ids, 0, null );   
+      if ( $post_id ) {
+        //$post_id = $post;
         //$value = $post_id;
         if ( is_array( $tokens[$key] ) ) {
           $tokens[$key][3] = retlink( null, oiksc_get_permalink( $post_id ), $tokens[$key][1], get_the_title( $post_id ) );
@@ -1632,8 +1632,7 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
           do_action( "oikai_handle_token_T_STRING", $post_id ); 
         }  
       }
-    }
-    if ( !$post ) {
+    }	else {
       if ( $type == "user" ) {
         $tokens[$key][3] = oikai_link_to_wordpress( $value );
       } else {

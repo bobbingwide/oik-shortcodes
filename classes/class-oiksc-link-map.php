@@ -12,6 +12,9 @@
  */
  
  
+/**
+ * Cached mapping of API names to post IDs
+ */
 class oiksc_link_map {
 
 
@@ -59,9 +62,6 @@ class oiksc_link_map {
 		}
 		return( $this->post_ids[ $post_id ] );
 	}
-	 
-		
-	
 	
 }
 
