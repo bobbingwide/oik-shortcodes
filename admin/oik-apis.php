@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2014
+<?php // (C) Copyright Bobbing Wide 2012-2016
 /**
  * Display the "Create API" admin page
  */
@@ -466,14 +466,18 @@ function oiksc_handle_association_differences( $previous, $current, $force=false
  */
 function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
   p( "Creating API: $api file: $file" );
-  $post = oiksc_get_oik_api_byname( $api );
-  bw_trace2( $post, "post" );
-  if ( !$post ) {
+	
+  oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
+  $post_ids = oikai_get_oik_api_byname( $api );
+  bw_trace2( $post_ids, "post_ids" );
+  if ( !$post_ids ) {
     $post_id = oiksc_create_oik_api( $plugin, $api, $file, $type, $title );     
   } else {
+		$post = get_post( $post_ids[0] );
     $post_id = $post->ID;
     oiksc_update_oik_api( $post, $plugin, $api, $file, $type, $title );
   }
+	oikai_load_posts( $api );
   global $oikai_post_id;
   $oikai_post_id = $post_id;
   
