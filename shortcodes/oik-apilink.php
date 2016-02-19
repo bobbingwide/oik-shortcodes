@@ -232,6 +232,32 @@ function oikai_get_oik_apis_byname( $functions ) {
 }
 
 /**
+ * Load the API(s) for the given function
+ *
+ * @TODO There should only be one of these per plugin/theme.
+ * But there could be multiple plugins or themes implementing the function.
+ * We need to be able to cater for this sensibly.
+ * Current solution is to work with the first one we come across
+ * Do we actually order by ID?
+ *
+ * @param string $function
+ * @return array of post IDs
+ */
+function oikai_get_oik_api_byname( $function ) {
+	$api_cache = oiksc_api_cache::instance();
+	$post_ids = $api_cache->get_oik_api_byname( $function );
+	return( $post_ids ); 
+}
+
+/**
+ * Load posts associated with the given function
+ */
+function oikai_load_posts( $function ) {
+	$api_cache = oiksc_api_cache::instance();
+	$api_cache->load_posts( $function );
+}
+
+/**
  * Produce a list of APIs as links
  * 
  * @param array $functions - array of function names
