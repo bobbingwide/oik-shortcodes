@@ -18,7 +18,7 @@ function oiksc_lazy_api_do_page() {
  */
 function _oiksc_get_plugins() {
   $plugins = get_plugins();
-  bw_trace2( $plugins );
+  bw_trace2( $plugins, "plugins", false, BW_TRACE_DEBUG );
   return( $plugins );
 }
 
@@ -148,7 +148,9 @@ function _oiksc_get_type() {
 }
 
 /**
- * Produce a list of the files for a plugin/theme 
+ * Produce a list of the files for a plugin/theme
+ *
+ * @TODO Verify dependency on oik-batch for listing "wordpress" files 
  * 
  * @param string/ID $plugin_id - plugin slug or post ID
  * @param bool $plugin - true when processing a plugin, false when a theme 
@@ -156,40 +158,30 @@ function _oiksc_get_type() {
  */
 function _oiksc_get_files( $plugin_id, $plugin=true ) {
   if ( is_numeric( $plugin_id ) ) {
-    $name = WP_PLUGIN_DIR . '/';
-    $name .= get_post_meta( $plugin_id, "_oikp_slug", true );
+		if ( $plugin ) {
+			$name = WP_PLUGIN_DIR . '/';
+			$name .= get_post_meta( $plugin_id, "_oikp_slug", true );
+		} else {
+			$name = get_theme_root() . '/'; 
+			$name .= get_post_meta( $plugin_id, "_oikth_slug", true );
+		}
   } else {
     $name= $plugin_id;
   }
-  bw_trace2( $name );
-  /**
-   * Note: This will list all the files in the plugin's directory
-     so you need to specify a plugin name of the form
-     "plugin/plugin.php"
-     
-  if ( false === strpos( $name, "/" ) ) {
-    $name .= "/$name.php";
-  }  
-  */
-  //$files = get_plugin_files( $name );
-  //$files = _oiksc_get_php_files( $plugin );
-  
-  
+  bw_trace2( $name, "name", true, BW_TRACE_VERBOSE );
   if ( $name ) {
     if ( $name == WP_PLUGIN_DIR . '/' . "wordpress" ) {
       oik_require( "oik-list-wordpress-files.php", "oik-batch" );
       $files = _la_get_wordpress_files();
       global $plugin;
       $plugin = null;
-      
     } else {
       $files = _oiksc_get_php_files( $name, $plugin );
     }  
   } else {
     $files = array();
   }
-  
-  bw_trace2( $files );
+  bw_trace2( $files, "files", false, BW_TRACE_VERBOSE );
   return( $files );
 }
 
@@ -197,7 +189,9 @@ function _oiksc_get_files( $plugin_id, $plugin=true ) {
  * List PHP files within this directory 
  *
  * Code copied from WP-parser\lib\runner.php but modified to return ANY file name
- * So the function name is a bit suspect!  
+ * So the function name is a bit suspect! 
+ * 
+ * @TODO See Issue #12 
  *
  * @param string $directory - the root directory for the file list. Must not be null
  * @return array of relative file names  
@@ -216,7 +210,7 @@ function _oiksc_get_php_files( $directory, $plugin ) {
 			$files[] = $filename; 
 		}
 	} catch ( \UnexpectedValueException $e ) {
-		bw_trace2( 'Directory [%s] contained a directory we can not recurse into', $directory );
+		bw_trace2( 'Directory [%s] contained a directory we can not recurse into', $directory, true, BW_TRACE_ERROR );
 	}
 	return $files;
 }
@@ -260,6 +254,7 @@ function oiksc_api() {
   bw_form();
   stag( "table" );
   $plugin = _oiksc_get_plugin();
+	
   $files = _oiksc_get_files( $plugin );
   array_unshift( $files, "0" );
   $file = _oiksc_get_file( $files );
@@ -267,7 +262,7 @@ function oiksc_api() {
   //if ( $file ) { 
     $apis = _oiksc_get_apis( bw_array_get( $files, $file, null ) );
   //}
-  bw_form_field_noderef( "plugin", "", "Select the plugin", $plugin, array( "#type" => "oik-plugins" ));
+  bw_form_field_noderef( "plugin", "", "Select the plugin", $plugin, array( "#type" => array( "oik-plugins" /*, "oik-themes" */) ) );
   
   bw_select( "file", "Select the file", $file, array( "#options" => $files, "#optional" => true ) );
   bw_select( "api", "Select the API", $api, array( "#options" => $apis, "#optional" => true ) );
@@ -362,7 +357,7 @@ function oiksc_report( $post_id, $type, $action, $title=null) {
  */
 function oiksc_save_hooks( $post_id ) {
   global $oikai_hook;
-  bw_trace2( $oikai_hook, "hooks" );
+  bw_trace2( $oikai_hook, "hooks", true, BW_TRACE_VERBOSE );
   if ( !empty( $oikai_hook ) ) {
     $hooks = array();
     foreach ( $oikai_hook as $key => $value ) {
@@ -389,9 +384,9 @@ function oiksc_save_hooks( $post_id ) {
  */ 
 function oiksc_save_associations( $post_id ) {  
   global $oikai_association;
-  bw_trace2( $oikai_association, "associations" );
+  bw_trace2( $oikai_association, "associations", true, BW_TRACE_VERBOSE );
   $prev_associations = get_post_meta( $post_id, "_oik_api_associations", false );
-  bw_trace2( $prev_associations, "previous associations" );
+  bw_trace2( $prev_associations, "previous associations", false, BW_TRACE_VERBOSE );
   
   oiksc_handle_association_differences( $prev_associations, $oikai_association, true );
 
@@ -428,7 +423,7 @@ function oiksc_handle_association_differences( $previous, $current, $force=false
   } else {
     $to_delete = array_diff( $previous, $current );
   }   
-  bw_trace2( $to_delete, "to_delete" );
+  bw_trace2( $to_delete, "to_delete", true, BW_TRACE_VERBOSE );
   if ( count( $to_delete ) ) {
     foreach ( $to_delete as $deleteme ) {
       list( $hook_id, $func_id ) = explode( ",", $deleteme );
@@ -440,7 +435,7 @@ function oiksc_handle_association_differences( $previous, $current, $force=false
   } else {   
     $to_add = array_diff( $current, $previous ); 
   }  
-  bw_trace2( $to_add, "to_add", false );
+  bw_trace2( $to_add, "to_add", false, BW_TRACE_VERBOSE );
   if ( count( $to_add ) ) {
     foreach ( $to_add as $addme ) {
       //bw_trace2( $addme, "addme" );
@@ -469,7 +464,7 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
 	
   oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
   $post_ids = oikai_get_oik_api_byname( $api );
-  bw_trace2( $post_ids, "post_ids" );
+  bw_trace2( $post_ids, "post_ids", true, BW_TRACE_DEBUG );
   if ( !$post_ids ) {
     $post_id = oiksc_create_oik_api( $plugin, $api, $file, $type, $title );     
   } else {
@@ -506,16 +501,20 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
  * 
  * @param string $api - the API name
  * @param string $file - the source file for this API
- * @param ID $plugin - the plugin for this API
+ * @param ID $plugin - the plugin/theme ID for this API
  * @param ID $post_id - the post ID for this API  
  * 
  */ 
 function oiksc_build_callees( $api, $file, $plugin, $post_id ) {
+	//bw_trace2();
   add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
   add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
   add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 ); 
   //add_action( "oikai_handle_token_T_ENCAPSED_STRING", "oikai_add_hook" );
   $slug = get_post_meta( $plugin, "_oikp_slug", true );
+	if ( !$slug ) {
+		$slug = get_post_meta( $plugin, "_oikth_slug", true );
+	}
   oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
   oikai_build_apiref( $api, $file, $slug, null, $post_id );
 }
@@ -541,7 +540,7 @@ function oikai_add_callee( $id ) {
   } else { 
     $oikai_callee[$id] = $id;
   }
-  bw_trace2( $oikai_callee, "oikai_callee" );
+  bw_trace2( $oikai_callee, "oikai_callee", true, BW_TRACE_VERBOSE );
 }
 
 /** 
@@ -561,8 +560,8 @@ function oikai_record_association( $hook, $func ) {
     }
     $oikai_association[] = "$hook,$func"; 
   } else {  
-    bw_trace2( $oikai_association, "oikai_association" );
-    bw_backtrace();
+    bw_trace2( $oikai_association, "oikai_association", true, BW_TRACE_VERBOSE );
+    //bw_backtrace();
   }
 }
 
@@ -582,7 +581,7 @@ function oikai_record_hook( $method, $hook, $post_id ) {
     $oikai_hook = array();
   }
   $oikai_hook[] = array( $method, $hook, $post_id ); 
-  bw_trace2( $oikai_hook, "oikai_hook" );
+  bw_trace2( $oikai_hook, "oikai_hook", true, BW_TRACE_VERBOSE );
 }
 
 /**
@@ -593,7 +592,7 @@ function oikai_record_hook( $method, $hook, $post_id ) {
  */
 function oikai_save_callees( $post_id ) {
   global $oikai_callee; 
-  bw_trace2( $oikai_callee, "oikai_callee" );
+  bw_trace2( $oikai_callee, "oikai_callee", true, BW_TRACE_VERBOSE );
   //if ( $oikai_callee[0] == $post_id ) {
   //  array_shift( $oikai_callee );
   //}
@@ -607,21 +606,20 @@ function oikai_save_callees( $post_id ) {
  * It lists functions that might be documented as WordPress or PHP functions.
  * We want to list the ones that aren't.. so basically we want the contents of the $ignore_functions array! 
  * 
- * @param string $file - plugin source file name
- * @return array $functions - array of implemented function names 
- *
- * Tokens are documented in @links http://php.net/manual/en/tokens.php 
+ * Tokens are documented in {@link http://php.net/manual/en/tokens.php}
  *
  * The values vary depending on PHP version, so we have to use the constant names. e.g. T_STRING, T_OBJECT_OPERATOR, T_FUNCTION
- *
+ * 
+ * @param string $file - plugin source file name
+ * @return array $functions - array of implemented function names 
  */
 function oiksc_list_file_functions( $file ) {
   $real_file = WP_PLUGIN_DIR . '/' . $file;
   $content = file_get_contents( $real_file );
-  bw_trace2( $content );
+  bw_trace2( $content, "content", true, BW_TRACE_VERBOSE );
   $tokens = token_get_all( $content );
   $functions = _oiksc_list_functions( $tokens );
-  bw_trace2( $functions );
+  bw_trace2( $functions, "functions", false, BW_TRACE_VERBOSE );
   return( bw_assoc( $functions) );
 }
 
@@ -688,16 +686,22 @@ function _oiksc_list_functions( $tokens ) {
   return( $functions );  
 } 
 
-
-
 /**
  * Determine the component type
  *
  * Component types supported are:
- * "wordpress" - $plugin = "wordpress"
- * "plugin"    - $plugin directory exists in WP_PLUGIN_DIR
- * "theme"     - $plugin directory exists in WP_TEMPLATE_DIR 
+ *
+ * component_type | When
+ * -------------- | -------------------
+ * "wordpress"    | $plugin == "wordpress"
+ * "plugin"       | $plugin directory exists in WP_PLUGIN_DIR
+ * "theme"        | $plugin directory exists in WP_TEMPLATE_DIR 
+ *
+ * We expect mu-plugins to be delivered as normal plugins and then relocated as required.
+ * Ditto for dropins {@see _get_dropins() }
  * 
+ * @param string $plugin - the plugin or theme slug ( e.g. 'wordpress', 'oik', or 'genesis' )
+ * @return string - the component type
  */
 function oiksc_query_component_type( $plugin ) {
   if ( $plugin == "wordpress" ) {
@@ -710,9 +714,9 @@ function oiksc_query_component_type( $plugin ) {
     $component_type = null;
   }
   //echo "Component type: $component_type" . PHP_EOL;
+	bw_trace2( $component_type, "component_type", true, BW_TRACE_DEBUG );
   return( $component_type );
 }
-
 
 /**
  * Load the filenames for the selected component
@@ -738,7 +742,7 @@ function oiksc_load_files( $plugin, $component_type ) {
     default:
       echo "Unrecognised component: $plugin" . PHP_EOL;
   }
-  bw_trace2( $files );
+  bw_trace2( $files, "files", true, BW_TRACE_DEBUG );
   //echo "WP_PLUGIN_DIR" . WP_PLUGIN_DIR . PHP_EOL;
   //echo "THEME_ROOT" . get_theme_root() . PHP_EOL;
   return( $files );
