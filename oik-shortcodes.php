@@ -783,7 +783,7 @@ function oiksc_ajax_oiksc_create_api() {
   do_action( "oik_loaded" );
 	
 	// Enabling autoloading requires oik v3.0.0-beta.xxxx or higher
-	oiksc_autload();
+	oiksc_autoload();
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -831,17 +831,13 @@ function oiksc_ajax_oiksc_create_api() {
  * Implement "wp_ajax_oiksc_create_file" action for oik-shortcodes
  *
  * Create or update an "oik_file" post AND parse all the classes, methods and APIs implemented, including the main file,
- * using logic similar to createapi2
+ * using logic similar to createapi2.php
  * 
  */
 function oiksc_ajax_oiksc_create_file() {
 
   do_action( "oik_loaded" );
-	
-	$lib_autoload = oik_require_lib( "oik-autoload" );
-	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
-		oik_autoload();
-	}
+	oiksc_autoload();
 	
   // User still has to be authorised to perform the request!
   // So how do we check this?
