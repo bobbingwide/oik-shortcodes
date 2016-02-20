@@ -399,3 +399,34 @@ function oiksc_file_should_have_parent( $file, $current_parent ) {
 }
 		
 
+/**
+ * Display an oik_file or folder
+ * 
+ * @param string $file 
+ * @param string $component_type
+ * @param ID $file_id
+ * @param book $force 
+ 
+ */ 
+function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $force=false ) {
+  oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
+	$real_file = oiksc_real_file( $file, $component_type );
+	if ( file_exists( $real_file ) ) {
+		if ( is_dir( $real_file ) ) {
+			//p( "This is a folder" );
+			oik_require( "shortcodes/oik-tree.php" );
+			e( bw_tree( array( "post_parent" => $file_id ) ) );
+		} else {
+			oiksc_display_oik_file( $file, $component_type, $file_id, $force );
+			
+			if ( $file_id ) {
+				oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
+				oikai_list_callers_callees( $file_id );
+			} 
+			
+		}
+	
+	} else {
+		p( "File: $file ( component type: $component_type ) does not exist" );
+	}
+}

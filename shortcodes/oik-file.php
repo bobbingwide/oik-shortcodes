@@ -69,14 +69,10 @@ function oikai_fileref( $atts=null, $content=null, $tag=null ) {
     list( $file, $component_type ) = oikai_get_current_post_filename();
     $file_id = bw_global_post_id(); 
     if ( $file ) {
-      oiksc_display_oik_file( $file, $component_type, $file_id );
+      oiksc_display_oik_file_or_folder( $file, $component_type, $file_id );
     } else {
       bw_trace2( $file, "Unable to determine file to display" );
     }
-    if ( $file_id ) {
-      oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
-      oikai_list_callers_callees( $file_id );
-    } 
   } else {
     $files = bw_as_array( $file );
     oik_require( "shortcodes/oik-filelink.php", "oik-shortcodes" );
