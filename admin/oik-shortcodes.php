@@ -552,15 +552,19 @@ function oiksc_update_oik_api( $post, $plugin, $func, $file, $type, $title ) {
 /**
  * Update the post data and meta data for an oik_hook post_type
  *
- * @TODO We need to stop cache invalidation occurring when this happens. Can we simple define( 'WPLOCKDOWN', '1' ) ?
+ * @TODO We need to stop cache invalidation occurring when this happens and the user is not logged in. 
+ * Can we simple define( 'WPLOCKDOWN', '1' ) ?
+ * 
+ * BUT we need to allow this logic to be performed when doing AJAX. 
+ * The fact that the cache might be invalidated is probably OK.
+ * 
  * @param post $post - the oik_hook object
  * 
  */
 function oiksc_update_oik_hook( $post, $hook, $context ) {
-	if ( !is_user_logged_in() ) {
+	if ( !defined( 'DOING_AJAX' ) && !is_user_logged_in() ) {
 		return;
 	}
-  //bw_backtrace();
   $type = oiksc_get_hook_type( $context );
   $post->post_title = oiksc_oik_hook_post_title( $hook, $type );
   $docblock = oiksc_get_docblock();

@@ -754,13 +754,14 @@ function oiksc_load_component( $plugin, $component_type ) {
         oik_require( "feed/oik-themes-feed.php", "oik-themes" ); 
         $plugin_post = oikth_load_theme( $plugin );
       } else {
-        gb();
+        bw_trace2( "oik-themes does not appear to be active" );
       }
       break;
       
     default:
       bw_trace2( $component_type, "Invalid component type for $plugin" );
   }
+	bw_trace2( $plugin_post, "plugin_post", true, BW_TRACE_VERBOSE );
   return( $plugin_post );
 }
  
