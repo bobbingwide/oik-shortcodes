@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014, 2015
+<?php // (C) Copyright Bobbing Wide 2014 - 2016
 
 /**
  * Strip all the classes, methods and APIs from the file
@@ -196,11 +196,13 @@ function _oikai_create_file( $plugin, $file ) {
   p( "Creating file: $file" );
   bw_flush();
   $post = oiksc_get_oik_file_byname( $plugin, $file );
-  bw_trace2( $post, "post" );
+	$parent = oiksc_create_ancestry( $post, $plugin, $file );
+  bw_trace2( $post, "post", true, BW_TRACE_DEBUG );
   if ( !$post ) {
-    $post_id = oiksc_create_oik_file( $plugin, $file );     
+    $post_id = oiksc_create_oik_file( $plugin, $file, $parent );     
   } else {
     $post_id = $post->ID;
+		$post->post_parent = $parent;
     oiksc_update_oik_file( $post, $plugin, $file );
   }
   global $oikai_post_id;
@@ -290,7 +292,7 @@ function oiksc_oik_file_post_title( $file ) {
  * @param string $file - the implementing filename within the plugin e.g. "oik/shortcodes/oik-codes.php"
  * @return ID - the post ID of the newly created oik_api record
  */
-function oiksc_create_oik_file( $plugin, $file ) {
+function oiksc_create_oik_file( $plugin, $file, $parent ) {
   bw_backtrace();
   $post_title = oiksc_oik_file_post_title( $file );
   $post = array( 'post_type' => 'oik_file'
@@ -299,6 +301,7 @@ function oiksc_create_oik_file( $plugin, $file ) {
                , 'post_content' => "<!--more -->[file][bw_fields]"
                , 'post_status' => 'publish'
                , 'comment_status' => 'closed'
+							 , 'post_parent' => $parent
                );
   /* Set metadata fields */
   //oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
@@ -332,4 +335,67 @@ function oiksc_update_oik_file( $post, $plugin, $file ) {
   //$_POST['_oik_file_passes'] = ; // Apply this update separately
   wp_update_post( $post );
 }
+
+
+/**
+ * Determine the post_parent for an oik_file 
+ *
+ * Here we will attempt to correct the hierarchy of oik_file posts
+ * so that they appear nicely structured.
+ * 
+ * Assuming we will eventually process every directory
+ * then we probably only need to handle one parent at a time
+ * BUT that assumes we'll process a file in each directory in the tree
+ * 
+ * Processing depends on the values of the parameters passed
+ * 
+ * $post  | $file 			      | post_parent | Processing
+ * ------ | -------------     | ----------  | -------------- 
+ * 0      | filename.ext      | n/a         | The post_parent will be 0
+ * 0      | path/filename.ext |	n/a         | Find the post_id for dirname( $file )
+ * set    | filename.ext      | should be 0 | force it to 0
+ * set    | path/filename.ext | 0           | Find the post_id for dirname( $file ) 
+ *
+ * @param post|null $post an existing post object or null
+ * @param ID $plugin the ID of the plugin or theme
+ * @param string $file the file name including the path ( forward slashes expected )
+ * @return ID the post_parent ID, which may be 0
+ */
+function oiksc_create_ancestry( $post, $plugin, $file ) {
+	//bw_backtrace();
+	//bw_trace2();
+	$post_parent = 0;
+	if ( $post ) {
+		$found_parent = oiksc_file_should_have_parent( $file, $post->post_parent );
+	} else {
+		$found_parent = oiksc_file_should_have_parent( $file, null );
+	} 
+	if ( null !== $found_parent ) {
+		$post_parent = $found_parent; 
+	} else {
+		$post_parent = _oikai_create_file( $plugin, dirname( $file ) );
+	}
+	bw_trace2( $post_parent, "post_parent", false, BW_TRACE_DEBUG );
+	return( $post_parent );
+}
+
+/**
+ * Deterimine the right value for post_parent
+ *
+ * @param string $file - the file name
+ * @param ID $current_parent 
+ * @return found_parent - null when need to find one otherwise the required ID
+ */
+function oiksc_file_should_have_parent( $file, $current_parent ) {
+	//bw_trace2();
+	if ( false === strpos( $file, "/" ) ) {
+		$found_parent = 0;
+	} elseif ( 0 == $current_parent ) {
+		$found_parent = null;
+	} else {
+		$found_parent = $current_parent;
+	}
+	return( $found_parent );
+}
+		
 
