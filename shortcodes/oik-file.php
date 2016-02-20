@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2016
 
 /** 
  * Get the file name from the current post
@@ -62,6 +62,7 @@ function oikai_get_current_post_filename() {
  * @return string HTML etc to complete the file reference
  */
 function oikai_fileref( $atts=null, $content=null, $tag=null ) {
+	oiksc_autoload();
   $file = bw_array_get_from( $atts, "file,0", null );
   oik_require( "admin/oik-files.php", "oik-shortcodes" );
   if ( !$file ) {

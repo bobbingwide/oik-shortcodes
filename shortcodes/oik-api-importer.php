@@ -337,6 +337,7 @@ function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
 function oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname ) {
   $refFunc = null;    
   bw_trace2( null, null, true, BW_TRACE_DEBUG );
+	bw_backtrace();
   if ( $sourcefile ) { 
     // oik_require( $sourcefile, $plugin );
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
@@ -2423,6 +2424,9 @@ function oikai_get_noderef_value( $post_id, $noderef_name, $field_name ) {
  * @return string - generated HTML
  */
 function oikai_apiref( $atts=null, $content=null, $tag=null ) {
+
+	oiksc_autoload();
+
   $funcname = bw_array_get( $atts, "funcname", null );
   $sourcefile = bw_array_get( $atts, "sourcefile", null );
   $plugin = bw_array_get( $atts, "plugin", null );
@@ -2778,18 +2782,13 @@ function ncr2ent($text) {
  * @return string permalink - with or without the home_url prefix
  */
 function oiksc_get_permalink( $post_id=null ) {
-	//oik_require( "classes/class-oiksc-link-map.php", "oik-shortcodes" );
-	$lib_autoload = oik_require_lib( "oik-autoload" );
-	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
-		oik_autoload();
+	if ( oiksc_autoload() ) {
 		$link_map = oiksc_link_map::instance();
+		bw_trace2( $link_map, "link-map", true, BW_TRACE_VERBOSE );
+		$permalink = $link_map->get_permalink( $post_id );
 	}	else {
-		gob();
+		$permalink = get_permalink( $post_id );
 	}
-	
-	bw_trace2( $link_map, "link-map" );
-	
-	$permalink = $link_map->get_permalink( $post_id );
 	return( $permalink );
-	
 }
+

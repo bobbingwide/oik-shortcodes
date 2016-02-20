@@ -782,11 +782,7 @@ function oiksc_ajax_oiksc_create_api() {
   do_action( "oik_loaded" );
 	
 	// Enabling autoloading requires oik v3.0.0-beta.xxxx or higher
-	
-	$lib_autoload = oik_require_lib( "oik-autoload" );
-	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
-		oik_autoload();
-	}
+	oiksc_autload();
   // User still has to be authorised to perform the request!
   // So how do we check this?
   //oiksc_create_api();
@@ -1278,7 +1274,6 @@ function oiksc_request( $request ) {
 	return( $request );
 }
 
-
 /**
  * Implement "oik_query_autoload_classes" for oik-shortcodes
  *
@@ -1301,6 +1296,26 @@ function oiksc_oik_query_autoload_classes( $classes ) {
 										);
 	return( $classes );								
 
+}
+
+/**
+ * Enable autoloading
+ *
+ * Some logic requires additional classes to be loaded
+ * but first we need to enable autoloading
+ *
+ * @return bool true if oik_autoloading is enabled
+ */
+function oiksc_autoload() {
+	$autloaded = false;
+	$lib_autoload = oik_require_lib( "oik-autoload" );
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload();
+		$autoloaded = true;
+	}	else {
+		bw_trace2( $lib_autoload, "oik-autoload not loadeded", false, BW_TRACE_ERRROR );
+	}
+	return( $autoloaded );
 }
 
 
