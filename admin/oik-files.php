@@ -297,7 +297,7 @@ function oiksc_create_oik_file( $plugin, $file, $parent ) {
   $post_title = oiksc_oik_file_post_title( $file );
   $post = array( 'post_type' => 'oik_file'
                , 'post_title' => $post_title
-               , 'post_name' => $file
+               , 'post_name' => oiksc_get_oik_file_post_name( $file )
                , 'post_content' => "<!--more -->[file][bw_fields]"
                , 'post_status' => 'publish'
                , 'comment_status' => 'closed'
@@ -321,6 +321,8 @@ function oiksc_create_oik_file( $plugin, $file, $parent ) {
 /**
  * Update an "oik_file" post type
  *
+ * Setting the post_name is required to update existing posts
+ *
  * @param object $post - the oik_file post object
  * @param ID $plugin - the plugin ID 
  * @param string $file - the file name
@@ -328,6 +330,7 @@ function oiksc_create_oik_file( $plugin, $file, $parent ) {
  */
 function oiksc_update_oik_file( $post, $plugin, $file ) {
   $post->post_title = oiksc_oik_file_post_title( $file );
+	$post->post_name = oiksc_get_oik_file_post_name( $file );
   /* Set metadata fields */
   $_POST['_oik_file_name'] = $file;
   $_POST['_oik_api_plugin'] = $plugin;
@@ -335,7 +338,6 @@ function oiksc_update_oik_file( $post, $plugin, $file ) {
   //$_POST['_oik_file_passes'] = ; // Apply this update separately
   wp_update_post( $post );
 }
-
 
 /**
  * Determine the post_parent for an oik_file 
@@ -397,16 +399,17 @@ function oiksc_file_should_have_parent( $file, $current_parent ) {
 	}
 	return( $found_parent );
 }
-		
 
 /**
  * Display an oik_file or folder
- * 
+ *
+ * When the file is a directory we need to display the children
+ * Otherwise display the details of the file
+ *  
  * @param string $file 
  * @param string $component_type
  * @param ID $file_id
  * @param book $force 
- 
  */ 
 function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $force=false ) {
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
@@ -418,15 +421,23 @@ function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $fo
 			e( bw_tree( array( "post_parent" => $file_id ) ) );
 		} else {
 			oiksc_display_oik_file( $file, $component_type, $file_id, $force );
-			
 			if ( $file_id ) {
 				oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
 				oikai_list_callers_callees( $file_id );
 			} 
-			
 		}
-	
 	} else {
 		p( "File: $file ( component type: $component_type ) does not exist" );
 	}
+}
+
+/**
+ * Choose a post_name
+ *
+ * @param string $file
+ * @return string the last part of the file name
+ */ 
+function oiksc_get_oik_file_post_name( $file ) {
+	$slug = basename( $file );
+	return( $slug );
 }

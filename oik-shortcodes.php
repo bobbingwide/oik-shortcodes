@@ -610,6 +610,8 @@ function oiksc_the_post_oik_shortcodes( $post ) {
  * - Extended by - for any child class
  * - and fields
  *
+ * Note: PHP only supports single inheritance. See {@link http://php.net/manual/en/keyword.extends.php }
+ * 
  * 
  * @param post $post
  * @return string additional content
