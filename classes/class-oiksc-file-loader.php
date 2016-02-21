@@ -51,6 +51,7 @@ class oiksc_file_loader extends oiksc_function_loader {
 	 * 
    */
   function extract_to_tmp() { 
+		bw_trace2();
     $this->tempnam = tempnam( "/tmp", "oikscloa");
     $line = "<?php function ";
     $line .= $this->dummy_function_name;
@@ -59,8 +60,9 @@ class oiksc_file_loader extends oiksc_function_loader {
     $this->contents = array();
     foreach ( $this->contents_arr as $line ) {
       if ( $line != "" ) {
-				//$line = str_replace( "parent::", "Quarent::", $line );
-				//$line = str_replace( "self::", "Telf::", $line );
+				$line = str_replace( "parent::", "Quarent::", $line );
+				$line = str_replace( "self", "Telf", $line );
+				 
         $this->write( $line );
         $this->contents[] = $line ;
       }
