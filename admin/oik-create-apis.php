@@ -180,14 +180,16 @@ function _ca_doapis_local( $file, $plugin_p, $component_type, $start=1 ) {
 		$apiname = $api->getApiName();
 		
 		echo "Processing API: $apiname, $file, $plugin, $component_type " . PHP_EOL;
-    $response = _ca_checkforselected_api( $apiname, $count );
+		oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api );
+			$discard = bw_ret();
+    /* $response = _ca_checkforselected_api( $apiname, $count );
     if ( $response ) {
       $response = oikb_get_response( "Continue to create API?" );
     }  
     if ( $response ) {
-			oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api );
-			$discard = bw_ret();
-    }  
+		
+    } 
+		*/ 
     
   }
 }
@@ -257,6 +259,7 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
   $file_id = _oikai_create_file( $plugin_post->ID, $file ); 
   $filename = oik_pathw( $file, $plugin, $component_type );
   $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, true );
+	echo PHP_EOL;
 }
 
 /**
@@ -273,15 +276,22 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
  * 
  */
 function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_object ) {
+
 	global $plugin_post;
 	$api = $api_object->getApiName();	
-	$type = $api_object->getApiType();
-	$title = $api_object->getShortDescription();
+	echo "API: $api " . PHP_EOL . PHP_EOL;
 	if ( $plugin_post ) {
-		$func = oikai_get_func( $api, null ); 
+		//$func = oikai_get_func( $api, null ); 
+		$func = $api_object->getMethod();
 		if ( $func ) {
+		
+			echo "Processing: $func,$api,$file". PHP_EOL;
+			$type = $api_object->getApiType();
+			
+			$title = $api_object->getShortDescription();
 			$post_id = _oiksc_create_api( $plugin_post->ID, $api, $file, $type, $title ); 
 		} else {
+			echo "Processing classref: $api,$file" . PHP_EOL;
 			$post_id = oikai_get_classref( $api, null, $plugin_post->ID, $file );
 		}
 	} else {

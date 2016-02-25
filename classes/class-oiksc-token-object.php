@@ -201,7 +201,9 @@ class oiksc_token_object {
 	/**
 	 * Return the API name
 	 *
-	 * 
+	 * Returns the full API name 
+	 *
+	 * @return string API name 
 	 */
   function getApiName() {
     $apiname = null;
@@ -215,16 +217,17 @@ class oiksc_token_object {
   }
 	
 	/**
-	 * Return the full Api name or Class name	
+	 * Return the method or function name
+	 *
+	 * @return string method name - may be null
 	 */
-	function getApiorClass() { 
-		if ( $api->methodname ) {
-		// @TODO move this logic to the server
-			$apiname = $api->getApiName();
-		} else { 
-			$apiname = $api->classname . "::";
+	function getMethod() {
+		$methodname = $this->methodname;
+		bw_trace2( $methodname, "methodname" );
+		if ( empty( $methodname ) ) {
+			//gob();
 		}
-		return( $apiname );
+		return( $methodname );
 	}
 }
  

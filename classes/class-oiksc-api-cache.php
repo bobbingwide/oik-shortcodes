@@ -12,7 +12,6 @@
  * {@link https://www.percona.com/blog/2014/01/28/10-mysql-performance-tuning-settings-after-installation/ }
  * 
  */
- 
 class oiksc_api_cache {
 
 	/**

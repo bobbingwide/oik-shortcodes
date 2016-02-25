@@ -1071,9 +1071,10 @@ function oikai_load_from_file( $fileName, $refFunc ) {
  * @param object $refFunc
  * @param ID $post_id 
  * @param string $component_type
+ * @param bool $echo true if we actually do want the source listed
  * 
  */
-function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type ) {
+function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
   
@@ -1108,13 +1109,15 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
     }
   } else { 
     $parsed_source = $parsed_source->post_content;
-  } 
-  
-  if ( $parsed_source ) {
-    oikai_navi_parsed_source( $parsed_source );
-  } else {
-    oikai_navi_source( $sources );
   }
+	
+	if ( $echo ) { 
+		if ( $parsed_source ) {
+			oikai_navi_parsed_source( $parsed_source );
+		} else {
+			oikai_navi_source( $sources );
+		}
+	}	
 }
 
 /**
@@ -2330,8 +2333,9 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * @param string $plugin_slug - the plugin slug
  * @param string $classname - the class name for a method
  * @param ID $post_id - the post ID for the "api" 
+ * @param bool $echo true if we actually want the source to be listed
  */
-function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id ) {
+function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id, $echo=true ) {
   $func = oikai_get_func( $funcname, $classname );
   bw_context( "func", $func );
   $class = oikai_get_class( $funcname, $classname );
@@ -2350,7 +2354,7 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $c
     //bw_push();
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
     $component_type = oiksc_query_component_type( $plugin_slug );
-    $source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type ); 
+    $source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo ); 
   } else { 
     p( "No API information available for: " . $funcname );
   }  
