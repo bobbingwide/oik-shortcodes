@@ -153,9 +153,9 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $force=false 
     //require( ABSPATH . WPINC . "/link-template.php" );
     oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
   
-    if ( !function_exists( "wp_enqueue_style" ) ) {
-      function wp_enqueue_style() {} 
-    } 
+    //if ( !function_exists( "wp_enqueue_style" ) ) {
+    //  function wp_enqueue_style() {} 
+    //} 
     //$contents_arr = oiksc_load_file( $tempfile->tempnam );
     
     
