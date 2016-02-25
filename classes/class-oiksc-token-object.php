@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2016
 
 /**
  * token object to record PHP classes, methods or functions
@@ -203,9 +203,24 @@ class oiksc_token_object {
     if ( $this->classname ) {
       $apiname .= $this->classname . '::';
     }
-    $apiname .= $this->methodname;
+		if ( $this->methodname ) {
+			$apiname .= $this->methodname;
+		}
     return( $apiname );
   }
+	
+	/**
+	 * Return the full Api name or Class name	
+	 */
+	function getApiorClass() { 
+		if ( $api->methodname ) {
+		// @TODO move this logic to the server
+			$apiname = $api->getApiName();
+		} else { 
+			$apiname = $api->classname . "::";
+		}
+		return( $apiname );
+	}
 }
  
  
