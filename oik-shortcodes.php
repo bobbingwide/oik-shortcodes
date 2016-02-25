@@ -60,6 +60,7 @@ function oik_shortcodes_init() {
 	add_filter( "get_the_excerpt", "oik_get_the_excerpt" );
 	
 	add_filter( "request", "oiksc_request" );
+	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
 }
 
 /**
@@ -1317,4 +1318,15 @@ function oiksc_autoload() {
 	return( $autoloaded );
 }
 
+
+
+/**
+ * Run oik-shortcodes in batch
+ *
+ */
+function oiksc_run_oik_shortcodes() {
+	oik_require( "admin/oik-create-apis.php", "oik-shortcodes" );
+	oiksc_lazy_run_oik_shortcodes();
+
+}
 
