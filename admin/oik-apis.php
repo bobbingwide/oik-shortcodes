@@ -191,7 +191,7 @@ function _oiksc_get_files( $plugin_id, $plugin=true ) {
  * Code copied from WP-parser\lib\runner.php but modified to return ANY file name
  * So the function name is a bit suspect! 
  * 
- * @TODO See Issue #12 
+ * Note: We ignore all files in the .git/ folder
  *
  * @param string $directory - the root directory for the file list. Must not be null
  * @return array of relative file names  
@@ -207,7 +207,10 @@ function _oiksc_get_php_files( $directory, $plugin ) {
 			//}
       $filename = $file->getPathname();
       $filename = oiksc_relative_filename( $filename, $plugin );
-			$files[] = $filename; 
+			bw_trace2( $filename, "filename" );
+			if ( false === strpos( $filename, ".git/" ) ) {
+				$files[] = $filename; 
+			}
 		}
 	} catch ( \UnexpectedValueException $e ) {
 		bw_trace2( 'Directory [%s] contained a directory we can not recurse into', $directory, true, BW_TRACE_ERROR );
@@ -502,10 +505,11 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
  * @param string $api - the API name
  * @param string $file - the source file for this API
  * @param ID $plugin - the plugin/theme ID for this API
- * @param ID $post_id - the post ID for this API  
+ * @param ID $post_id - the post ID for this API 
+ * @param bool $echo - true if we want the output echoed 
  * 
  */ 
-function oiksc_build_callees( $api, $file, $plugin, $post_id ) {
+function oiksc_build_callees( $api, $file, $plugin, $post_id, $echo=true ) {
 	//bw_trace2();
   add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
   add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
@@ -516,7 +520,7 @@ function oiksc_build_callees( $api, $file, $plugin, $post_id ) {
 		$slug = get_post_meta( $plugin, "_oikth_slug", true );
 	}
   oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-  oikai_build_apiref( $api, $file, $slug, null, $post_id );
+  oikai_build_apiref( $api, $file, $slug, null, $post_id, $echo );
 }
 
 /** 
