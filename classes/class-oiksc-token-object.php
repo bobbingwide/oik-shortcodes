@@ -197,7 +197,12 @@ class oiksc_token_object {
     $sdesc = $docblock->getShortDescription();
     return( $sdesc );
   }
-  
+	
+	/**
+	 * Return the API name
+	 *
+	 * 
+	 */
   function getApiName() {
     $apiname = null;
     if ( $this->classname ) {
