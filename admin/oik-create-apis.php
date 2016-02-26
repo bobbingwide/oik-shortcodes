@@ -25,6 +25,12 @@ function oiksc_lazy_run_oik_shortcodes() {
 	$previous = bw_array_get( $_SERVER['argv'], 2, null );
 	$start = bw_array_get( $_SERVER['argv'], 3, 1 );
 	
+	$met = ini_get( 'max_execution_time' );
+	echo "Max execution time is: $met" . PHP_EOL;
+	
+	
+	ini_set('memory_limit','1572M');
+	
 	//bw_trace2( $_SERVER, "_SERVER" );  
 	$components = bw_as_array( $component );
 	

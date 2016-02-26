@@ -1046,8 +1046,21 @@ function oikai_load_from_file( $fileName, $refFunc ) {
   return( $sources );
 }
 
-
-
+/**
+ * Set the time limit except in batch mode
+ *
+ * Note: Some plugins check if it's OK to set this. e.g. Easy-Digital-Downloads
+ * Here we just check if we're running in batch ( PHP from the command line )
+ * 
+ * @param integer $limit time limit in seconds
+ */
+function oikai_set_time_limit( $limit=120 ) {
+	if ( PHP_SAPI == "cli" ) {
+		//
+	} else {
+		set_time_limit( $limit );
+	}
+}
 
 /**
  * List the source of the function
@@ -1089,7 +1102,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
   if ( !$parsed_source ) {  
     $sources = oikai_load_from_file( $fileName, $refFunc );
     if ( $paged === false ) {
-      set_time_limit( 120 );
+      oikai_set_time_limit();
       bw_push();
       oikai_syntax_source( $sources, 1 );
       $parsed_source = bw_ret();
