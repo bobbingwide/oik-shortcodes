@@ -765,6 +765,7 @@ function oiksc_load_files( $plugin, $component_type ) {
  */
 function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 ) {
   $count = 0;
+	$total = count( $files );
   foreach ( $files as $file ) {
     //echo oiksc_relative_filename( $file ) . PHP_EOL;
     
@@ -786,7 +787,7 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 )
         // Shouldn't get here
     } 
     $count++;   
-    //echo "File:$count,$rfile" . PHP_EOL;
+    echo "File:$count,$total,$rfile,$file" . PHP_EOL;
     //echo 
     call_user_func( $callback, $rfile, $plugin, $component_type, $start  );
   }
