@@ -53,34 +53,36 @@ function oiksc_lazy_run_oik_shortcodes() {
  * @param string $start 
  */
 function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
-  global $plugin;
+	global $plugin;
 	$plugin = $component;
-  if ( $plugin ) {
-    $component_type = oiksc_query_component_type( $plugin );
-    if ( $component_type ) {
-      echo "Doing a $component_type: " . $plugin . PHP_EOL;
-  
-      $response = oikb_get_response( "Continue?", true );
-      if ( $response ) {
-        oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-        //wp_register_plugin_realpath( WP_PLUGIN_DIR . "/$plugin/." );
-        oik_require( "oik-list-previous-files.php", "oik-batch" );
-				
-				$files = oikb_list_changed_files( $previous, $plugin, $component_type );
-	
-				if ( null === $files ) {
-					$files = oiksc_load_files( $plugin, $component_type );
-					$files = oikb_maybe_do_files( $files, $previous, $component, $component_type );
+	if ( $plugin ) {
+		$component_type = oiksc_query_component_type( $plugin );
+		if ( $component_type ) {
+			echo "Doing a $component_type: " . $plugin . PHP_EOL;
+			$response = oikb_get_response( "Continue?", true );
+			if ( $response ) {
+				oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+				//wp_register_plugin_realpath( WP_PLUGIN_DIR . "/$plugin/." );
+				oik_require( "oik-list-wordpress-files.php", "oik-batch" );
+				oik_require( "oik-list-previous-files.php", "oik-batch" );
+				$component_preloaded = oiksc_pre_load_component( $plugin, $component_type );
+				if ( $component_preloaded ) {
+					$files = oikb_list_changed_files( $previous, $plugin, $component_type );
+					if ( null === $files ) {
+						$files = oiksc_load_files( $plugin, $component_type );
+						$files = oikb_maybe_do_files( $files, $previous, $component, $component_type );
+					}
+					oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
+				} else {
+					echo "Plugin/theme not defined: $component" . PHP_EOL;
 				}
-				oiksc_pre_load_component( $plugin, $component_type );
-        oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
-      }
-    } else {
-      echo "Invalid plugin/theme: $component" . PHP_EOL;
-    }       
-  } else {
-    echo "Missing --plugin= parameter" . PHP_EOL;
-  } 
+			} else {
+				echo "Invalid plugin/theme: $component" . PHP_EOL;
+			}
+		} else {
+			echo "Missing --plugin= parameter" . PHP_EOL;
+		}
+	}	
 }
 
 
@@ -92,7 +94,10 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
  *
  * @TODO: Expand to cover ALL files.
  *
- * @param string $file - the file name
+ * @param string $file - the file name - fully qualified
+ * @param string $plugin - the plugin or theme name
+ * @param string $component_type "plugin", "theme" or "wordpress"
+ * @param integer $start starting file number
  *
  */ 
 function _ca_dofile_local( $file, $plugin, $component_type, $start=1 ) {
@@ -170,7 +175,11 @@ function _ca_doapis_local( $file, $plugin_p, $component_type, $start=1 ) {
   $plugin = $plugin_p;
   static $count = 0;
   echo "Processing valid: $plugin $file $component_type" . PHP_EOL;
+	
+	
   $apis = _oiksc_get_apis2( $file, true, $component_type );
+	
+  $file = strip_directory_path( ABSPATH, $file );
   foreach ( $apis as $api ) {
     $count++;
 		if ( $count < $start ) {
@@ -229,11 +238,21 @@ function oiksc_preloader() {
 
 }
 
+/**
+ * Pre-load the component we're processing
+ *
+ * @param string $plugin - the plugin or theme slug
+ * @param string $component_type "plugin", "theme", "wordpress"
+ * @param bool $force unnecessary parameter **?**
+ */
 function oiksc_pre_load_component( $plugin, $component_type, $force=false ) {
 	global $plugin_post;
  	//if ( !$plugin_post ) {
 		$plugin_post = oiksc_load_component( $plugin, $component_type );
   //}
+	if ( null == $plugin_post ) {
+		bw_trace2( $plugin_post, "Missing plugin_post", true, BW_TRACE_ERROR );
+	}
 	return( $plugin_post );
 }	
  
@@ -255,6 +274,10 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
     //$file = str_replace( "\\", "/", $file );
     bw_trace2( $file, "file" );
   } 
+	if ( is_null( $plugin_post ) ) {
+		bw_trace2( null, null, true, BW_TRACE_ERROR );
+		bw_backtrace();
+	}
   // $plugin_post = oikp_load_plugin( $plugin );
   $file_id = _oikai_create_file( $plugin_post->ID, $file ); 
   $filename = oik_pathw( $file, $plugin, $component_type );
