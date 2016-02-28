@@ -29,7 +29,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	echo "Max execution time is: $met" . PHP_EOL;
 	
 	
-	ini_set('memory_limit','1572M');
+	ini_set('memory_limit','2048M');
 	
 	//bw_trace2( $_SERVER, "_SERVER" );  
 	$components = bw_as_array( $component );
@@ -77,6 +77,9 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
 					if ( null === $files ) {
 						$files = oiksc_load_files( $plugin, $component_type );
 						$files = oikb_maybe_do_files( $files, $previous, $component, $component_type );
+					}
+					if ( $component_type == "wordpress" ) {
+						$files = oikb_filter_wordpress_files( $files );
 					}
 					oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
 				} else {
