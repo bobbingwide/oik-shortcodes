@@ -769,27 +769,31 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 )
   foreach ( $files as $file ) {
     //echo oiksc_relative_filename( $file ) . PHP_EOL;
     
-    switch ( $component_type ) {
-      case "wordpress" :
-        $rfile = ABSPATH . $file;
-        break;
-      case "plugin":
-        //echo $file;
-        $rfile = plugin_basename( $file ); 
-        break;
-      case "theme":
-        //echo $file;
-				oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
-        $rfile = oiksc_theme_basename( $file ); 
-        //echo $rfile;
-      break;
-      default:
-        // Shouldn't get here
-    } 
     $count++;   
-    echo "File:$count,$total,$rfile,$file" . PHP_EOL;
-    //echo 
-    call_user_func( $callback, $rfile, $plugin, $component_type, $start  );
+		if ( $count >= $start ) { 
+		
+			switch ( $component_type ) {
+			 case "wordpress" :
+				 $rfile = ABSPATH . $file;
+				 
+				 break;
+			 case "plugin":
+				 //echo $file;
+				 $rfile = plugin_basename( $file ); 
+				 break;
+			 case "theme":
+				 //echo $file;
+					oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
+				 $rfile = oiksc_theme_basename( $file ); 
+				 //echo $rfile;
+			 break;
+			 default:
+				 // Shouldn't get here
+			} 
+			echo "File:$count,$total,$rfile,$file,$start" . PHP_EOL;
+			//echo
+			call_user_func( $callback, $rfile, $plugin, $component_type, $start  );
+		}
   }
 }   
 
