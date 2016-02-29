@@ -298,6 +298,7 @@ function oiksc_api() {
  */
 function oiksc_create_api() {
   $create = bw_array_get( $_REQUEST, "_oiksc_create_api", null );
+	oiksc_autoload();
   if ( $create ) {
     // $plugins = _oiksc_get_plugins(); 
     $plugin_id = _oiksc_get_plugin(); 
