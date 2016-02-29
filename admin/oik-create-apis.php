@@ -106,10 +106,8 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
  * @param string $file - the file name - fully qualified
  * @param string $plugin - the plugin or theme name
  * @param string $component_type "plugin", "theme" or "wordpress"
- * @param integer $start starting file number
- *
  */ 
-function _ca_dofile_local( $file, $plugin, $component_type, $start=1 ) {
+function _ca_dofile_local( $file, $plugin, $component_type ) {
   if ( $plugin ) {
     $inignorelist = _la_checkignorelist( $file );
   } else {
@@ -123,7 +121,7 @@ function _ca_dofile_local( $file, $plugin, $component_type, $start=1 ) {
     $validext = bw_array_get( $exts, $ext, false );
     if ( $validext ) {
       _lf_dofile_local( $file, $plugin, $component_type );
-      _ca_doapis_local( $file, $plugin, $component_type, $start ); 
+      _ca_doapis_local( $file, $plugin, $component_type ); 
     }
   }  
 }
@@ -179,10 +177,9 @@ function _lf_dofile_local( $file, $plugin, $component_type ) {
  * @param string $file - file name to load
  * @global $plugin - which may be null when processing WordPress core
  */
-function _ca_doapis_local( $file, $plugin_p, $component_type, $start=1 ) {
+function _ca_doapis_local( $file, $plugin_p, $component_type ) {
   global $plugin;
   $plugin = $plugin_p;
-  static $count = 0;
   echo "Processing valid: $plugin $file $component_type" . PHP_EOL;
 	
 	
@@ -190,10 +187,6 @@ function _ca_doapis_local( $file, $plugin_p, $component_type, $start=1 ) {
 	
   $file = strip_directory_path( ABSPATH, $file );
   foreach ( $apis as $api ) {
-    $count++;
-		if ( $count < $start ) {
-			continue;
-		}
 		
 		$apiname = $api->getApiName();
 		
@@ -264,7 +257,6 @@ function oiksc_pre_load_component( $plugin, $component_type, $force=false ) {
 	}
 	return( $plugin_post );
 }	
- 
 
 /**
  * Create an oik_file locally
@@ -292,6 +284,7 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
   $filename = oik_pathw( $file, $plugin, $component_type );
   $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, true );
 	echo PHP_EOL;
+	oiksc_reset_globals();
 }
 
 /**
@@ -328,6 +321,24 @@ function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_obj
 		}
 	} else {
 		e( "Invalid plugin: $plugin ");
-	}    
+	}
+	oiksc_reset_globals();    
+}
+
+
+/**
+ * Reset globals
+ * 
+ * Unset all values in $_POST, ready for the next request
+ */
+function oiksc_reset_globals() {
+	bw_trace2( $_POST, "_POST", false );
+	unset( $_POST );
+  global $oikai_hook;
+	$oikai_hook = null;
+	global $oikai_association;
+	$oikai_association = null;
+	global $oikai_callee;
+	$oikai_callee = null;
 }
 

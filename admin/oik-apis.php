@@ -501,6 +501,9 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
 
 /**
  * Build the callees for this API
+ *
+ * @TODO The action hooks that are added should only be added once per process.
+ * Rather than using a static, the code should be moved to somewhere else
  * 
  * @param string $api - the API name
  * @param string $file - the source file for this API
@@ -511,9 +514,14 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
  */ 
 function oiksc_build_callees( $api, $file, $plugin, $post_id, $echo=true ) {
 	//bw_trace2();
-  add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
-  add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
-  add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 ); 
+	
+	static $added_actions = false;
+	if ( !$added_actions ) {
+		add_action( "oikai_handle_token_T_STRING", "oikai_add_callee" );
+		add_action( "oikai_record_association", "oikai_record_association", 10, 2 ); 
+		add_action( "oikai_record_hook", "oikai_record_hook", 10, 3 ); 
+		$added_actions = true;
+	}
   //add_action( "oikai_handle_token_T_ENCAPSED_STRING", "oikai_add_hook" );
   $slug = get_post_meta( $plugin, "_oikp_slug", true );
 	if ( !$slug ) {
@@ -792,7 +800,7 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 )
 			} 
 			echo "File:$count,$total,$rfile,$file,$start" . PHP_EOL;
 			//echo
-			call_user_func( $callback, $rfile, $plugin, $component_type, $start  );
+			call_user_func( $callback, $rfile, $plugin, $component_type );
 		}
   }
 }   
