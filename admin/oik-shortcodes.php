@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2015
+<?php // (C) Copyright Bobbing Wide 2012-2016
 
 // Admin functions for oik_shortcodes
 // We will provide an entry field to allow us to generate known shortcodes that have the appropriate filters
@@ -562,7 +562,7 @@ function oiksc_update_oik_api( $post, $plugin, $func, $file, $type, $title ) {
  * 
  */
 function oiksc_update_oik_hook( $post, $hook, $context ) {
-	if ( !defined( 'DOING_AJAX' ) && !is_user_logged_in() ) {
+	if ( !defined( 'DOING_AJAX' ) && !is_user_logged_in() && PHP_SAPI !== "cli" ) {
 		return;
 	}
   $type = oiksc_get_hook_type( $context );
