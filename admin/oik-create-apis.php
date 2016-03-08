@@ -34,7 +34,9 @@ function oiksc_lazy_run_oik_shortcodes() {
 	//bw_trace2( $_SERVER, "_SERVER" );  
 	$components = bw_as_array( $component );
 	
-	oiksc_preloader(); 
+	oiksc_preloader();
+	
+	oiksc_preload_content(); 
 	
 	//foreach ( $components as $component ) {
 		_ca_doaplugin_local( $component, $previous, $start );
@@ -89,7 +91,9 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
 				echo "Invalid plugin/theme: $component" . PHP_EOL;
 			}
 		} else {
-			echo "Missing --plugin= parameter" . PHP_EOL;
+			//echo "Missing --plugin= parameter" . PHP_EOL;
+			echo "Cannot determine component type for: $component" . PHP_EOL;
+			gob();
 		}
 	}	
 }
@@ -222,7 +226,7 @@ function _ca_checkforselected_api( $api, $count ) {
 
 
 /**
- * Preload the libraries used in create+file and create_apui
+ * Preload the libraries used in create_file and create_api
  */
 function oiksc_preloader() {
   do_action( "oik_loaded" );
@@ -235,9 +239,20 @@ function oiksc_preloader() {
 	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
 	oik_require( "feed/oik-plugins-feed.php", "oik-plugins" );
 	oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-	
-	
 
+
+}
+
+/**
+ * Preload content
+ * 
+ * See if preloading ALL the content makes any difference on second and subsequent runs when running locally.
+ */ 
+function oiksc_preload_content() {
+
+	$api_cache = oiksc_api_cache::instance();
+	$api_cache->preload_all_apis();
+	
 }
 
 /**
