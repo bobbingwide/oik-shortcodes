@@ -71,25 +71,35 @@ function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
  * @return updated contents_arr
  */
 function oiksc_contents_link( $contents_arr, $api ) {
-  //print_r( $api );
-  $index = $api->getStartLine();
-  $line = "/*";
-  $api_name = $api->getApiName();
-  oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
-  if ( $api->methodname ) {
-    $line .= " function ";
-    $post = oiksc_get_oik_api_byname( $api->getApiName() );
-  } else {
-    $line .= " class ";
-    $post = oikai_get_oik_class_byname( $api->classname );
-  }
-  if ( $post ) {
-    $post_id = $post->ID;
-    $line .= retlink( null, get_permalink( $post_id ), get_the_title( $post_id ) );
-  }
-  $line .= " */\n";
-  $contents_arr[$index-1] = $line;
-  return( $contents_arr );
+	//print_r( $api );
+	bw_trace2();
+	$post_id = null;
+	$index = $api->getStartLine();
+	$line = "/*";
+	$api_name = $api->getApiName();
+	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
+	oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
+	if ( $api->methodname ) {
+		$line .= " function ";
+		$post = oikai_get_oik_api_byname( $api->getApiName() );
+		$post_id = $post[0];
+	} else {
+		$line .= " class ";
+		$post = oikai_get_oik_class_byname( $api->classname );
+		if ( $post ) {
+			$post_id = $post->ID;
+		}
+		
+	}
+	if ( $post_id ) {
+		$line .= retlink( null, get_permalink( $post_id ), get_the_title( $post_id ) );
+	} else {
+		$line .= $api_name;
+	}
+	 
+	$line .= " */\n";
+	$contents_arr[$index-1] = $line;
+	return( $contents_arr );
 }
 
 /**
@@ -230,6 +240,9 @@ function _oikai_create_file( $plugin, $file ) {
 
 /**
  * Return the "oik_file" post for the given plugin ID and file name
+ *
+ * If the plugin is not specified we just look for the file
+ * 
  * 
  * @param ID $plugin - the plugin ref
  * @param string $file - the file name. e.g. admin/oik-files.php 
