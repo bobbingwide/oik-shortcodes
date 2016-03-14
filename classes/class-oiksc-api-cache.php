@@ -174,9 +174,46 @@ class oiksc_api_cache {
 		print_r( $this->meta_values );
 		bw_trace2( $this->meta_values, "meta_values", false, BW_TRACE_DEBUG );
 	}
-
-
-
+	
+	/**
+	 * Preload all _oik_api_name values 
+	 *
+	 * meta_key      | meta_values
+	 * ------------- | ---------------
+	 * _oik_api_name | class::method / function
+	 * 
+	 *  
+	 */
+	function preload_all_apis() {
+		$this->fetch_all( "_oik_api_name" );		
+	
+	}	
+	
+	/**
+	 * fetch all posts for the given meta_key
+	 * 
+	 
+    [0] => stdClass Object
+        (
+            [post_id] => 4958
+            [meta_value] => bw_oik_long
+        )
+	 */ 																
+	function fetch_all( $meta_key ) {
+		global $wpdb;
+		$sql = $wpdb->prepare( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '%s' ", $meta_key );
+		$results = $wpdb->get_results( $sql );
+ 
+		//bw_trace2( $results, "results" );
+		$this->meta_key = $meta_key;
+		foreach ( $results as $key => $result ) {
+			$this->meta_value = $result->meta_value;
+			$this->map( $result->post_id );
+		}
+		//$this->report();
+		//gob();
+	}
+		
 
 }
 
