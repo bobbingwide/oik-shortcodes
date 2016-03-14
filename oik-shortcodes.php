@@ -1313,12 +1313,10 @@ function oiksc_autoload() {
 		oik_autoload();
 		$autoloaded = true;
 	}	else {
-		bw_trace2( $lib_autoload, "oik-autoload not loadeded", false, BW_TRACE_ERRROR );
+		bw_trace2( $lib_autoload, "oik-autoload not loaded", false );
 	}
 	return( $autoloaded );
 }
-
-
 
 /**
  * Run oik-shortcodes in batch
@@ -1327,6 +1325,5 @@ function oiksc_autoload() {
 function oiksc_run_oik_shortcodes() {
 	oik_require( "admin/oik-create-apis.php", "oik-shortcodes" );
 	oiksc_lazy_run_oik_shortcodes();
-
 }
 
