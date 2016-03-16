@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2014
+<?php // (C) Copyright Bobbing Wide 2012-2016
 /** 
  * Automagically determine the API list
  *
@@ -251,6 +251,8 @@ function oikai_get_oik_api_byname( $function ) {
 
 /**
  * Load posts associated with the given function
+ * 
+ * @param string $function
  */
 function oikai_load_posts( $function ) {
 	$api_cache = oiksc_api_cache::instance();
