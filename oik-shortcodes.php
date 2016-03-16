@@ -907,7 +907,7 @@ function oiksc_ajax_nopriv_oiksc_create_api() {
   if ( $continue ) {
     oiksc_ajax_oiksc_create_api();
   } 
-  bw_backtrace();
+  bw_backtrace( BW_TRACE_VERBOSE );
   bw_flush();
   exit();
 }
@@ -922,7 +922,7 @@ function oiksc_ajax_nopriv_oiksc_create_file() {
   if ( $continue ) {
     oiksc_ajax_oiksc_create_file();
   } 
-  bw_backtrace();
+  bw_backtrace( BW_TRACE_VERBOSE );
   bw_flush();
   exit();
 }
