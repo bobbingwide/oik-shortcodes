@@ -63,32 +63,76 @@ function oikai_get_current_post_filename() {
  */
 function oikai_fileref( $atts=null, $content=null, $tag=null ) {
 	oiksc_autoload();
-  $file = bw_array_get_from( $atts, "file,0", null );
-  oik_require( "admin/oik-files.php", "oik-shortcodes" );
-  if ( !$file ) {
-    list( $file, $component_type ) = oikai_get_current_post_filename();
-    $file_id = bw_global_post_id(); 
-    if ( $file ) {
-      oiksc_display_oik_file_or_folder( $file, $component_type, $file_id );
-    } else {
-      bw_trace2( $file, "Unable to determine file to display" );
-    }
-  } else {
-    $files = bw_as_array( $file );
-    oik_require( "shortcodes/oik-filelink.php", "oik-shortcodes" );
-    $file_id = oikai_list_files_byname( $files, array( "uo" => "," ) );
-    //oik_require( "shortcodes/oik-parent.php" );
-    //bw_post_link( $file_id );
-  } 
-  return( bw_ret()); 
+	$file = bw_array_get_from( $atts, "file,0", null );
+	$full_file = bw_array_get( $atts, "1", null );
+	oik_require( "admin/oik-files.php", "oik-shortcodes" );
+	if ( !$file ) {
+		list( $file, $component_type ) = oikai_get_current_post_filename();
+		$file_id = bw_global_post_id(); 
+		if ( $file ) {
+			oiksc_display_oik_file_or_folder( $file, $component_type, $file_id );
+		} else {
+			bw_trace2( $file, "Unable to determine file to display" );
+		}
+	} else {
+		if ( $full_file ) {
+			
+			oikai_pragmatic_link( $file, $full_file  );
+		} else {
+			$files = bw_as_array( $file );
+			oik_require( "shortcodes/oik-filelink.php", "oik-shortcodes" );
+			$file_id = oikai_list_files_byname( $files, array( "uo" => "," ) );
+			//oik_require( "shortcodes/oik-parent.php" );
+			//bw_post_link( $file_id );
+		}	
+	}
+	return( bw_ret()); 
 }
 
+/**
+ * Help hook for file shortcode
+ */
 function file__help( $shortcode="file" ) {
   return( "Display reference for a file" );
 }
+
+/**
+ * Syntax hook for file shortcode
+ */
 
 function file__syntax( $shortcode="file" ) {
   $syntax = array( "file" => bw_skv( null, "<i>file</i>", "plugin file name" )
                  );
   return( $syntax );
 }
+
+/**
+ * Create a pragmatic link for a file
+ * 
+ * Processing depends on the $file and we may also need the $full_file
+ * in some instances ( perhaps we pass it on the link as a query parameter
+ * to help if and when we get a 404
+ * 
+ * @TODO Revisit when the plugin or theme name is used as part of the file's title and post_meta key _oik_api_file
+ * 
+ * @param string $file relative file name with slash separators
+ * @param string $full_file the full file name with platform specific separators. May be a resolved symlinked file namee
+ */
+function oikai_pragmatic_link( $file, $full_file=null ) {
+	$parts = explode( "/", $file );
+	switch ( $parts[0] ) {
+		case "wp-content":
+			array_shift( $parts );	// Remove the wp-content
+			array_shift( $parts );  // Remove the plugins/themes/mu-plugins/upgrade/uploads etc
+			array_shift( $parts );  // Remove the plugin or theme folder
+			break;
+		
+		default:
+			// WordPress file so we don't need to strip anything
+			
+	}
+	$adjusted_file = implode( "/",  $parts );
+	$url = site_url( "oik_file/" . $adjusted_file ); 
+	alink( null, $url, $file );
+}  
+ 
