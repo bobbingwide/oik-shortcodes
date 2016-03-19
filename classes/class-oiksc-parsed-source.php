@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2016
 /**
  * oiksc_parsed_source class
  *
@@ -172,6 +172,7 @@ function bw_get_parsed_source_by_sourceref( $id ) {
  * 
  * @param ID $source_post - the source post ID 
  * @param string $content - the parsed content
+ * @return ID post ID of the created object
  *  
  */  
 function bw_create_parsed_object( $source_post, $content ) {
@@ -206,7 +207,7 @@ function bw_create_parsed_object( $source_post, $content ) {
  * @param post $parsed_source - the current parsed object
  * @param string $content - the new content
  * @param string $filename - the parsed file full name
- * 
+ * @return ID the post ID of the updated post
  */
 function bw_update_parsed_object( $parsed_source, $content, $filename ) {
   bw_backtrace();
@@ -215,6 +216,7 @@ function bw_update_parsed_object( $parsed_source, $content, $filename ) {
   $_POST['_oik_parse_count'] = filemtime( $filename );
    
   wp_update_post( $parsed_source );
+	return( $parsed_source->ID );
 }
                                               
 /**
@@ -231,10 +233,11 @@ function bw_update_parsed_object( $parsed_source, $content, $filename ) {
 function bw_update_parsed_source( $post_id, $content, $filename ) {
   $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
   if ( $parsed_source ) {
-    bw_update_parsed_object( $parsed_source, $content, $filename );
+    $parsed_id = bw_update_parsed_object( $parsed_source, $content, $filename );
   } else {
-    bw_create_parsed_object( $post_id, $content );
+    $parsed_id = bw_create_parsed_object( $post_id, $content );
   }
+	return( $parsed_id );
 }
 
 /**
@@ -246,40 +249,34 @@ function bw_update_parsed_source( $post_id, $content, $filename ) {
  * @param string $parsed_source - the parsed source
  */                                          
 function oikai_navi_parsed_source( $parsed_source ) {
-  //bw_backtrace();
-  c( "parsed source" );
-  //e( $parsed_source->post_content );
-  $parsed_source = rtrim( $parsed_source, "\n " );
-  $sources = explode( "\n", $parsed_source );
-  //bw_trace2( $sources, "sources" );
-  
-  
-  oik_require( "shortcodes/oik-navi.php" );
-  $bwscid = bw_get_shortcode_id( true );
-  $page = bw_check_paged_shortcode( $bwscid );
-  $posts_per_page = 100; // get_option( "posts_per_page" );
-  $count = count( $sources );
-  $pages = ceil( $count / $posts_per_page );
-  $start = ( $page-1 ) * $posts_per_page;
-  $end = min( $start + $posts_per_page, $count ) -1;
-  bw_navi_s2eofn( $start, $end, $count, bw_translate( "Lines: " ) );
-  if ( $start  ) {
-    e( "<pre>" );
-  }
-  for ( $i = $start; $i<= $end; $i++ ) {
-    // $selection[] = $sources[$i];
-    //$line = $i+1;
-    //e( "$line " );
-    e( $sources[$i] );
-    e( "\n" );
-  }
-  if ( $end < $count ) {
-    e( "</pre>" );
-  }
-  //oikai_syntax_source( $selection, 1 ); 
-  bw_navi_paginate_links( $bwscid, $page, $pages );
-} 
-
-
-
-
+	//bw_backtrace();
+	c( "parsed source" );
+	//e( $parsed_source->post_content );
+	$parsed_source = rtrim( $parsed_source, "\n " );
+	$sources = explode( "\n", $parsed_source );
+	//bw_trace2( $sources, "sources" );
+	oik_require( "shortcodes/oik-navi.php" );
+	$bwscid = bw_get_shortcode_id( true );
+	$page = bw_check_paged_shortcode( $bwscid );
+	$posts_per_page = 100; // get_option( "posts_per_page" );
+	$count = count( $sources );
+	$pages = ceil( $count / $posts_per_page );
+	$start = ( $page-1 ) * $posts_per_page;
+	$end = min( $start + $posts_per_page, $count ) -1;
+	bw_navi_s2eofn( $start, $end, $count, bw_translate( "Lines: " ) );
+	if ( $start  ) {
+		e( "<pre>" );
+	}
+	for ( $i = $start; $i<= $end; $i++ ) {
+		// $selection[] = $sources[$i];
+		//$line = $i+1;
+		//e( "$line " );
+		e( $sources[$i] );
+		e( "\n" );
+	}
+	if ( $end < $count ) {
+		e( "</pre>" );
+	}
+	//oikai_syntax_source( $selection, 1 ); 
+	bw_navi_paginate_links( $bwscid, $page, $pages );
+}

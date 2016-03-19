@@ -1090,13 +1090,17 @@ function oikai_set_time_limit( $limit=120 ) {
 function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
+	$saved_post = null;
   
   if ( $post_id && $paged !== false ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
     $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id );
+		$saved_post = bw_global_post( $parsed_source );
+		$parsed_source_id = $parsed_source->ID;
   } else {
     $parsed_source = null;
+		$parsed_source_id = null;
   }
   
   if ( !$parsed_source ) {  
@@ -1115,10 +1119,11 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
       global $plugin;
       $plugin = $plugin_slug;
       // e( "flarg: $fileName" );
-      bw_update_parsed_source( $post_id, $parsed_source, oiksc_real_file( $fileName, $component_type) );   //   $files[$file]
+      $parsed_source_id = bw_update_parsed_source( $post_id, $parsed_source, oiksc_real_file( $fileName, $component_type) );   //   $files[$file]
     } else { 
       // We only handle a subset!
-      //$parsed_source = null;
+      // $parsed_source = null;
+			//
     }
   } else { 
     $parsed_source = $parsed_source->post_content;
@@ -1126,11 +1131,18 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
 	
 	if ( $echo ) { 
 		if ( $parsed_source ) {
-			oikai_navi_parsed_source( $parsed_source );
+			//oikai_navi_parsed_source( $parsed_source );
+			oik_require( "shortcodes/oik-parsed-source.php", "oik-shortcodes" );
+			$atts = array( "paged" => $paged, "id" => $parsed_source_id ); 
+			$result = oikai_parsed_source( $atts, $parsed_source );
+			c( "after oikai_parsed_source" );
+			e( $result ); 
+			c( "agter result" );
 		} else {
 			oikai_navi_source( $sources );
 		}
 	}	
+	bw_global_post( $saved_post );
 }
 
 /**

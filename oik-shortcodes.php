@@ -120,6 +120,7 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
   bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "md", "oikai_markdown", oik_path( "shortcodes/oik-markdown.php", "oik-shortcodes" ), false );
+	bw_add_shortcode( "parsed_source", "oikai_parsed_source", oik_path( "shortcodes/oik-parsed-source.php", "oik-shortcodes" ), false );
 }
 
 /** 
