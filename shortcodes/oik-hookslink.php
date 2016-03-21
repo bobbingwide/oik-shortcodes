@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2014
+<?php // (C) Copyright Bobbing Wide 2012-2016
 
 /** 
  * Automagically determine the hook list
@@ -11,6 +11,7 @@
  * oik_hook       find all the functions that this hook calls (implementers) and is called by (invokers)
  * other          see if we can find a _plugin_ref field and use that
  *
+ * @param array $atts [hooks] shortcode parameters 
  */
 function oikho_listhooks( $atts ) {
   global $post;
@@ -108,6 +109,10 @@ function oikho_list_callees( $post_id ) {
  * How about? 
  * [hook "bbboing_sc fiddle" ]  
  *
+ * @param array $atts shortcode parameters
+ * @param string $content not expected - yet
+ * @param string $tag shortcode name
+ * @return string the generated HTML
  */
 function oikho_hooklink( $atts=null, $content, $tag ) {
   $function = bw_array_get( $atts, "hook", null );
