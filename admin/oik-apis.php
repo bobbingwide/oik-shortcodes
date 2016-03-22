@@ -553,7 +553,7 @@ function oikai_add_callee( $id ) {
   } else { 
     $oikai_callee[$id] = $id;
   }
-  bw_trace2( $oikai_callee, "oikai_callee", true, BW_TRACE_VERBOSE );
+  bw_trace2( $oikai_callee, "oikai_callee", true, BW_TRACE_DEBUG );
 }
 
 /** 
