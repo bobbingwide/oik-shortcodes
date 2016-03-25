@@ -496,11 +496,11 @@ function oik_register_API() {
   bw_register_post_type( $post_type, $post_type_args );
   
   bw_register_field( "_oik_api_name", "text", "Function name" , array( "#length" => 80 ));
-  bw_register_field( "_oik_api_class", "noderef", "Class ref", array( "#type" => "oik_class", "#optional" => true )); 
+  bw_register_field( "_oik_api_class", "noderef", "Class ref", array( "#type" => "oik_class", "#optional" => true, '#theme_null' => false )); 
   bw_register_field( "_oik_api_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes" ) )); 
   bw_register_field( "_oik_api_source", "text", "Sourcefile" , array( "#length" => 80 ));
   bw_register_field( "_oik_fileref", "noderef", "File ref", array( "#type" => "oik_file" )); 
-  bw_register_field( "_oik_api_type", "select", "API type", array( "#options" => oiksc_api_types(), "#optional" => true ) );
+  bw_register_field( "_oik_api_type", "select", "API type", array( "#options" => oiksc_api_types(), "#optional" => true, '#theme_null' => false ) );
   //bw_register_field( "_oik_api_example", "textarea", "Examples", array( '#theme' => false, '#form' => false ) ); 
   //bw_register_field( "_oik_api_notes", "textarea", "Notes", array( '#theme' => false, '#form' => false ) ); 
   bw_register_field( "_oik_api_deprecated_cb", "checkbox", "Deprecated?" ); 
