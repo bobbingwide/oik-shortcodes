@@ -94,7 +94,8 @@ function oiksc_contents_link( $contents_arr, $api ) {
 	if ( $post_id ) {
 		$line .= retlink( null, get_permalink( $post_id ), get_the_title( $post_id ) );
 	} else {
-		$line .= $api_name;
+		$url = site_url( "oik_api/" . $api_name );
+		$line .= retlink( null, $url, $api_name );  
 	}
 	 
 	$line .= " */\n";
