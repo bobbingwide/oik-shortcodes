@@ -152,6 +152,9 @@ function oiksc_list_file_functions2( $file, $component_type ) {
     /**
      * Process each of the classes and their methods
      */
+		 
+		//bw_context( "dummy_TCES", false ); 
+		oikai_dummy_TCES( false );
     $tokens = token_get_all( $contents );
     $classes = _oiksc_list_classes2( $tokens );
   } else { 
