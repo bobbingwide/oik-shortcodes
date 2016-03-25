@@ -1110,16 +1110,18 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
 	$saved_post = null;
+	$parsed_source_id = null;
   
   if ( $post_id && $paged !== false ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
     $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id );
 		$saved_post = bw_global_post( $parsed_source );
-		$parsed_source_id = $parsed_source->ID;
+		if ( $parsed_source ) {
+			$parsed_source_id = $parsed_source->ID;
+		}
   } else {
     $parsed_source = null;
-		$parsed_source_id = null;
   }
   
   if ( !$parsed_source ) {  
