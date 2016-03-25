@@ -299,6 +299,7 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
   $filename = oik_pathw( $file, $plugin, $component_type );
   $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, true );
 	echo PHP_EOL;
+	oiksc_yoastseo( $file_id, $file, $plugin, "file" );
 	oiksc_reset_globals();
 }
 
@@ -313,7 +314,11 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
  * The value we store in "_oik_api_name" for a method will be in the class::api format 
  * 
  * API names are normally expected to be unique. This code does not cater for use of namespacing. 
- * 
+ *
+ * @param string $plugin
+ * @param string $file
+ * @param string $component_type
+ * @param object $api_object
  */
 function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_object ) {
 
@@ -324,15 +329,15 @@ function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_obj
 		//$func = oikai_get_func( $api, null ); 
 		$func = $api_object->getMethod();
 		if ( $func ) {
-		
 			echo "Processing: $func,$api,$file". PHP_EOL;
 			$type = $api_object->getApiType();
-			
 			$title = $api_object->getShortDescription();
 			$post_id = _oiksc_create_api( $plugin_post->ID, $api, $file, $type, $title ); 
+			oiksc_yoastseo( $post_id, $api, $plugin, $type, $title );
 		} else {
 			echo "Processing classref: $api,$file" . PHP_EOL;
 			$post_id = oikai_get_classref( $api, null, $plugin_post->ID, $file );
+			oiksc_yoastseo( $post_id, $api, $plugin, "class" );
 		}
 	} else {
 		e( "Invalid plugin: $plugin ");
@@ -340,6 +345,29 @@ function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_obj
 	oiksc_reset_globals();    
 }
 
+/**
+ * Create Yoast SEO data
+ *
+ * Set fields specifically for Yoast SEO
+ * 
+ * WordPress SEO aka YoastSEO has a number of fields which, if not set
+ * it goes away and attempts to determine from the content and excerpt.
+ * 
+ * This is time consuming at front-end runtime so we need to set the values ourselves.
+ * 
+ * @param ID $id 
+ * @param string $name - the API, Class or Filename
+ * @param string $plugin - component name: wordpress, plugin or theme
+ * @param string $type - API, Class or File
+ * @param string $desc - short description
+ *
+ */
+function oiksc_yoastseo( $id, $name, $plugin, $type='API', $desc=null ) {
+	$metadesc = "$name - $plugin $type - $desc";
+	$focuskw = "$name $plugin $type";
+	update_post_meta( $id, "_yoast_wpseo_metadesc", $metadesc );
+	update_post_meta( $id, "_yoast_wpseo_focuskw", $focuskw );
+}
 
 /**
  * Reset globals
@@ -350,10 +378,14 @@ function oiksc_reset_globals() {
 	bw_trace2( $_POST, "_POST", false );
 	unset( $_POST );
   global $oikai_hook;
+	var_dump( $oikai_hook );
 	$oikai_hook = null;
+	var_dump( $oikai_hook );
+	
 	global $oikai_association;
 	$oikai_association = null;
 	global $oikai_callee;
 	$oikai_callee = null;
+	
 }
 
