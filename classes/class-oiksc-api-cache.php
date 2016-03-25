@@ -122,7 +122,7 @@ class oiksc_api_cache {
 	}
 	
 	function get_cached() {
-		bw_trace2( $this->meta_values, "meta_values", false, BW_TRACE_DEBUG );
+		bw_trace2( $this->meta_values, "meta_values", false, BW_TRACE_VERBOSE );
 		if ( isset( $this->meta_values[ $this->meta_key][ $this->meta_value ] ) ) {
 			$posts = $this->meta_values[ $this->meta_key][ $this->meta_value ];
 			
