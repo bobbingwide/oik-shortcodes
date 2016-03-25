@@ -217,6 +217,7 @@ function oikai_print_todo_info( $description ) {
   oikai_format_description( $description );
   ediv();
 }
+
 /**
  * Check to see if opcache is being used
  *
@@ -232,23 +233,38 @@ function oikai_print_todo_info( $description ) {
  * @return bool - true if we believe that opcache processing is being used 
  */   
 function oikai_using_opcache() {
-  $using_opcache = false;
-  $refFunc = oikai_reflect( __FUNCTION__ );
-  if ( $refFunc ) { 
-    $docComment = $refFunc->getDocComment(); 
-    bw_trace2( $docComment, "docComment", false, BW_TRACE_VERBOSE );
-    if ( $docComment === false ) {
-      $using_opcache = true;
-    }
-  }
-	bw_trace2( $using_opcache, "using_opcache", false, BW_TRACE_DEBUG );
+	static $using_opcache = null;
+	if ( null === $using_opcache ) {
+		$using_opcache = false;
+		$refFunc = oikai_reflect( __FUNCTION__ );
+		if ( $refFunc ) { 
+			$docComment = $refFunc->getDocComment(); 
+			bw_trace2( $docComment, "docComment", false, BW_TRACE_DEBUG );
+			if ( $docComment === false ) {
+				$using_opcache = true;
+			}
+		}
+		bw_trace2( $using_opcache, "using_opcache", false, BW_TRACE_DEBUG );
+	}	
   return( $using_opcache ); 
+}
+
+/**
+ * Determine if we're using oik-lib
+ *
+ * @return integer - the number of times "oik_lib_loaded" has been invoked
+ */
+function oikai_using_libs() {
+	
+	return( did_action( "oik_lib_loaded" ) );
 }
 
 /**
  * Attempt to create a reflection function / reflection method for this API
  *
- * When using opcache we have to use oikai_load_and_reflect()
+ * When using opcache with comment stripping we have to use oikai_load_and_reflect().
+ * When using shared libraries we may also need to use oikai_load_and_reflect().
+ *
  * Otherwise processing depends on whether or not the function or method is already defined 
  * 
  * classname | class_exists| function or method exists |     Reflect using?
@@ -269,7 +285,10 @@ function oikai_pseudo_reflect( $funcname, $sourcefile, $plugin, $classname=null 
   bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $refFunc = null;
   $using_opcache = oikai_using_opcache();
-  if ( $using_opcache ) {
+	if ( !$using_opcache ) {
+		$using_oik_libs = oikai_using_libs();
+	}
+  if ( $using_opcache || $using_oik_libs ) {
     $refFunc = oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname );
   } else {
     if ( $classname ) {
@@ -1381,6 +1400,30 @@ function oikai_set_links( $post_id, $title, $context, &$tokens ) {
   }
 }
 
+
+/**
+ * Set a pragmatic link on each relevant token in the dummy TCES
+ * 
+ * @param ID $post_id - the ID of the post to link to
+ * @param string $title - 
+ * @param string $context - used for the link class
+ * @param array - array of tokens 
+ */
+function oikai_set_pragmatic_links( $url, $title, $context, &$tokens ) {
+  //e( "setting links for $post_id $title ");
+  $TCESes = bw_context( "dummy_TCES" );
+  //bw_trace2( $TCESes, "TCESes", false );
+  if ( is_array( $TCESes) && count( $TCESes ) ) {
+    foreach ( $TCESes as $TCES ) {
+      //bw_trace2( $TCES, "TCES", false ); 
+      //bw_trace2( $tokens[$TCES], "tokens[TCES]", false );
+      if ( is_array( $tokens[$TCES] ) ) {
+        $tokens[$TCES][3] = retlink( "$context", $url, $tokens[$TCES][1], $title ); 
+      } 
+    }
+  }
+}
+
 /**
  * Handle the hook
  *
@@ -1564,8 +1607,12 @@ function oikai_handle_dummy_TCES( $key, $value, &$tokens ) {
  * It's not actually necessary to store each of the tokens.
  * BUT it doesn't really do any harm.
  *
+ * 
+ * @param integer $key the index of the token to add  
+ * @param string $value the value of the token to add ( not used? may be null )
+ * @param array $tokens the array of tokens ( not used? may be null )
  */
-function oikai_dummy_TCES( $key, $value, $tokens ) {
+function oikai_dummy_TCES( $key, $value=null, $tokens=null ) {
   if ( $key ) {
     $dummy_TCES = bw_context( "dummy_TCES" );
     $dummy_TCES[] = $key;
@@ -1645,30 +1692,11 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
     $tokens[$key][3] = oikai_link_to_php( $api_name );
     $post_id = null;
   } else {
-    $post_ids = oikai_get_oik_api_byname( $api_name );
-    if ( $post_ids ) { 
-      $post_id = bw_array_get( $post_ids, 0, null );   
-      if ( $post_id ) {
-        //$post_id = $post;
-        //$value = $post_id;
-        if ( is_array( $tokens[$key] ) ) {
-          $tokens[$key][3] = retlink( null, oiksc_get_permalink( $post_id ), $tokens[$key][1], get_the_title( $post_id ) );
-        } else {
-          oikai_set_links( $post_id, $api_name, "API", $tokens );
-        } 
-        if ( $doaction ) {                                                              
-          //do_action( __FUNCTION__, $post_id );      // @TODO - convert __FUNCTION__ to a literal somewhere! Herb 2013/10/24
-          do_action( "oikai_handle_token_T_STRING", $post_id ); 
-        }  
-      }
-    }	else {
-      if ( $type == "user" ) {
-        $tokens[$key][3] = oikai_link_to_wordpress( $value );
-      } else {
-        // br( "$value $api_name" );  // This used to contain " $type" as well. **?**
-      }
-      $post_id = null;
-    }
+		if ( is_multisite() ) {
+			$post_id = oikai_pragmatic_link_to_api( $key, $tokens, $api_name, $doaction, $type ); 
+		} else {
+			$post_id = oikai_link_to_local_site( $key, $tokens, $api_name, $doaction, $type, $value ); 
+		}
   } 
   if ( $doaction ) {
     //br( "calling set_context with !$value! !$post_id!" );      
@@ -1677,6 +1705,61 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
   return( $post_id ); 
 }
 
+/**
+ * Create a link to the local site
+ * 
+ * Use the old ( slower ) way of creating links to the API
+ *
+ * 
+ */
+function oikai_link_to_local_site( $key, &$tokens, $api_name, $doaction, $type, $value ) {
+	$post_ids = oikai_get_oik_api_byname( $api_name );
+	if ( $post_ids ) { 
+		$post_id = bw_array_get( $post_ids, 0, null );   
+		if ( $post_id ) {
+			//$post_id = $post;
+			//$value = $post_id;
+			if ( is_array( $tokens[$key] ) ) {
+				$tokens[$key][3] = retlink( null, oiksc_get_permalink( $post_id ), $tokens[$key][1], get_the_title( $post_id ) );
+			} else {
+				oikai_set_links( $post_id, $api_name, "API", $tokens );
+			} 
+			if ( $doaction ) {                                                              
+				//do_action( __FUNCTION__, $post_id );      // @TODO - convert __FUNCTION__ to a literal somewhere! Herb 2013/10/24
+				do_action( "oikai_handle_token_T_STRING", $post_id ); 
+			}  
+		}
+	}	else {
+		if ( $type == "user" ) {
+			$tokens[$key][3] = oikai_link_to_wordpress( $value );
+		} else {
+			// br( "$value $api_name" );  // This used to contain " $type" as well. **?**
+		}
+		$post_id = null;
+	}
+}
+
+/**
+ * Create a link to the API without accessing the database
+ * 
+ * This is a bit like the Wiki way. We assume the link is going to be valid
+ * 
+ * We don't know the post_id so we use the api_name instead
+ * No need to link to WordPress separately as this should do.
+ *
+ */
+function oikai_pragmatic_link_to_api( $key, &$tokens, $api_name, $doaction, $type ) {
+	$url = site_url( "oik_api/" . $api_name );
+	if ( is_array( $tokens[$key] ) ) {
+		$tokens[$key][3] = retlink( null, $url, $tokens[$key][1] );
+	} else {
+		oikai_set_pragmatic_links( $url, $api_name, "API", $tokens );
+	} 
+	if ( $doaction ) {                                                              
+		//do_action( __FUNCTION__, $post_id );      // @TODO - convert __FUNCTION__ to a literal somewhere! Herb 2013/10/24
+	 	do_action( "oikai_handle_token_T_STRING", $api_name ); 
+	}
+}
 /**
  * Handle a T_DOC_COMMENT
  * When we see a T_DOC_COMMENT in a function then this is expected to precede
