@@ -179,19 +179,21 @@ function oiksc_get_source( $code ) {
  * @param ID $post_id - the post ID for the shortcode
  */
 function _oiksc_create_param( $syntax, $plugin, $code, $post_id ) {
-  if ( is_array( $syntax ) ) {
-    foreach ( $syntax as $param => $skv ) {
-      p( "Parameter $param" );
-      $post = oiksc_get_sc_param( $code, $param, $post_id );
-      if ( $post ) {
-        // Check the skv values?
-         p( "$param already defined for $code" );
+	if ( is_array( $syntax ) ) {
+		foreach ( $syntax as $param => $skv ) {
+			p( "Parameter $param" );
+			$post = oiksc_get_sc_param( $code, $param, $post_id );
+			if ( $post ) {
+				// Check the skv values?
+				p( "$param already defined for $code:" . $post->ID );
+        oiksc_yoastseo( $post->ID, $code, $param, "shortcode parameter", null);  
       } else {
-        $param_post_id = oiksc_create_oik_sc_param( $post_id, $code, $param, $skv );
-        p( "$param created for $code. ID: $param_post_id" );
-      }
-    }  
-  }
+				$param_post_id = oiksc_create_oik_sc_param( $post_id, $code, $param, $skv );
+				oiksc_yoastseo( $param_post_id, $code, $param, "shortcode parameter", null );  
+				p( "$param created for $code. ID: $param_post_id" );
+			}
+		}
+	}
 }
 
 /**
@@ -313,9 +315,9 @@ function oiksc_create_oik_shortcode( $plugin, $code, $help, $func ) {
   return( $post_id );
 }
 
-
-
 /**
+ * Create an oik_shortcode
+ * 
  * Respond to the submit button by creating an oik_shortcode, parameters and values
  */
 function oiksc_create_shortcode() {
@@ -333,6 +335,10 @@ function oiksc_create_shortcode() {
       $func = oiksc_get_func( $code, $plugin ); 
       $post_id = _oiksc_create_shortcode( $plugin, $code, $help, $func );
       if ( $post_id ) {
+				oik_require( "admin/oik-create-apis.php", "oik-shortcodes" );
+				oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+				$plugin_slug = oiksc_get_plugin_slug( $plugin );
+				oiksc_yoastseo( $post_id, $code, $plugin, "shortcode", $help );
         _oiksc_create_params( $plugin, $code, $post_id );
       } else {
         p( "No post id returned " );
@@ -605,6 +611,7 @@ function oiksc_get_sc_param( $code, $name, $sc_post_id ) {
 }
 
 /**
+ * Create an oik_shortcode programmatically
  * 
  * Creating a shortcode programmatically involves
  * 1. Check the code is not already defined
@@ -612,7 +619,13 @@ function oiksc_get_sc_param( $code, $name, $sc_post_id ) {
  * 3. If not then we create the shortcode
  * 3a. Which may require us to create the API that implements the shortcode
  * 3b. Which suggests we should also consider creating the plugin in the first place **?**
- * 4. For each specified parameter (either through interface or shortcode__syntax insert an oik_sc_param
+ * 4. For each specified parameter (either through interface or shortcode__syntax) insert an oik_sc_param
+ * 
+ * @param ID $plugin - the plugin noderef
+ * @param string $code - the required shortcode ( excluding the square brackets )
+ * @param string $help - short description 
+ * @param string $func - the implementing API
+ * @return ID post ID of the oik_shortcode post
  */
 function _oiksc_create_shortcode( $plugin, $code, $help, $func ) {
   p( "Creating shortcode $code - $help" );
