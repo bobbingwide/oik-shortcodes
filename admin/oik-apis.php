@@ -74,15 +74,15 @@ function _oiksc_apis_list( $apis, $class_names=false ) {
  * @return string - the plugin slug 
  */
 function oiksc_get_plugin_slug( $plugin ) {
-  if ( is_numeric( $plugin ) ) {
-    $slug = get_post_meta( $plugin, "_oikp_slug", true );
-  } else {
-    $slug = $plugin;
-  }
-  //if ( $slug == "wordpress" ) {
-  //  $slug = null;
-  // }
-  return( $slug );
+	if ( is_numeric( $plugin ) ) {
+		$slug = get_post_meta( $plugin, "_oikp_slug", true );
+		if ( !$slug ) {
+			$slug = get_post_meta( $plugin, "_oikth_slug", true );
+		}
+	} else {
+		$slug = $plugin;
+	}
+	return( $slug );
 }
 
 /**
@@ -353,22 +353,22 @@ function oiksc_report( $post_id, $type, $action, $title=null) {
  *  
  * The oik_hook CPT does not need a "hook called by" (Invokers) field as this can be determined in reverse from the 
  * _oik_api_hooks metadata created for each oik_api instance.
+ * 
+ * @global $oikai_hook
  *
  * @param ID $post_id - post ID of the API function that is being updated
  *
- * @global $oikai_association
- * @global $oikai_hook
  */
 function oiksc_save_hooks( $post_id ) {
   global $oikai_hook;
   bw_trace2( $oikai_hook, "hooks", true, BW_TRACE_VERBOSE );
+  $hooks = array();
   if ( !empty( $oikai_hook ) ) {
-    $hooks = array();
     foreach ( $oikai_hook as $key => $value ) {
       $hooks[] = $value[2];
-    }
-    bw_update_post_meta( $post_id, "_oik_api_hooks", $hooks );
+		}
   }  
+  bw_update_post_meta( $post_id, "_oik_api_hooks", $hooks );
 }
 
 /** 
