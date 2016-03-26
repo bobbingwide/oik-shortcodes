@@ -315,7 +315,7 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
  * 
  * API names are normally expected to be unique. This code does not cater for use of namespacing. 
  *
- * @param string $plugin
+ * @param string $plugin the plugin name
  * @param string $file
  * @param string $component_type
  * @param object $api_object
@@ -363,7 +363,10 @@ function oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api_obj
  *
  */
 function oiksc_yoastseo( $id, $name, $plugin, $type='API', $desc=null ) {
-	$metadesc = "$name - $plugin $type - $desc";
+	if ( $plugin == "wordpress" ) {
+		$plugin = "WordPress";
+	}
+	$metadesc = "$name $desc $plugin $type";
 	$focuskw = "$name $plugin $type";
 	update_post_meta( $id, "_yoast_wpseo_metadesc", $metadesc );
 	update_post_meta( $id, "_yoast_wpseo_focuskw", $focuskw );
@@ -378,9 +381,9 @@ function oiksc_reset_globals() {
 	bw_trace2( $_POST, "_POST", false );
 	unset( $_POST );
   global $oikai_hook;
-	var_dump( $oikai_hook );
+	//var_dump( $oikai_hook );
 	$oikai_hook = null;
-	var_dump( $oikai_hook );
+	//var_dump( $oikai_hook );
 	
 	global $oikai_association;
 	$oikai_association = null;
