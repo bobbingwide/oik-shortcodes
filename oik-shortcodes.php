@@ -61,6 +61,8 @@ function oik_shortcodes_init() {
 	
 	add_filter( "request", "oiksc_request" );
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
+	add_filter( "genesis_404_entry_title", "oiksc_genesis_404_entry_title" );
+	add_filter( "genesis_404_entry_content", "oiksc_genesis_404_entry_content" );
 }
 
 /**
@@ -1295,6 +1297,11 @@ function oiksc_oik_query_autoload_classes( $classes ) {
 										, "path" => "classes"
 										, "file" => "classes/class-oiksc-api-cache.php"
 										);
+	$classes[] = array( "class" => "oiksc_404_handler"
+										, "plugin" => "oik-shortcodes"
+										, "path" => "classes"
+										, "file" => "classes/class-oiksc-404-handler.php" 
+										);									
 	return( $classes );								
 
 }
@@ -1327,4 +1334,37 @@ function oiksc_run_oik_shortcodes() {
 	oik_require( "admin/oik-create-apis.php", "oik-shortcodes" );
 	oiksc_lazy_run_oik_shortcodes();
 }
+
+
+/**
+ * Implement "genesis_404_entry_content" for oik-shortcodes
+ * 
+ * Do something special on the 404 page
+ *
+ * @param string $text
+ * @return string a lot more useful stuff we hope
+ */
+function oiksc_genesis_404_entry_content( $text ) {
+	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
+	$oiksc_404_handler = oiksc_404_handler::instance();;
+	$text = $oiksc_404_handler->handle_404( $text );
+	return( $text );
+}
+
+
+/**
+ * Implement "genesis_404_entry_tit;e" for oik-shortcodes
+ * 
+ * Do something special on the 404 page
+ *
+ * @param string $text
+ * @return string a lot more useful stuff we hope
+ */
+function oiksc_genesis_404_entry_title( $text ) {
+	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
+	$oiksc_404_handler = oiksc_404_handler::instance();;
+	$text = $oiksc_404_handler->entry_title( $text );
+	return( $text );
+}
+
 
