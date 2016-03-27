@@ -72,13 +72,16 @@ function oikai_listapis( $atts ) {
  * @param ID $post_id - the ID of the oik_api
  */
 function oikai_list_callers_callees( $post_id ) {
+	$api_name = get_post_meta( $post_id, "_oik_api_name", true );
+	bw_trace2( $api_name, "API name" );
+	
   sdiv( "bw_callers" );
   h3( "Called by", "bw_callers" );
-  oikai_list_callers( $post_id );
+  oikai_list_callers( $post_id, $api_name );
   ediv();
   sdiv( "bw_invokers" );
   h3( "Invoked by", "bw_invokers" );
-  oikai_list_invokers( $post_id );
+  oikai_list_invokers( $post_id, $api_name );
   ediv();
   sdiv( "bw_callees" );
   h3( "Calls", "bw_callees" );
@@ -100,15 +103,22 @@ function oikai_list_callers_callees( $post_id ) {
  * * 2014/11/11 - Now orders by post title
  *
  * @param ID $post_id - of the API that's being called
- *
+ * @param string $api_name - of the API that's being called
  */
-function oikai_list_callers( $post_id ) {
+function oikai_list_callers( $post_id, $api_name ) {
   oik_require( "shortcodes/oik-navi.php" );
   $atts['post_type'] = "oik_api,oik_file";  
-  $atts['meta_key' ] = "_oik_api_calls";
-  $atts['meta_value'] = $post_id;
+  //$atts['meta_key' ] = "_oik_api_calls";
+  //$atts['meta_value'] = $post_id;
   $atts['orderby'] = "title";
-  $atts['order'] = "ASC"; 
+  $atts['order'] = "ASC";
+	
+	$meta_query = array();
+  $meta_query[] = array( "key" => "_oik_api_calls"
+                       , "value" => array( $post_id, $api_name )
+                       , "compare" => "IN"  
+                       );
+	$atts['meta_query'] = $meta_query;												
   e( bw_navi( $atts ) );
 }
 
@@ -118,8 +128,9 @@ function oikai_list_callers( $post_id ) {
  * Invokers are the action or filter hooks that call the API.
  * 
  * @param ID $post_id - of the API that's being called
+ * @param string $api_name - future use
  */
-function oikai_list_invokers( $post_id ) {
+function oikai_list_invokers( $post_id, $api_name ) {
   oik_require( "shortcodes/oik-navi.php" );
   $atts['post_type'] = "oik_hook"; 
   $atts['meta_key' ] = "_oik_hook_calls";
