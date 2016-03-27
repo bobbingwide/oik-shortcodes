@@ -61,8 +61,7 @@ function oik_shortcodes_init() {
 	
 	add_filter( "request", "oiksc_request" );
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
-	add_filter( "genesis_404_entry_title", "oiksc_genesis_404_entry_title" );
-	add_filter( "genesis_404_entry_content", "oiksc_genesis_404_entry_content" );
+	add_action( "genesis_404", "oiksc_genesis_404" );
 }
 
 /**
@@ -1335,6 +1334,20 @@ function oiksc_run_oik_shortcodes() {
 	oiksc_lazy_run_oik_shortcodes();
 }
 
+/**
+ * Implement 'genesis_404' action for oik-shortcodes
+ * 
+ * Here we determine whether or not we're going to hook into the filters
+ * run on our genesis 404 page.
+ * 
+ * If we are then we attach the filter to handle 'genesis_404_entry_title'
+ * this will then choose the right filter for entry content.
+ * 
+ */ 
+function oiksc_genesis_404() {
+	$oiksc_404_handler = oiksc_404_handler::instance();
+	$oiksc_404_handler->attach_post_type_handler();
+}
 
 /**
  * Implement "genesis_404_entry_content" for oik-shortcodes
@@ -1346,14 +1359,14 @@ function oiksc_run_oik_shortcodes() {
  */
 function oiksc_genesis_404_entry_content( $text ) {
 	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
-	$oiksc_404_handler = oiksc_404_handler::instance();;
+	$oiksc_404_handler = oiksc_404_handler::instance();
 	$text = $oiksc_404_handler->handle_404( $text );
 	return( $text );
 }
 
 
 /**
- * Implement "genesis_404_entry_tit;e" for oik-shortcodes
+ * Implement "genesis_404_entry_title" for oik-shortcodes
  * 
  * Do something special on the 404 page
  *
@@ -1362,7 +1375,7 @@ function oiksc_genesis_404_entry_content( $text ) {
  */
 function oiksc_genesis_404_entry_title( $text ) {
 	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
-	$oiksc_404_handler = oiksc_404_handler::instance();;
+	$oiksc_404_handler = oiksc_404_handler::instance();
 	$text = $oiksc_404_handler->entry_title( $text );
 	return( $text );
 }
