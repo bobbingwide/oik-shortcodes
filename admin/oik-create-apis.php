@@ -22,8 +22,12 @@ function oiksc_lazy_run_oik_shortcodes() {
 	//$start = null;
 	
 	$component = bw_array_get( $_SERVER['argv'], 1, "allow-reinstalls" );
+	
+	// We'll attempt to find previous and start from the parse_status field for this component
+	// but this COULD be used to override the logic
 	$previous = bw_array_get( $_SERVER['argv'], 2, null );
 	$start = bw_array_get( $_SERVER['argv'], 3, 1 );
+	
 	
 	$met = ini_get( 'max_execution_time' );
 	echo "Max execution time is: $met" . PHP_EOL;
@@ -60,7 +64,7 @@ function oiksc_lazy_run_oik_shortcodes() {
  * @param string $previous - the previous version to compare against - for performance
  * @param string $start 
  */
-function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
+function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 	global $plugin;
 	$plugin = $component;
 	if ( $plugin ) {
@@ -75,7 +79,13 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
 				oik_require( "oik-list-previous-files.php", "oik-batch" );
 				$component_preloaded = oiksc_pre_load_component( $plugin, $component_type );
 				if ( $component_preloaded ) {
-					$files = oikb_list_changed_files( $previous, $plugin, $component_type );
+				
+					$oiksc_parse_status = oiksc_parse_status::instance();
+					$oiksc_parse_status->register_fields();
+					$oiksc_parse_status->set_component( $component_preloaded->ID );
+					$oiksc_parse_status->fetch_status();
+					$previous = $oiksc_parse_status->get_from_sha( $previous );
+					$files = oikb_list_changed_files( $previous, $plugin, $component_type, $oiksc_parse_status );
 					if ( null === $files ) {
 						$files = oiksc_load_files( $plugin, $component_type );
 						$files = oikb_maybe_do_files( $files, $previous, $component, $component_type );
@@ -83,6 +93,8 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
 					if ( $component_type == "wordpress" ) {
 						$files = oikb_filter_wordpress_files( $files );
 					}
+					
+					$start = $oiksc_parse_status->get_file_m( $start );
 					oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
 				} else {
 					echo "Plugin/theme not defined: $component" . PHP_EOL;
@@ -97,7 +109,6 @@ function _ca_doaplugin_local( $component, $previous=null, $start=1 ) {
 		}
 	}	
 }
-
 
 /**
  * Process a file

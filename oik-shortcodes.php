@@ -45,6 +45,7 @@ function oik_shortcodes_init() {
   oik_register_hook();
   oik_register_api();
   oik_register_parsed_source();
+	//oik_register_parse_status();
 	
   add_action( 'the_content', "oiksc_the_content", 1, 1 );
   add_action( 'oik_admin_menu', 'oiksc_admin_menu' );
@@ -534,9 +535,9 @@ function oik_register_API() {
  * we look for a parsed source version and use that in preference to dynamically parsing the source.
  * 
  * Logic will exist to check if the parsed source is the latest 
- * If it's not then the source will be reparsed and the call trees and hook invocations rebuilt
+ * If it's not then the source will be reparsed and the call trees and hook invocations rebuilt.
  * We therefore need to store private information about the API, file and class that we've parse
- * in order to be able to determine whether or not to re-parse the code
+ * in order to be able to determine whether or not to re-parse the code.
  * 
  * Reasons for reparsing the code are:
  * 1. Updated plugin producing new logic - here we just force the parsing
@@ -1300,9 +1301,13 @@ function oiksc_oik_query_autoload_classes( $classes ) {
 										, "plugin" => "oik-shortcodes"
 										, "path" => "classes"
 										, "file" => "classes/class-oiksc-404-handler.php" 
-										);									
+										);
+	$classes[] = array( "class" => "oiksc_parse_status"
+										, "plugin" => "oik-shortcodes"
+										, "path" => "classes"
+										, "file" => "classes/class-oiksc-parse-status.php"
+										);																			
 	return( $classes );								
-
 }
 
 /**
@@ -1348,36 +1353,3 @@ function oiksc_genesis_404() {
 	$oiksc_404_handler = oiksc_404_handler::instance();
 	$oiksc_404_handler->attach_post_type_handler();
 }
-
-/**
- * Implement "genesis_404_entry_content" for oik-shortcodes
- * 
- * Do something special on the 404 page
- *
- * @param string $text
- * @return string a lot more useful stuff we hope
- */
-function oiksc_genesis_404_entry_content( $text ) {
-	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
-	$oiksc_404_handler = oiksc_404_handler::instance();
-	$text = $oiksc_404_handler->handle_404( $text );
-	return( $text );
-}
-
-
-/**
- * Implement "genesis_404_entry_title" for oik-shortcodes
- * 
- * Do something special on the 404 page
- *
- * @param string $text
- * @return string a lot more useful stuff we hope
- */
-function oiksc_genesis_404_entry_title( $text ) {
-	//oik_require( "classes/class-oiksc-404-handler.php", "oik-shortcodes" );
-	$oiksc_404_handler = oiksc_404_handler::instance();
-	$text = $oiksc_404_handler->entry_title( $text );
-	return( $text );
-}
-
-

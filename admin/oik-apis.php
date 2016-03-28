@@ -761,7 +761,6 @@ function oiksc_load_files( $plugin, $component_type ) {
   return( $files );
 }
 
-
 /**
  * Invoke the callback function for each file
  * 
@@ -773,37 +772,54 @@ function oiksc_load_files( $plugin, $component_type ) {
  * @param integer $start first function to process 
  */
 function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 ) {
-  $count = 0;
+	$oiksc_parse_status = oiksc_parse_status::instance();
 	$total = count( $files );
-  foreach ( $files as $file ) {
-    //echo oiksc_relative_filename( $file ) . PHP_EOL;
-    
-    $count++;   
-		if ( $count >= $start ) { 
+	$pass = $oiksc_parse_status->get_pass();
+	if( !$pass ) {	
+		$pass = 1;
+		$oiksc_parse_status->set_pass( $pass );
+	}
+	while ( $pass <= 2 ) {
+	
+		$count = 0;
+		foreach ( $files as $file ) {
+			//echo oiksc_relative_filename( $file ) . PHP_EOL;
 		
-			switch ( $component_type ) {
-			 case "wordpress" :
-				 $rfile = ABSPATH . $file;
-				 
-				 break;
-			 case "plugin":
-				 //echo $file;
-				 $rfile = plugin_basename( $file ); 
-				 break;
-			 case "theme":
-				 //echo $file;
-					oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
-				 $rfile = oiksc_theme_basename( $file ); 
-				 //echo $rfile;
-			 break;
-			 default:
-				 // Shouldn't get here
-			} 
-			echo "File:$count,$total,$rfile,$file,$start" . PHP_EOL;
-			//echo
-			call_user_func( $callback, $rfile, $plugin, $component_type );
+			$count++;   
+			if ( $count >= $start ) { 
+			
+				switch ( $component_type ) {
+					case "wordpress" :
+						$rfile = ABSPATH . $file;
+						break;
+					case "plugin":
+						//echo $file;
+						$rfile = plugin_basename( $file ); 
+						break;
+					case "theme":
+						//echo $file;
+							oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
+						$rfile = oiksc_theme_basename( $file ); 
+						//echo $rfile;
+					break;
+					default:
+					// Shouldn't get here
+				}
+				echo "File:$count,$total,$rfile,$file,$start" . PHP_EOL;
+				//echo
+				call_user_func( $callback, $rfile, $plugin, $component_type );
+				$oiksc_parse_status->set_file_m( $count );
+				$oiksc_parse_status->update_status();
+			}
 		}
-  }
+		$pass++;
+		if ( $pass <= 2 ) {
+			$oiksc_parse_status->set_pass( $pass );
+			$start = 1;
+			$oiksc_parse_status->set_file_m( $start );
+			$oiksc_parse_status->update_status();
+		}
+	}
 }   
 
 
