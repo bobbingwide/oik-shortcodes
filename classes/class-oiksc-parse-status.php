@@ -123,7 +123,7 @@ class oiksc_parse_status {
 	public function update_status() {
 		$this->populate_parse_status();
 		//print_r( $this->parse_status );
-		print_r( $this );
+		//print_r( $this );
 		//$parse_status = serialize( $this->parse_status );
 		update_post_meta( $this->component_id, "_oiksc_parse_status", $this->parse_status );
 	}
@@ -189,8 +189,8 @@ class oiksc_parse_status {
 	 * @param string $previous
 	 * @return string from_sha
 	 */
-	public function get_from_sha( $previous ) {
-		$from_sha = $this->from_sha;
+	public function get_from_sha( $previous=null ) {
+		$from_sha = current( explode( ' ', $this->from_sha ) );
 		if ( $previous ) {
 			gob();
 		}
@@ -213,7 +213,48 @@ class oiksc_parse_status {
 		$this->current_sha = $current_sha;
 	}
 	
-
+	public function set_current_of_n( $current_of_n ) {
+		$this->current_of_n = $current_of_n;
+	}
+	
+	/**
+	 * Check if two passes are complete
+	 *
+	 * @return bool true if two passes have been performed
+	 */
+	public function finished_two_passes() {
+		$finished_two_passes =  ( $this->file_m == $this->of_n ) && ( $this->pass == 2 );
+		return( $finished_two_passes );
+	}
+	
+	/**
+	 * Restart processing
+	 *
+	 * Determine 
+	 */ 
+	public function restart_processing() {
+		//print_r( $this );
+		$finished_two_passes = $this->finished_two_passes();
+		if ( $finished_two_passes ) { 
+			if ( $this->to_sha != $this->current_sha ) {
+				$this->from_sha = $this->to_sha; 
+				$this->to_sha = $this->current_sha;
+				$this->file_m = 0;
+				$this->of_n = $this->current_of_n;
+			} else {
+				// It's the same - no need to do anything
+			}
+		} else {
+			if ( !$this->to_sha ) {
+				$this->to_sha = $this->current_sha;
+				$this->of_n = $this->current_of_n;
+			
+			} else {
+				//
+			}
+		}
+		$this->update_status();
+	}	 
 
 }
  

@@ -93,9 +93,11 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 					if ( $component_type == "wordpress" ) {
 						$files = oikb_filter_wordpress_files( $files );
 					}
-					
-					$start = $oiksc_parse_status->get_file_m( $start );
-					oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
+					$finished = $oiksc_parse_status->finished_two_passes();
+					if ( !$finished ) {
+						$start = $oiksc_parse_status->get_file_m( $start );
+						oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
+					}
 				} else {
 					echo "Plugin/theme not defined: $component" . PHP_EOL;
 				}
