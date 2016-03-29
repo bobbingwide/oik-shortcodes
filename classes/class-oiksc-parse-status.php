@@ -93,6 +93,7 @@ class oiksc_parse_status {
 			$this->parse_status = $parse_status;
 			$this->extract_parse_status();
 		}
+		print_r( $this );
 	}
 	
 	/**
@@ -241,6 +242,8 @@ class oiksc_parse_status {
 				$this->to_sha = $this->current_sha;
 				$this->file_m = 0;
 				$this->of_n = $this->current_of_n;
+				echo "Restarting";
+				print_r( $this );
 			} else {
 				// It's the same - no need to do anything
 			}

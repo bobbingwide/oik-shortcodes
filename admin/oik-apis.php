@@ -774,6 +774,7 @@ function oiksc_load_files( $plugin, $component_type ) {
 function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 ) {
 	$oiksc_parse_status = oiksc_parse_status::instance();
 	$total = count( $files );
+	$oiksc_parse_status->set_of_n( $total );
 	$pass = $oiksc_parse_status->get_pass();
 	if( !$pass ) {	
 		$pass = 1;

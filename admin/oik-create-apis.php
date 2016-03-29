@@ -84,7 +84,17 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 					$oiksc_parse_status->register_fields();
 					$oiksc_parse_status->set_component( $component_preloaded->ID );
 					$oiksc_parse_status->fetch_status();
-					$previous = $oiksc_parse_status->get_from_sha( $previous );
+					$finished = $oiksc_parse_status->finished_two_passes();
+					if ( $finished ) {
+						$previous = $oiksc_parse_status->get_to_sha( $previous );
+						echo "We've finished the previous pass: $previous" . PHP_EOL;
+					} else {
+						
+						$previous = $oiksc_parse_status->get_from_sha( $previous );
+						$start = $oiksc_parse_status->get_file_m( $start );
+						echo "Continuing previous pass: $previous from $start" . PHP_EOL;
+						
+					}
 					$files = oikb_list_changed_files( $previous, $plugin, $component_type, $oiksc_parse_status );
 					if ( null === $files ) {
 						$files = oiksc_load_files( $plugin, $component_type );
@@ -95,7 +105,6 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 					}
 					$finished = $oiksc_parse_status->finished_two_passes();
 					if ( !$finished ) {
-						$start = $oiksc_parse_status->get_file_m( $start );
 						oiksc_do_files( $files, $plugin, $component_type, "_ca_dofile_local", $start );
 					}
 				} else {

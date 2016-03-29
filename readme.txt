@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 4.2
-Tested up to: 4.3.1
-Stable tag: 1.27.3
+Tested up to: 4.5-RC1
+Stable tag: 1.27.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.27.4 =
+A multitude of improvements and changes for oik-plugins and WP-a2z.	 Tested up to WordPress 4.5
+
 = 1.27.3 =
 Improvements for oik-plugins and WP-a2z.
 
@@ -215,6 +218,36 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.27.4 =
+Added: Automate the creation of Yoast SEO post meta [github bobbingwide oik-shortcodes issue 20]
+Added: Implement 'genesis_404' action for 404 handler logic [github bobbingwide oik-shortcodes issue 18]
+Added: Improve performance of oiksc_create_api() [github bobbingwide oik-shortcodes issue 9]
+Added: Improve performance of oiksc_create_file [github bobbingwide oik-shortcodes issue 10]
+Added: Improve performance with pragmatic links [github bobbingwide oik-shortcodes issue 18]
+Added: Logic to enable AJAX pagination of parsed_source
+Added: Preload all APIs
+Added: Reflect the folder structure in the oik_file post type hierarchy [github bobbingwide oik-shortcodes issue 15]
+Added: Support the start parameter for files
+Changed: Don't display Class ref or API type if null
+Changed: First pass working with _oik_api_calls as string or post_id
+Changed: Format parameters which are arrays [[github bobbingwide oik-shortcodes issue 6]
+Changed: Improve class oiksc_function_loaded for PHP 7 [github bobbingwide oik-shortcodes issue 8]
+Changed: Improve component processing
+Changed: Improve the contents of oik_parsed_source [github bobbingwide oik-shortcodes issue 7]
+Changed: Need oiksc_autoload for oik options > create API
+Changed: Trace levels
+Changed: Various performance improvements and fixes
+Changed: autoloading improvements
+Changed: docblock improvements
+Fixed: Allow for bw_get_latest_parsed_source_by_sourceref() to return null
+Fixed: Also cater for instanceof self and new self [github bobbingwide oik-shortcodes issue 8]
+Fixed: No longer need dummy wp_enqueue_style() function
+Fixed: Parsing a theme produces "Source file not available" [github bobbingwide oik-shortcodes issue 11]
+Fixed: _oiksc_get_php_files should ignore the .git folder [github bobbingwide oik-shortcodes issue 12]
+Fixed: oiksc_update_oik_hook() allowed to run when DOING_AJAX [github bobbingwide oik-shortcodes issue 13]
+Fixed: update _oik_api_hooks even if empty [github bobbingwide oik-shortcodes issue 17]
+Fixed: use oikai_dummy_TCES( false ) for each API
+
 = 1.27.3 =
 * Changed: oik-shortcode has archive
 * Added: help and syntax for [md] shortcode
