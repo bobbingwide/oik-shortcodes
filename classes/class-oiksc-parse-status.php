@@ -68,6 +68,13 @@ class oiksc_parse_status {
 	 * 
 	 */
 	function __construct() {
+		$this->reset();
+	}
+	
+	/**
+	 * Reset the properties
+	 */
+	function reset() {
 		$this->parse_status = array();
 		$this->current_sha = null;
 		$this->from_sha = 0;
@@ -178,9 +185,13 @@ class oiksc_parse_status {
 	/** 
 	 * Set the component ID
 	 *
+	 * We need to reset everything here.
+	 *
 	 * @param ID $component_id post ID of the plugin/theme
 	 */ 
 	public function set_component( $component_id ) {
+		echo "Component ID: $component_id" . PHP_EOL;
+		$this->reset();
 		$this->component_id = $component_id;
 	}
 	

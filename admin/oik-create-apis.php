@@ -21,7 +21,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	//$previous = null;
 	//$start = null;
 	
-	$component = bw_array_get( $_SERVER['argv'], 1, "allow-reinstalls" );
+	$component = bw_array_get( $_SERVER['argv'], 1, null );
 	
 	// We'll attempt to find previous and start from the parse_status field for this component
 	// but this COULD be used to override the logic
@@ -35,19 +35,52 @@ function oiksc_lazy_run_oik_shortcodes() {
 	
 	ini_set('memory_limit','2048M');
 	
-	//bw_trace2( $_SERVER, "_SERVER" );  
-	$components = bw_as_array( $component );
+	//bw_trace2( $_SERVER, "_SERVER" ); 
+	if ( $component ) { 
+		$components = bw_as_array( $component );
+	} else {
+		$components = array();
+		$components = oiksc_load_all_components( $components );
+	}
 	
 	oiksc_preloader();
 	
 	oiksc_preload_content(); 
 	
-	//foreach ( $components as $component ) {
+	foreach ( $components as $component ) {
 		_ca_doaplugin_local( $component, $previous, $start );
-	//} 
-		
-		
+	} 
 }
+
+/**
+ * Load all components 
+ *
+ * Load all the components that are defined and return an array of their plugin/theme slugs
+ *
+ * We assume:
+ * - all of these components are available as Git repositories. 
+ * - ... we could check the GitHub repo field but at the end of the day we want to support ALL the components anyway
+ * - that the Git repo status is up to date
+ * - that the version we're running locally is in line with the Git repo.
+ * 
+ * We load plugins and themes separately, processing plugins first
+ * 
+ * 
+ * 
+ */
+function oiksc_load_all_components( $components) {
+	oik_require( "includes/bw_posts.inc" );
+	$atts = array( "post_type" => "oik-plugins"
+							 , "numberposts" => -1
+							 );
+	$posts = bw_get_posts( $atts );
+	foreach ( $posts as $post ) {
+		$component = get_post_meta( $post->ID, "_oikp_slug", true );
+		$components[] = $component;
+	}
+	print_r( $components );
+	return( $components ); 
+}							
 
 /**  
  * Create the APIs for a component
