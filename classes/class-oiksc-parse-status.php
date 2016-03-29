@@ -203,7 +203,8 @@ class oiksc_parse_status {
 	}
 	
 	public function get_to_sha() {
-		return( $this->to_sha );
+		$to_sha = current( explode( ' ', $this->to_sha ) );
+		return( $to_sha );
 	}
 	
 	public function set_to_sha( $to_sha ) {
