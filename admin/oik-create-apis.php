@@ -149,7 +149,8 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 		} else {
 			//echo "Missing --plugin= parameter" . PHP_EOL;
 			echo "Cannot determine component type for: $component" . PHP_EOL;
-			gob();
+			echo "Perhaps the component is not available." . PHP_EOL;
+			bw_trace2( $component, "Missing component", true, BW_TRACE_WARNING );
 		}
 	}	
 }
