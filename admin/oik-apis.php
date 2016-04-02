@@ -794,7 +794,8 @@ function oiksc_do_files( $files, $plugin, $component_type, $callback, $start=1 )
 			
 				switch ( $component_type ) {
 					case "wordpress" :
-						$rfile = ABSPATH . $file;
+						//$rfile = ABSPATH . $file;
+						$rfile = $file;
 						break;
 					case "plugin":
 						//echo $file;
