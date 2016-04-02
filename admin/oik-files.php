@@ -127,15 +127,16 @@ function oiksc_listfile_create_dummy_function( $contents_arr, $component_type ) 
  * @param string $file - the name of the file
  * @param string $component_type
  * @param ID $file_id - the ID of the file post
+ * @param string $component_slug - plugin or theme slug
  * @param bool $force - true if we need to rebuild
  * @return string - parsed source or null 
  */
-function oiksc_display_oik_file( $file, $component_type, $file_id, $force=false ) {
+function oiksc_display_oik_file( $file, $component_type, $file_id, $component_slug, $force=false ) {
    oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
   if ( $file_id && !$force ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     //$parsed_source = bw_get_parsed_source_by_sourceref( $file_id );
-    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id );
+    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id, $component_slug );
   } else {
     $parsed_source = null;
   }
@@ -144,9 +145,9 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $force=false 
     oikai_navi_parsed_source( $parsed_source->post_content );
   } else { 
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-    $apis = oiksc_list_file_functions2( $file, $component_type );
+    $apis = oiksc_list_file_functions2( $file, $component_type, $component_slug );
     //var_dump( $apis );
-    $contents_arr = oiksc_load_file( $file, $component_type );
+    $contents_arr = oiksc_load_file( $file, $component_type, $component_slug );
     $contents_arr = oiksc_listfile_strip_apis( $contents_arr, $apis );
     $contents = oiksc_listfile_create_dummy_function( $contents_arr, $component_type );
   
@@ -185,7 +186,8 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $force=false 
      */
     $content = bw_ret();
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
-    bw_update_parsed_source( $file_id, $content, $file );
+		$real_file = oiksc_real_file( $file, $component_type, $component_slug );
+    bw_update_parsed_source( $file_id, $content, $real_file );
     
     oikai_save_callees( $file_id );
     oiksc_save_hooks( $file_id );
@@ -423,18 +425,19 @@ function oiksc_file_should_have_parent( $file, $current_parent ) {
  * @param string $file 
  * @param string $component_type
  * @param ID $file_id
- * @param book $force 
+ * @param string $plugin_slug
+ * @param bool $force 
  */ 
-function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $force=false ) {
+function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $plugin, $force=false ) {
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-	$real_file = oiksc_real_file( $file, $component_type );
+	$real_file = oiksc_real_file( $file, $component_type, $plugin );
 	if ( file_exists( $real_file ) ) {
 		if ( is_dir( $real_file ) ) {
 			//p( "This is a folder" );
 			oik_require( "shortcodes/oik-tree.php" );
 			e( bw_tree( array( "post_parent" => $file_id ) ) );
 		} else {
-			oiksc_display_oik_file( $file, $component_type, $file_id, $force );
+			oiksc_display_oik_file( $file, $component_type, $file_id, $plugin, $force );
 			if ( $file_id ) {
 				oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
 				oikai_list_callers_callees( $file_id );

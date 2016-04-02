@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2016
 /**
  * Functions to dynamically "load" methods and functions from source files that are not already loaded
  * 
@@ -11,14 +11,13 @@ oik_require( "classes/class-oiksc-token-object.php", "oik-shortcodes" );
  
 /**
  * Return the token at $index if it's of type $type
+ * 
+ * This doesn't include code to return the literal values
  *
  * @param array $tokens - array of tokens from token_get_all()
  * @param integer $index - the index to the $tokens array
  * @param constant $type - constant token type required
  * @return $token - the token or null
- *
- * This doesn't include code to return the literal values
- *
  */
 function _oiksc_get_token_object( $tokens, $index, $type=null ) {
   $token = null;
@@ -63,45 +62,54 @@ function _oiksc_get_endline( $tokens, $t ) {
 /**
  * Return the "real file" name
  *
- * **?** This is a pretty hideous piece of code 
- * sometimes it gets passed a full file name
- * and other times it doesn't
+ * **?** This is a pretty hideous piece of code; 
+ * sometimes it gets passed a full file name and other times it doesn't.
+ * @TODO Remove this comment when we've confirmed that we always pass a file name
+ * and when the other logic using global variable has been completely resolved.
+ *
+ * It's not safe to work with the file if it exists in the current directory.
+ * It may be the wrong file! e.g. admin/oik-activation.php
  * 
  * @param $file - file name 
  * @param $component_type_p - the component type - "plugin"|"theme"| ?
  */ 
-function oiksc_real_file( $file=null, $component_type_p=null ) {
+function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) {
   global $plugin, $filename, $component_type ;
   if ( $file ) {
     $filename = $file;
   }
-  if ( file_exists( $filename ) ) {
-    $real_file = $filename;  
-  } else {
+  if ( false !== strpos( $filename, ":" ) ) {
+		gob();
+	}
+  //  $real_file = $filename;  
+	//	echo "Real file is: $filename" . PHP_EOL;
+	//	echo getcwd() . PHP_EOL;
+  //} else {
     if ( $component_type_p ) {
       $component_type = $component_type_p;
     }
-    //echo "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" . PHP_EOL;   
-    if ( $plugin ) {
-      if ( $plugin == "wordpress" ) {
+    //echo "Plugin: $component_slug ! Filename: $filename! Component_type: $component_type!" . PHP_EOL;   
+    if ( $component_slug ) {
+      if ( $component_slug == "wordpress" ) {
         $real_file = ABSPATH . $filename; 
       } else {
         if ( $component_type == "plugin" ) {
           if ( defined( 'OIK_BATCH_DIR' ) ) { 
-            $real_file = OIK_BATCH_DIR . '/' . $plugin . '/' . $filename;
+            $real_file = OIK_BATCH_DIR . '/' . $component_slug . '/' . $filename;
           } else { 
-            $real_file = WP_PLUGIN_DIR . '/' . $plugin . '/' . $filename;
+            $real_file = WP_PLUGIN_DIR . '/' . $component_slug . '/' . $filename;
           }
         } else {
-          $real_file = get_theme_root() . '/' . $plugin . '/' . $filename; 
+          $real_file = get_theme_root() . '/' . $component_slug . '/' . $filename; 
         }  
       }
     } else { 
       $real_file = ABSPATH . $filename;
+			gob();
     } 
-  }
-  //bw_trace2( $real_file, "Plugin: $plugin! Filename: $filename! Component_type: $component_type!" );
-  //bw_backtrace();
+  //}
+  bw_trace2( $real_file, "Plugin: $component_slug! Filename: $filename! Component_type: $component_type!", BW_TRACE_DEBUG );
+  bw_backtrace( BW_TRACE_VERBOSE );
   return( $real_file );
 }
 
@@ -114,8 +122,8 @@ function oiksc_real_file( $file=null, $component_type_p=null ) {
  * @param string $component_type_p - "plugin"|"theme"| ?
  * @return array - the file contents
  */
-function oiksc_load_file( $file=null, $component_type_p=null ) { 
-  $real_file = oiksc_real_file( $file, $component_type_p );
+function oiksc_load_file( $file=null, $component_type_p=null, $component_slug ) { 
+  $real_file = oiksc_real_file( $file, $component_type_p, $component_slug );
   $contents_arr = file( $real_file );
   return( $contents_arr );
 }
@@ -144,9 +152,10 @@ function oiksc_load_file( $file=null, $component_type_p=null ) {
  * The values vary depending on PHP version, so we have to use the constant names. e.g. T_STRING, T_OBJECT_OPERATOR, T_FUNCTION, T_CLASS
  *
  */
-function oiksc_list_file_functions2( $file, $component_type ) {
-  // echo "Loading: $file, $component_type" . PHP_EOL;
-  $contents_arr = oiksc_load_file( $file, $component_type );
+function oiksc_list_file_functions2( $file, $component_type, $component_slug ) {
+	bw_backtrace();
+  echo "Loading: $file, $component_type, $component_slug" . PHP_EOL;
+  $contents_arr = oiksc_load_file( $file, $component_type, $component_slug );
   if ( $contents_arr ) {
     $contents = implode( $contents_arr );
     /**

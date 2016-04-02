@@ -71,7 +71,8 @@ class oiksc_parsed_source {
    } 
    $this->post = $po_post;
    return( $this );
- } 
+ }
+  
 }
 
 /**
@@ -103,10 +104,10 @@ function bw_get_parse_count( $parsed_source ) {
  * @param string $component_type - "plugin" | "theme" 
  * @return string - file's timestamp - file modification time
  */
-function bw_get_file_time( $file, $component_type ) {
+function bw_get_file_time( $file, $component_type, $plugin ) {
   //bw_backtrace();
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-  $real_file = oiksc_real_file( $file, $component_type );
+  $real_file = oiksc_real_file( $file, $component_type, $plugin );
   $filemtime = filemtime( $real_file );
   return( $filemtime );
 }
@@ -129,7 +130,7 @@ function bw_get_file_time( $file, $component_type ) {
  * @return post - the parsed source post object or null
  * 
  */
-function bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id ) {
+function bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id, $component_slug) {
   // bw_trace2();
   $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
   if ( $parsed_source ) {
@@ -137,7 +138,7 @@ function bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post
     if ( $parse_count <= 1 ) {
       $parsed_source = null;
     } else {
-      $file_time = bw_get_file_time( $file, $component_type );
+      $file_time = bw_get_file_time( $file, $component_type, $component_slug );
       if ( $parse_count < $file_time ) {
         $parsed_source = null;
       }

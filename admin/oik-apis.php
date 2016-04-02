@@ -117,15 +117,17 @@ function _oiksc_get_apis( $file=null, $reload=false ) {
  * 
  * @param string $file - file name
  * @param bool $reload - causes the static $apis array to be rebuilt
+ * @param string $component_type - plugin | theme
+ * @param string $component_slug - the plugin / theme name
  * @return array - array of oiksc_token_objects
  */
-function _oiksc_get_apis2( $file=null, $reload=false, $component_type ) {
+function _oiksc_get_apis2( $file=null, $reload=false, $component_type, $component_slug ) {
   static $apis = null;
   if ( !$apis || $reload ) {
     if ( $file ) {
       //oik_require( "admin/oik-apis.php", "oik-shortcodes" );
       oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-      $apis = oiksc_list_file_functions2( $file, $component_type );
+      $apis = oiksc_list_file_functions2( $file, $component_type, $component_slug );
     } else {
       $apis = array();
     }
@@ -626,8 +628,9 @@ function oikai_save_callees( $post_id ) {
  * @param string $file - plugin source file name
  * @return array $functions - array of implemented function names 
  */
-function oiksc_list_file_functions( $file ) {
-  $real_file = WP_PLUGIN_DIR . '/' . $file;
+function oiksc_list_file_functions( $file, $component_type, $component_slug ) {
+	$real_file = oiksc_real_file( $file, $component_type, $component_slug );
+  //$real_file = WP_PLUGIN_DIR . '/' . $file;
   $content = file_get_contents( $real_file );
   bw_trace2( $content, "content", true, BW_TRACE_VERBOSE );
   $tokens = token_get_all( $content );

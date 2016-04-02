@@ -349,30 +349,33 @@ function oik_pathw( $sourcefile, $plugin, $component_type= "plugin" ) {
  *
  * @param string $funcname - the function or method name
  * @param string $sourcefile - relative filename
- * @param string $plugin - the plugin slug
+ * @param string $component_slug - the plugin or theme slug
  * @param string $classname - the classname, if applicable
  * @return refFunc object or null
  */   
-function oikai_load_and_reflect( $funcname, $sourcefile, $plugin, $classname ) {
+function oikai_load_and_reflect( $funcname, $sourcefile, $component_slug, $classname ) {
+	global $filename, $plugin, $component_type;
   $refFunc = null;    
   bw_trace2( null, null, true, BW_TRACE_DEBUG );
 	bw_backtrace();
   if ( $sourcefile ) { 
     // oik_require( $sourcefile, $plugin );
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-    $component_type = oiksc_query_component_type( $plugin );
-    $filename = oik_pathw( $sourcefile, $plugin, $component_type );
+    $component_type = oiksc_query_component_type( $component_slug );
+    $filename = oik_pathw( $sourcefile, $component_slug, $component_type );
     if ( file_exists( $filename ) ) {
       //require_once( $filename );
       //$file = file_get_contents( $filename );
       //p( "TBC" );
       
       oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-      $functions = oiksc_list_file_functions2( $filename, $component_type );
+      $functions = oiksc_list_file_functions2( $sourcefile, $component_type, $component_slug );
       //bw_trace2( $functions, "functions" );
       $function = oiksc_find_function( $functions, $funcname, $classname );
       //bw_trace2( $function );
       if ( $function ) {
+				$filename = $sourcefile;
+				$plugin = $component_slug;
         $refFunc = $function->load_and_reflect();
       }
     } else {
@@ -1046,7 +1049,7 @@ function oikai_reflect_parameters( $refFunc, $docblock ) {
 function oikai_load_from_file( $fileName, $refFunc ) {
  
   $file = file( $fileName );
-  bw_trace2( $file, null, false, BW_TRACE_DEBUG );
+  bw_trace2( $file, null, true, BW_TRACE_DEBUG );
   $start = $refFunc->getStartLine();
   $sources = array();
   $end = $refFunc->getEndLine();
@@ -1115,7 +1118,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
   if ( $post_id && $paged !== false ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
-    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id );
+    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id, $plugin_slug );
 		$saved_post = bw_global_post( $parsed_source );
 		if ( $parsed_source ) {
 			$parsed_source_id = $parsed_source->ID;
@@ -1124,7 +1127,8 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
     $parsed_source = null;
   }
   
-  if ( !$parsed_source ) {  
+  if ( !$parsed_source ) { 
+		$fileName = oiksc_real_file( $fileName, $component_type, $plugin_slug ); 
     $sources = oikai_load_from_file( $fileName, $refFunc );
     if ( $paged === false ) {
       oikai_set_time_limit();
@@ -1140,7 +1144,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
       global $plugin;
       $plugin = $plugin_slug;
       // e( "flarg: $fileName" );
-      $parsed_source_id = bw_update_parsed_source( $post_id, $parsed_source, oiksc_real_file( $fileName, $component_type) );   //   $files[$file]
+      $parsed_source_id = bw_update_parsed_source( $post_id, $parsed_source, $fileName );   //   $files[$file]
     } else { 
       // We only handle a subset!
       // $parsed_source = null;

@@ -21,22 +21,21 @@ function oiksc_lazy_run_oik_shortcodes() {
 	//$previous = null;
 	//$start = null;
 	
-	$component = bw_array_get( $_SERVER['argv'], 1, null );
 	
 	// We'll attempt to find previous and start from the parse_status field for this component
 	// but this COULD be used to override the logic
-	$previous = bw_array_get( $_SERVER['argv'], 2, null );
-	$start = bw_array_get( $_SERVER['argv'], 3, 1 );
 	
+	$component = oik_batch_query_value_from_argv( 1, null );
+	$previous = oik_batch_query_value_from_argv( 2, null );
+	$start = oik_batch_query_value_from_argv( 3, 1 );
 	
 	$met = ini_get( 'max_execution_time' );
 	echo "Max execution time is: $met" . PHP_EOL;
-	
-	
 	ini_set('memory_limit','2048M');
 	
-	//bw_trace2( $_SERVER, "_SERVER" ); 
-	if ( $component ) { 
+	//bw_trace2( $_SERVER, "_SERVER" );
+	// @TODO Cater for a start index for the components, to allow for restarting where we left off from the complete list of components 
+	if ( $component ) {
 		$components = bw_as_array( $component );
 	} else {
 		$components = array();
@@ -64,8 +63,10 @@ function oiksc_lazy_run_oik_shortcodes() {
  * - that the version we're running locally is in line with the Git repo.
  * 
  * We load plugins and themes separately, processing plugins first
+ * @TODO Add logic for themes
+ * @TODO Cater for plugins we don't want to document but which are defined as plugins
  * 
- * 
+ * @param array $components 
  * 
  */
 function oiksc_load_all_components( $components) {
@@ -205,8 +206,7 @@ function _lf_dofile_local( $file, $plugin, $component_type ) {
     if ( $plugin == "wordpress" ) {
       $file = strip_directory_path( ABSPATH, $file );
     } else {
-      echo $file . PHP_EOL;
-        
+      //echo $file . PHP_EOL;
     }
     echo "Processing file: $plugin,$file" . PHP_EOL;
     $response = oikb_get_response( "Continue to process file?" );
@@ -243,7 +243,7 @@ function _ca_doapis_local( $file, $plugin_p, $component_type ) {
   echo "Processing valid: $plugin $file $component_type" . PHP_EOL;
 	
 	
-  $apis = _oiksc_get_apis2( $file, true, $component_type );
+  $apis = _oiksc_get_apis2( $file, true, $component_type, $plugin_p );
 	
   $file = strip_directory_path( ABSPATH, $file );
   foreach ( $apis as $api ) {
@@ -334,14 +334,18 @@ function oiksc_pre_load_component( $plugin, $component_type, $force=false ) {
  *
  * Create or update an "oik_file" post AND parse all the classes, methods and APIs implemented, including the main file,
  * using logic similar to createapi2.php
+ *
+ * @param string $plugin_slug
+ * @param string $file relative file name 
+ * @param string $component_type
  * 
  */
-function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
+function oiksc_local_oiksc_create_file( $plugin_slug, $file, $component_type ) {
   global $plugin_post;
-	echo "Processing: $file, $plugin, $component_type " . PHP_EOL;
+	echo "Processing: $file, $plugin_slug, $component_type " . PHP_EOL;
 	
-  if ( is_null( $plugin )) {
-    $plugin = 'wordpress';
+  if ( is_null( $plugin_slug )) {
+    $plugin_slug = 'wordpress';
     //$file = ABSPATH . $file;
     //$file = str_replace( "\\", "/", $file );
     bw_trace2( $file, "file" );
@@ -352,10 +356,13 @@ function oiksc_local_oiksc_create_file( $plugin, $file, $component_type ) {
 	}
   // $plugin_post = oikp_load_plugin( $plugin );
   $file_id = _oikai_create_file( $plugin_post->ID, $file ); 
-  $filename = oik_pathw( $file, $plugin, $component_type );
-  $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, true );
+  //$filename = oik_pathw( $file, $plugin, $component_type );
+	$filename = $file;
+	global $plugin;
+	$plugin = $plugin_slug;
+  $parsed_source = oiksc_display_oik_file( $filename, $component_type, $file_id, $plugin_slug, true );
 	echo PHP_EOL;
-	oiksc_yoastseo( $file_id, $file, $plugin, "file" );
+	oiksc_yoastseo( $file_id, $file, $plugin_slug, "file" );
 	oiksc_reset_globals();
 }
 

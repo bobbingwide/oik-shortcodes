@@ -32,8 +32,12 @@ function oikai_get_current_post_filename() {
         }
         if ( $plugin ) {
           oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-          $filename = oik_pathw( $file, $plugin, $component_type );
-        }
+          //$filename = oik_pathw( $file, $plugin, $component_type );
+					$filename = array( $file, $component_type, $plugin );
+        }	else {
+					echo "eh? $plugin_id, $component_type, $file" . PHP_EOL;
+					gob();
+				}
       } else {
         bw_trace2( $plugin_id, "Unable to determine plugin slug from ID" );
       }
@@ -43,9 +47,9 @@ function oikai_get_current_post_filename() {
   } else {
     bw_trace2( $post_id, "Global post id not set" );
   }
-  if ( $filename ) {
-    $filename = array( $filename, $component_type );
-  } 
+  //if ( $filename ) {
+  //} 
+	//print_r( $filename );
   return( $filename );
 }
 
@@ -67,10 +71,11 @@ function oikai_fileref( $atts=null, $content=null, $tag=null ) {
 	$full_file = bw_array_get( $atts, "1", null );
 	oik_require( "admin/oik-files.php", "oik-shortcodes" );
 	if ( !$file ) {
-		list( $file, $component_type ) = oikai_get_current_post_filename();
+		list( $file, $component_type, $plugin ) = oikai_get_current_post_filename();
+		echo "$file, $component_type, $plugin" . PHP_EOL;
 		$file_id = bw_global_post_id(); 
 		if ( $file ) {
-			oiksc_display_oik_file_or_folder( $file, $component_type, $file_id );
+			oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $plugin );
 		} else {
 			bw_trace2( $file, "Unable to determine file to display" );
 		}
