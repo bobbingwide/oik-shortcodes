@@ -70,6 +70,17 @@ function oiksc_lazy_run_oik_shortcodes() {
  * 
  */
 function oiksc_load_all_components( $components) {
+	$components = oiksc_load_all_plugins( $components );
+	$components = oiksc_load_all_themes( $components );
+	print_r( $components );
+	return( $components );
+}
+
+/**
+ * Return the registered oik-plugins
+ *
+ */
+function oiksc_load_all_plugins( $components ) {
 	oik_require( "includes/bw_posts.inc" );
 	$atts = array( "post_type" => "oik-plugins"
 							 , "numberposts" => -1
@@ -79,7 +90,24 @@ function oiksc_load_all_components( $components) {
 		$component = get_post_meta( $post->ID, "_oikp_slug", true );
 		$components[] = $component;
 	}
-	print_r( $components );
+	return( $components ); 
+}
+
+	
+/**
+ * Return the registered oik-themes
+ *
+ */
+function oiksc_load_all_themes( $components ) {
+	oik_require( "includes/bw_posts.inc" );
+	$atts = array( "post_type" => "oik-themes"
+							 , "numberposts" => -1
+							 );
+	$posts = bw_get_posts( $atts );
+	foreach ( $posts as $post ) {
+		$component = get_post_meta( $post->ID, "_oikth_slug", true );
+		$components[] = $component;
+	}
 	return( $components ); 
 }							
 
