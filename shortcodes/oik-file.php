@@ -72,7 +72,7 @@ function oikai_fileref( $atts=null, $content=null, $tag=null ) {
 	oik_require( "admin/oik-files.php", "oik-shortcodes" );
 	if ( !$file ) {
 		list( $file, $component_type, $plugin ) = oikai_get_current_post_filename();
-		echo "$file, $component_type, $plugin" . PHP_EOL;
+		//echo "$file, $component_type, $plugin" . PHP_EOL;
 		$file_id = bw_global_post_id(); 
 		if ( $file ) {
 			oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $plugin );
