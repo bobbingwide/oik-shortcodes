@@ -70,8 +70,9 @@ function _oiksc_get_endline( $tokens, $t ) {
  * It's not safe to work with the file if it exists in the current directory.
  * It may be the wrong file! e.g. admin/oik-activation.php
  * 
- * @param $file - file name 
- * @param $component_type_p - the component type - "plugin"|"theme"| ?
+ * @param string $file - file name - nowadays we don't expect it to be fully qualified 
+ * @param string $component_type_p - the component type - "plugin"|"theme"| ?
+ * @param string $component_slug - the plugin or theme slug - may be "wordpress"
  */ 
 function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) {
   global $plugin, $filename, $component_type ;
@@ -153,8 +154,8 @@ function oiksc_load_file( $file=null, $component_type_p=null, $component_slug ) 
  *
  */
 function oiksc_list_file_functions2( $file, $component_type, $component_slug ) {
-	bw_backtrace();
-  echo "Loading: $file, $component_type, $component_slug" . PHP_EOL;
+	bw_backtrace( BW_TRACE_DEBUG );
+  //echo "Loading: $file, $component_type, $component_slug" . PHP_EOL;
   $contents_arr = oiksc_load_file( $file, $component_type, $component_slug );
   if ( $contents_arr ) {
     $contents = implode( $contents_arr );
