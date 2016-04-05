@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2013-2015
+<?php // (C) Copyright Bobbing Wide 2013-2016
 /**
  * Code originally imported from phpDocumentor
  *
@@ -308,10 +308,10 @@ class DocBlock //implements \Reflector
             //if ($tag->getName() != $name) {
             //    continue;
             // }
-            echo $name . $tag . PHP_EOL;
+            //echo $name . $tag . PHP_EOL;
             $pos = strpos( $tag, "@$name " );
-            echo "strpos:$pos!" . PHP_EOL;
-            print_r( $pos );
+            //echo "strpos:$pos!" . PHP_EOL;
+            //print_r( $pos );
             if ( $pos !== false ) {
               $result[] = substr( $tag, strlen( "@$name " ));
             }
