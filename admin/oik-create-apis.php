@@ -43,6 +43,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	}
 	
 	oiksc_preloader();
+	oiksc_reassign_hooks();
 	
 	oiksc_preload_content(); 
 	
@@ -481,5 +482,26 @@ function oiksc_reset_globals() {
 	global $oikai_callee;
 	$oikai_callee = null;
 	
+}
+
+/**
+ * Reassign hooks 
+ * 
+ * Everything is being programmatically generated
+ * so we don't have to worry about certain hooks which may be run zillions of times, effectively doing nothing except wasting time.
+ * Here we remove actions and filters that aren't necessary
+  
+: 0   bw_trace_attached_hooks;9 bw_trace_backtrace;9
+: 10   convert_invalid_entities;1 wp_filter_post_kses;1
+: 50   balanceTags;1
+
+ * Note: remove_action() calls remove_filter() so you can use either to get the same result.
+
+ */
+
+function oiksc_reassign_hooks() {
+	remove_filter( 'content_save_pre', 'convert_invalid_entities', 10 );
+	remove_filter( 'content_save_pre', 'wp_filter_post_kses', 10 );
+	remove_filter( 'content_save_pre', 'balanceTags', 50 );
 }
 
