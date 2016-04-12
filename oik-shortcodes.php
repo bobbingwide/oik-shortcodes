@@ -62,6 +62,7 @@ function oik_shortcodes_init() {
 	
 	add_filter( "request", "oiksc_request" );
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
+	add_action( "run_oik-create-codes.php", "oiksc_run_oik_create_codes" );
 	add_action( "genesis_404", "oiksc_genesis_404" );
 }
 
@@ -1352,4 +1353,14 @@ function oiksc_run_oik_shortcodes() {
 function oiksc_genesis_404() {
 	$oiksc_404_handler = oiksc_404_handler::instance();
 	$oiksc_404_handler->attach_post_type_handler();
+}
+
+
+/**
+ * Run oik-create-codes in batch
+ *
+ */
+function oiksc_run_oik_create_codes() {
+	oik_require( "admin/oik-create-codes.php", "oik-shortcodes" );
+	//oiksc_lazy_run_oik_shortcodes();
 }
