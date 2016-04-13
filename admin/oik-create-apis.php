@@ -2,10 +2,13 @@
 
 /**
  * Lazy implementation of "run_oik-shortcodes.php" 
- * to perform createapi2.php against the local database
+ *
+ * Perform createapi2.php against the local database
  * 
  * Uses _local versions of the functions from oik-batch/creatapi2.php
- * 
+ *
+ * @TODO libs/oik-git.php should be loaded as a library
+  
  *
  */
 function oiksc_lazy_run_oik_shortcodes() {
@@ -15,6 +18,7 @@ function oiksc_lazy_run_oik_shortcodes() {
   oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 	oik_require( "oik-ignore-list.php", "oik-batch" );
 	oik_require( "oik-login.inc", "oik-batch" );
+	oik_require( "libs/oik-git.php", "oik-batch" );
 	
 
   //$component = "allow-reinstalls";
