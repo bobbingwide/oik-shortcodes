@@ -161,7 +161,7 @@ class oiksc_token_object {
       $parameters = $this->refFunc->getParameters();
     } else {
       $parameters = null;
-      bw_backtrace();
+      //bw_backtrace();
     }
       
     return( $parameters );
@@ -225,7 +225,7 @@ class oiksc_token_object {
 	 */
 	function getMethod() {
 		$methodname = $this->methodname;
-		bw_trace2( $methodname, "methodname" );
+		//bw_trace2( $methodname, "methodname" );
 		if ( empty( $methodname ) ) {
 			//gob();
 		}

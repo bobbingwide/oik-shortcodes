@@ -357,7 +357,7 @@ function oikai_load_and_reflect( $funcname, $sourcefile, $component_slug, $class
 	global $filename, $plugin, $component_type;
   $refFunc = null;    
   bw_trace2( null, null, true, BW_TRACE_DEBUG );
-	bw_backtrace();
+	//bw_backtrace();
   if ( $sourcefile ) { 
     // oik_require( $sourcefile, $plugin );
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
@@ -1343,7 +1343,7 @@ function oikai_concoct_hook_name2( $tokens ) {
       }  
     }
   }  
-  bw_trace2( $hook_name, "hook_name", false );
+  bw_trace2( $hook_name, "hook_name", false, BW_TRACE_DEBUG );
   //br( "hook_name $hook_name" );
   return( $hook_name );  
 } 
@@ -1372,10 +1372,10 @@ function oikai_concoct_api_name2( $tokens ) {
       }  
     }
   }  
-  bw_trace2( $api_name, "api_name", false );
+  bw_trace2( $api_name, "api_name", false, BW_TRACE_DEBUG );
   
   $api_name = ltrim( $api_name, ":" );
-  bw_trace2( $api_name, "API_name" );
+  bw_trace2( $api_name, "API_name", false, BW_TRACE_VERBOSE );
   return( $api_name );  
 } 
 
@@ -1626,7 +1626,7 @@ function oikai_dummy_TCES( $key, $value=null, $tokens=null ) {
     $dummy_TCES = array();
   }  
   bw_context( "dummy_TCES", $dummy_TCES );
-  bw_trace2( $dummy_TCES, "dummy_TCES", false );
+  bw_trace2( $dummy_TCES, "dummy_TCES", false, BW_TRACE_DEBUG );
 }
 
 /**
@@ -1684,7 +1684,7 @@ function oikai_handle_token_T_STRING_VARNAME( $key, $token, &$tokens ) {
  */ 
 function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) {
   //gobang();
-  bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_VERBOSE );
   if ( is_array( $token ) ) {
     $value = $token[1];
   } else { 
@@ -1864,7 +1864,7 @@ function oikai_handle_token_T_FUNC_C( $key, $token, &$tokens ) {
   // What's the current function name? 
   $func = bw_context( "func" );
   //e( $func );
-  bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   oikai_handle_token_T_STRING( $key, $func, $tokens );
 }
 
@@ -1936,7 +1936,7 @@ function oikai_concoct_api_name( $value ) {
   $class = bw_context( "classname" );
   $literal = bw_context( "literal" );
   
-  bw_trace2( "$operator,$variable,$class,$literal,$value,", "o,v,c,l,v"  );
+  bw_trace2( "$operator,$variable,$class,$literal,$value,", "o,v,c,l,v", true, BW_TRACE_DEBUG );
   
   if ( $variable && $operator ) {
     //bw_trace2( $class, "class" );
@@ -1950,7 +1950,7 @@ function oikai_concoct_api_name( $value ) {
     $api_name = $value;
   }
   $api_name = ltrim( $api_name, ":" );
-  bw_trace2( $api_name, "API_name" );
+  bw_trace2( $api_name, "API_name", false, BW_TRACE_DEBUG );
   return ( $api_name );
 }
               
@@ -2023,7 +2023,7 @@ function oikai_handle_char_comma( $key, $char, &$tokens ) {
   $hook = bw_context( "hook" );
   $add_ = bw_context( "add_" );
   $operator = bw_context( "operator" );
-  bw_trace2( $operator, "operator");
+  bw_trace2( $operator, "operator", true, BW_TRACE_DEBUG );
   if ( $operator == "array" ) {
     // wait until we get to a ')' before we actually do something
     
@@ -2302,7 +2302,7 @@ function oikai_get_oik_class_byname( $class ) {
   $atts['meta_value'] = $class;
   $posts = bw_get_posts( $atts ); 
   $post = bw_array_get( $posts, 0, null );
-  bw_trace2( $post, "oik_class?" );
+  bw_trace2( $post, "oik_class?", true, BW_TRACE_VERBOSE );
   return( $post );
 }
  
@@ -2354,7 +2354,7 @@ function oikai_oik_class_post_title( $class ) {
  */
 function oikai_oik_class_parent( $class, $plugin, $file ) {
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-  bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $parent_id = 0;
   oik_require( "admin/oik-apis.php", "oik-shortcodes" );
   
@@ -2366,7 +2366,7 @@ function oikai_oik_class_parent( $class, $plugin, $file ) {
     $functions = oiksc_list_file_functions2( $filename, $component_type );
     $class_obj = oiksc_find_function( $functions, null, $class );
     $parent_class = $class_obj->extended;
-    bw_trace2( $parent_class, "parent_class" );
+    bw_trace2( $parent_class, "parent_class", false, BW_TRACE_DEBUG );
     if ( $parent_class ) {
       $parent_class_obj = oiksc_find_function( $functions, null, $parent_class );
       if ( $parent_class_obj ) {
@@ -2376,7 +2376,7 @@ function oikai_oik_class_parent( $class, $plugin, $file ) {
       }
     }
   } else {
-    bw_trace2( $filename, "File does not exist" );
+    bw_trace2( $filename, "File does not exist", true, BW_TRACE_ERROR );
   }  
   return( $parent_id );
 }
@@ -2408,7 +2408,7 @@ function oikai_create_oik_class( $class, $plugin, $file ) {
   oik_require( "admin/oik-files.php", "oik-shortcodes" );
   $_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
   $post_id = wp_insert_post( $post, TRUE );
-  bw_trace2( $post_id );
+  bw_trace2( $post_id, "post_id", true, BW_TRACE_DEBUG );
   return( $post_id );
 }
 
@@ -2556,7 +2556,7 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
     if ( !$funcname ) {
       oik_require( "includes/bw_posts.inc" ); 
       $post_id = bw_global_post_id(); 
-      bw_trace2( $post_id ); 
+      bw_trace2( $post_id, "post_id", true, BW_TRACE_VERBOSE ); 
       $sourcefile = get_post_meta( $post_id, "_oik_api_source", true );
       if ( $sourcefile ) {
         $plugin_id = get_post_meta( $post_id, "_oik_api_plugin", true );

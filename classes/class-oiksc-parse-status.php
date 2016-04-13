@@ -88,13 +88,14 @@ class oiksc_parse_status {
 	/**
 	 * Fetch the parse status 
 	 *
-	 * For each component we store the parse status
-	 * We use this for checkpoint restarting
-	 * 
+	 * For each component we store the parse status.
+	 * We use this for checkpoint restarting.
+	 *
+	 * @TODO Improve on the print_r() 
 	 */
 	public function fetch_status() {
 		$parse_status = get_post_meta( $this->component_id, "_oiksc_parse_status", true );
-		bw_trace2( $parse_status, "parse_status" );
+		bw_trace2( $parse_status, "parse_status", false, BW_TRACE_DEBUG );
 		if ( $parse_status ) {
 			//$this->parse_status = unserialize( $parse_status );
 			$this->parse_status = $parse_status;
@@ -180,7 +181,6 @@ class oiksc_parse_status {
 	public function set_of_n( $of_n ) {
 		$this->of_n = $of_n;
 	}
-	 
 	
 	/** 
 	 * Set the component ID

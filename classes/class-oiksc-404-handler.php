@@ -59,7 +59,7 @@ class oiksc_404_handler {
 		if ( $post_type ) {
 			$this->post_type_object = get_post_type_object( $post_type );
 		}
-		bw_trace2( $this->post_type_object, "post_type_object", false);
+		bw_trace2( $this->post_type_object, "post_type_object", false, BW_TRACE_DEBUG );
 		return( $this->post_type_object );
 	}
 	
@@ -80,6 +80,8 @@ class oiksc_404_handler {
 	
 	/**
 	 * Get the name specified
+	 *
+	 * @return string $name
 	 */
 	function get_name() { 
 		$name = bw_array_get( $this->query->query, "name", null );
@@ -185,12 +187,9 @@ class oiksc_404_handler {
 			$text = "We couldn't find exactly what you were looking for. Perhaps it's in this list." ;
 			unset( $atts['meta_key'] );
 			$text .= bw_navi( $atts ); 
-								
 		}
-								
 		return( $text );
 	}
-	
 	
 	/**
 	 * oik_api 404 handler
@@ -227,7 +226,6 @@ class oiksc_404_handler {
 		$text = $this->perform_queries( $atts );						
 		return( $text );
 	}
-	
 	
 	/** 
 	 * Find potential matches to the query
@@ -270,13 +268,13 @@ class oiksc_404_handler {
 	}
 	
 	/**
+	 * Alternative 'like' API - tbc
 	 * 
-	 * 
-	 * $name   | e.g. |           Processing 
-	 * ------- | --------------- | ----------
-	 * x%nny   | Happy%20Easter | Happy
+	 * $name         | e.g.            | Processing 
+	 * -------       | --------------- | ----------
+	 * x%nny         | Happy%20Easter  | Happy
 	 * class::method | WP_query::posts | List all the methods for the class
-	 * class:: | WP_Query:: |  
+	 * class::       | WP_Query::      |  
 	 */
 	function another_like_api( $atts=null ) {
 	
@@ -287,32 +285,22 @@ class oiksc_404_handler {
 		$type = oikai_determine_reference_type( $name );
 		switch ( $type ) {
 			case 'class':
-			
 				$atts['post_type'] = "oik_class";
 				$atts['meta_key'] = "_oik_class_name";
 				$atts['meta_value'] = $this->another_like();
-				 
-			
 				break;
 				
 			case 'method':
-			
-			
 				break;
-				
 			
 			case 'function':
 				break;
 			
 			case 'internal':
-				
 				break;
 			
 			default:
 				break;
-			
-			
-			
 			
 		}
 		return( $atts );
@@ -320,6 +308,9 @@ class oiksc_404_handler {
 
 	/**
 	 * Run the queries and display results
+	 *
+	 * @param array $atts
+	 * @return string Generated HTML
 	 */
 	function perform_queries( $atts ) {
 		oik_require( "includes/bw_posts.inc" );
@@ -332,7 +323,6 @@ class oiksc_404_handler {
 			$text = "We couldn't find exactly what you were looking for. Perhaps it's in this list." ;
 			unset( $atts['meta_key'] );
 			$text .= bw_navi( $atts ); 
-								
 		}
 		return( $text );
 	}

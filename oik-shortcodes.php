@@ -312,7 +312,7 @@ function oik_register_oik_shortcode_example() {
  *
  */
 function oiksc_api_types() {
-	bw_backtrace();
+	//bw_backtrace();
 	if ( oik_require_lib( "bobbfunc" ) ) {
 		static $types = array( "shortcode"
                 , "filter"
@@ -337,8 +337,7 @@ function oiksc_api_types() {
  * @return array - currently only contains "action" and "filter"
  */
 function oiksc_hook_types() {
-
-	bw_backtrace();
+	//bw_backtrace();
 	//var_dump( debug_backtrace() );
   $types = bw_assoc( bw_as_array( "action,filter" ));
   return( $types );
@@ -1285,9 +1284,8 @@ function oiksc_request( $request ) {
  *
  * @param array $classes {@see OIK_Autoload::}
  */
-
 function oiksc_oik_query_autoload_classes( $classes ) {
-	bw_trace2();
+	bw_trace2( null, null, true, BW_TRACE_VERBOSE );
 	$classes[] = array( "class" => "oiksc_link_map"
 										, "plugin" => "oik-shortcodes"
 										, "path" => "classes" 

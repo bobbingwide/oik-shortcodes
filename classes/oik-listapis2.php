@@ -109,7 +109,7 @@ function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) 
 			gob();
     } 
   //}
-  bw_trace2( $real_file, "Plugin: $component_slug! Filename: $filename! Component_type: $component_type!", BW_TRACE_DEBUG );
+  bw_trace2( $real_file, "Plugin: $component_slug! Filename: $filename! Component_type: $component_type!", false, BW_TRACE_DEBUG );
   bw_backtrace( BW_TRACE_VERBOSE );
   return( $real_file );
 }

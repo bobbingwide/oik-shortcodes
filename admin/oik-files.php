@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014 - 2016
+<?php // (C) Copyright Bobbing Wide 2014-2016
 
 /**
  * Strip all the classes, methods and APIs from the file
@@ -47,7 +47,6 @@ function oiksc_contents_strip( $contents_arr, $start, $end ) {
  * OR obtain the start information from the docblock_token. 
  * 
  */
- 
 function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
   bw_trace2( null, null, true, BW_TRACE_DEBUG );
   $docblock = $api->docblock;
@@ -72,7 +71,7 @@ function oiksc_contents_strip_docblock( $contents_arr, $start, $end, $api ) {
  */
 function oiksc_contents_link( $contents_arr, $api ) {
 	//print_r( $api );
-	bw_trace2();
+	bw_trace2( null, null, true, BW_TRACE_DEBUG );
 	$post_id = null;
 	$index = $api->getStartLine();
 	$line = "/*";
@@ -264,7 +263,7 @@ function oiksc_get_oik_file_byname( $plugin, $file ) {
   $atts['meta_query'] = $meta_query;
   $posts = bw_get_posts( $atts );
   $post = bw_array_get( $posts, 0, null );
-  bw_trace2( $post, "oik_file?" );
+  bw_trace2( $post, "oik_file?", true, BW_TRACE_VERBOSE );
   return( $post );
 }
 
@@ -309,7 +308,7 @@ function oiksc_oik_file_post_title( $file ) {
  * @return ID - the post ID of the newly created oik_api record
  */
 function oiksc_create_oik_file( $plugin, $file, $parent ) {
-  bw_backtrace();
+  //bw_backtrace();
   $post_title = oiksc_oik_file_post_title( $file );
   $post = array( 'post_type' => 'oik_file'
                , 'post_title' => $post_title
@@ -330,7 +329,7 @@ function oiksc_create_oik_file( $plugin, $file, $parent ) {
      _oik_api_hooks
   */
   $post_id = wp_insert_post( $post, TRUE );
-  bw_trace2( $post_id );
+  bw_trace2( $post_id, "post_id", true, BW_TRACE_DEBUG );
   return( $post_id );
 }
 
@@ -350,7 +349,7 @@ function oiksc_update_oik_file( $post, $plugin, $file ) {
   /* Set metadata fields */
   $_POST['_oik_file_name'] = $file;
   $_POST['_oik_api_plugin'] = $plugin;
-  bw_trace2();
+  bw_trace2( null, null, true, BW_TRACE_DEBUG );
   //$_POST['_oik_file_passes'] = ; // Apply this update separately
   wp_update_post( $post );
 }

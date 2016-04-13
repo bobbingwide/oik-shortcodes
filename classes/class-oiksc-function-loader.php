@@ -21,7 +21,7 @@ class oiksc_function_loader {
    * @return object oiksc_function_loader instance
    */
   function __construct( $function ) {
-		bw_backtrace();
+		//bw_backtrace();
     global $plugin, $filename;
     $this->plugin = $plugin;
     $this->filename = $filename;
@@ -32,7 +32,7 @@ class oiksc_function_loader {
     ///$this->component_type = $component_type;
     $this->component_type = null;
     $this->extract_to_tmp();
-		bw_trace2( $this, "this" );
+		//bw_trace2( $this, "this" );
     $this->require_tmp();
     //return( $this );
   }

@@ -89,7 +89,7 @@ class oiksc_api_cache {
 	function load_posts( $function ) {
 		$posts = $this->get_oik_api_byname( $function );
 		//$this->map_posts( $posts, true );
-		bw_trace2( $posts, "posts" );
+		bw_trace2( $posts, "posts", true, BW_TRACE_VERBOSE );
 		$this->preload_api_calls( $posts[0] );
 	}
 	
@@ -102,8 +102,8 @@ class oiksc_api_cache {
 	 *
 	 */
 	function get_oik_api_byname( $function ) {
-	bw_trace2();
-	bw_backtrace();
+		//	bw_trace2();
+		//bw_backtrace();
 		$this->post_type = "oik_api"; 
 		$this->meta_key = "_oik_api_name";
 		$this->meta_value = $function;
@@ -130,17 +130,18 @@ class oiksc_api_cache {
 			$posts = null;
 			
 		}
-		bw_trace2( $posts, $this->meta_value, false );
+		bw_trace2( $posts, $this->meta_value, false, BW_TRACE_DEBUG );
 		return( $posts );
 	}
 	
 	/**
 	 * Map an array of posts into the meta_values
 	 * 
-	 * 
+	 * @param array $post_ids
+	 * @param bool $preload 
 	 */
 	function map_posts( $post_ids, $preload=false ) {
-		bw_trace2();
+		bw_trace2( null, null, true, BW_TRACE_VERBOSE );
 		if ( count( $post_ids ) ) {
 			foreach ( $post_ids as $post_id ) {
 				//echo "Mapping $post_id" . PHP_EOL;
