@@ -1305,7 +1305,12 @@ function oiksc_oik_query_autoload_classes( $classes ) {
 										, "plugin" => "oik-shortcodes"
 										, "path" => "classes"
 										, "file" => "classes/class-oiksc-parse-status.php"
-										);																			
+										); 
+	$classes[] = array( "class" => "oiksc_parsed_source"
+										, "plugin" => "oik-shortcodes"
+										, "path" => "classes"
+										//, "file" => "classes/class-oiksc-parsed-source.php"
+										);																												
 	return( $classes );								
 }
 

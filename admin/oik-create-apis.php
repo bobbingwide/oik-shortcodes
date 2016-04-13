@@ -474,18 +474,16 @@ function oiksc_yoastseo( $id, $name, $plugin, $type='API', $desc=null ) {
  * Unset all values in $_POST, ready for the next request
  */
 function oiksc_reset_globals() {
-	bw_trace2( $_POST, "_POST", false );
+	bw_trace2( $_POST, "_POST", false, BW_TRACE_VERBOSE );
 	unset( $_POST );
   global $oikai_hook;
 	//var_dump( $oikai_hook );
 	$oikai_hook = null;
 	//var_dump( $oikai_hook );
-	
 	global $oikai_association;
 	$oikai_association = null;
 	global $oikai_callee;
 	$oikai_callee = null;
-	
 }
 
 /**
@@ -502,7 +500,6 @@ function oiksc_reset_globals() {
  * Note: remove_action() calls remove_filter() so you can use either to get the same result.
 
  */
-
 function oiksc_reassign_hooks() {
 	remove_filter( 'content_save_pre', 'convert_invalid_entities', 10 );
 	remove_filter( 'content_save_pre', 'wp_filter_post_kses', 10 );

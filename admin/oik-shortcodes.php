@@ -1,9 +1,13 @@
 <?php // (C) Copyright Bobbing Wide 2012-2016
 
-// Admin functions for oik_shortcodes
-// We will provide an entry field to allow us to generate known shortcodes that have the appropriate filters
-// 
-
+/**
+ * Admin functions for oik_shortcodes
+ * 
+ * Provides admin pages to allow us to generate known shortcodes that have the appropriate filters
+ * and we can also generate/re-generate API definitions.
+ *
+ * But the batch method is expected to be much much easier in the long run.
+ */ 
 
 /**
  * Define oik-shortcodes settings and page
@@ -154,7 +158,7 @@ function oiksc_relative_filename( $fullname, $plugin=true ) {
   $parts = explode( '/', $file );
   array_shift( $parts );
   $file = implode( '/', $parts );
-  bw_trace2( $file, "relative filename" );
+  bw_trace2( $file, "relative filename", true, BW_TRACE_VERBOSE );
   return( $file );
 }  
 
@@ -222,10 +226,8 @@ function oiksc_create_oik_sc_param( $sc_post_id, $code, $param, $skv ) {
   $_POST['_sc_param_default'] = bw_array_get( $skv, "default", null );
   $_POST['_sc_param_values'] = bw_array_get( $skv, "values", null );
   $_POST['_sc_param_notes'] = bw_array_get( $skv, "notes", null );
-  
   $param_post_id = wp_insert_post( $post, TRUE );
- 
-  bw_trace2( $param_post_id );
+  bw_trace2( $param_post_id, "param_post_id", true, BW_TRACE_VERBOSE );
   return( $param_post_id );
 }
 
@@ -235,6 +237,9 @@ function oiksc_create_oik_sc_param( $sc_post_id, $code, $param, $skv ) {
  * with input coming from the shortcode__syntax
  * or the input fields 
  *
+ * @param string $plugin
+ * @param string $code
+ * @param ID $post_id
  */
 function _oiksc_create_params( $plugin, $code, $post_id ) {
   $syntax = array();
@@ -248,10 +253,10 @@ function _oiksc_create_params( $plugin, $code, $post_id ) {
       $syntax[ $name ] = bw_skv( $default, $values, $notes );
     }  
   }
-  bw_trace2( $syntax );
+  bw_trace2( $syntax, "syntax", true, BW_TRACE_DEBUG );
   oik_require( "includes/oik-sc-help.inc" );
   $syntax_code = _bw_lazy_sc_syntax( $code );
-  bw_trace2( $syntax_code );
+  bw_trace2( $syntax_code, "syntax_code", false, BW_TRACE_VERBOSE );
   
   // Once again... there's no need to merge them - just treat each array separately
   _oiksc_create_param( $syntax, $plugin, $code, $post_id ); 
@@ -308,10 +313,8 @@ function oiksc_create_oik_shortcode( $plugin, $code, $help, $func ) {
   $_POST['_oik_sc_plugin'] = $plugin;
   $_POST['_oik_sc_code'] = $code; 
   $_POST['_oik_sc_func'] = $func; 
-  
   $post_id = wp_insert_post( $post, TRUE );
- 
-  bw_trace2( $post_id );
+  bw_trace2( $post_id, "post_id", true, BW_TRACE_DEBUG );
   return( $post_id );
 }
 
@@ -371,7 +374,6 @@ function oiksc_oik_api_post_title( $func, $type, $title ) {
   $post_title = stripslashes( $post_title );
   return( $post_title );
 } 
-
   
 /** 
  * Set the post_title for an oik_hook
@@ -433,7 +435,7 @@ function oiksc_create_oik_api( $plugin, $func, $file, $type, $title=null ) {
      _oik_api_deprecated_cb
   */
   $post_id = wp_insert_post( $post, TRUE );
-  bw_trace2( $post_id );
+  bw_trace2( $post_id, "post_id", true, BW_TRACE_DEBUG );
   return( $post_id );
 }
 
@@ -469,7 +471,9 @@ function oiksc_get_docblock() {
 }
 
 /**
- * Return the post_ID for the plugin name 
+ * Return the post_ID for the plugin name
+ *
+ * @return ID post ID for the plugin 
  */
 function oiksc_get_plugin() {
   //$plugin = bw_array_get( $_REQUEST, "plugin", null );
@@ -479,23 +483,28 @@ function oiksc_get_plugin() {
   } else {
     $plugin = null;
   }
-  bw_trace2( $plugin );
+  bw_trace2( $plugin, "plugin ID", false, BW_TRACE_VERBOSE );
   //bw_backtrace();
   return( $plugin );
 }
 
 /**
  * Return the filename
+ *
+ * @return string filename
  */   
 function oiksc_get_filename() {
   $filename = bw_array_get( $_REQUEST, "file", null );
-  bw_trace2( $filename );
+  bw_trace2( $filename, "filename", false, BW_TRACE_VERBOSE );
   //bw_backtrace();
   return( $filename );
 }
 
 /**
  * Programmatically create an oik_hook record
+ *
+ * @TODO We need to improve the docblock stuff and
+ * record multiple places where a hook is invoked.
  *
  * Note: We don't allow comments on oik_hook posts
  * 
@@ -528,7 +537,7 @@ function oiksc_create_oik_hook( $hook, $context ) {
   $_POST['_oik_hook_docblock'] = $docblock;
   //$_POST['_oik_hook_deprecated_cb'] = false;
   $post_id = wp_insert_post( $post, TRUE );
-  bw_trace2( $post_id );
+  bw_trace2( $post_id );	// Leave like this until the TODO is done 
   return( $post_id );
 }
 
@@ -630,7 +639,7 @@ function oiksc_get_sc_param( $code, $name, $sc_post_id ) {
 function _oiksc_create_shortcode( $plugin, $code, $help, $func ) {
   p( "Creating shortcode $code - $help" );
   $post = oiksc_get_shortcode_byname( $plugin, $code );
-  bw_trace2( $post, "post" );
+  bw_trace2( $post, "post", true, BW_TRACE_VERBOSE );
   if ( !$post ) {
     $post_id = oiksc_create_oik_shortcode( $plugin, $code, $help, $func );     
   } else {
@@ -712,7 +721,7 @@ function oiksc_get_oik_api_byname( $function ) {
   $atts['meta_value'] = $function;
   $posts = bw_get_posts( $atts ); 
   $post = bw_array_get( $posts, 0, null );
-  bw_trace2( $post, "oik_api?" );
+  bw_trace2( $post, "oik_api?", true, BW_TRACE_VERBOSE );
   return( $post );
 }
 
@@ -731,7 +740,7 @@ function oiksc_get_oik_hook_byname( $hook ) {
   $atts['meta_value'] = $hook;
   $posts = bw_get_posts( $atts ); 
   $post = bw_array_get( $posts, 0, null );
-  bw_trace2( $post, "oik_hook?" );
+  bw_trace2( $post, "oik_hook?", true, BW_TRACE_VERBOSE );
   return( $post );
 }
 
@@ -753,13 +762,17 @@ function oiksc_get_shortcodes_byname( $oik_shortcode, $func=null ) {
   $meta_query[] = array( "key" => "_oik_sc_code", "value" => $oik_shortcode ); 
   $atts['meta_query'] = $meta_query;
   $posts = bw_get_posts( $atts );
-  bw_trace2( $posts );
+  bw_trace2( $posts, "posts", true, BW_TRACE_VERBOSE );
   return( $posts );
 }
 
 /**
  * Redirect to the page for the shortcode
+ * 
  * If we have the function we can look up the func ID and pass that in _oik_sc_func
+ *
+ * @param string $oik_shortcode the required shortcode
+ * @param string $function the implementing function ( or method )
  */
 function oiksc_lazy_redirect( $oik_shortcode, $function=null ) {
   $api = oiksc_get_oik_api_byname( $function );

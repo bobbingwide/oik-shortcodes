@@ -156,9 +156,14 @@ class oiksc_api_cache {
 		}	
 	}
 	
+	/**
+	 * Preload the callees for this post
+	 *
+	 * @param ID $post_id
+	 */
 	function preload_api_calls( $post_id ) {
 		$post_ids = get_post_meta( $post_id, "_oik_api_calls", false );
-		bw_trace2( $post_ids, "_oik_api_calls" );
+		bw_trace2( $post_ids, "_oik_api_calls", true, BW_TRACE_DEBUG );
 		if ( $post_ids ) {
 			$this->map_posts( $post_ids );
 		}
@@ -166,6 +171,10 @@ class oiksc_api_cache {
 	
 	/**
 	 * Map a post
+	 * 
+	 * Note: $this meta_key and meta_value must have already been set
+	 * 
+	 * @param ID $post_id the post to be mapped
 	 */
 	function map( $post_id ) {
 		$this->meta_values[ $this->meta_key ][ $this->meta_value ] = array( $post_id );
@@ -193,12 +202,13 @@ class oiksc_api_cache {
 	/**
 	 * fetch all posts for the given meta_key
 	 * 
-	 
+	 	`
     [0] => stdClass Object
         (
             [post_id] => 4958
             [meta_value] => bw_oik_long
         )
+		`		
 	 */ 																
 	function fetch_all( $meta_key ) {
 		global $wpdb;
