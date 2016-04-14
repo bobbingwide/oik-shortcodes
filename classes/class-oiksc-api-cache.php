@@ -147,7 +147,7 @@ class oiksc_api_cache {
 				//echo "Mapping $post_id" . PHP_EOL;
 				$this->meta_key = "_oik_api_name";
 				$this->meta_value = get_post_meta( $post_id, $this->meta_key , true );
-				bw_trace2( $this->meta_value );
+				bw_trace2( $this->meta_value, "meta_value", false, BW_TRACE_VERBOSE );
 				$this->map( $post_id );
 				if ( $preload ) { 
 					$this->preload_api_calls( $post_id );

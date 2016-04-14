@@ -563,9 +563,11 @@ function oik_register_parsed_source() {
   
   bw_register_field( "_oik_sourceref", "noderef", "Source ref", array( "#type" => array( "oik_api", "oik_file", "oik_class" ) ) );
   bw_register_field( "_oik_parse_count", "timestamp", "Parse count / Source file date" );
+	bw_register_field( "_oik_md5_hash", "text", "MD5 hash" );
    
   bw_register_field_for_object_type( "_oik_sourceref", $post_type );
   bw_register_field_for_object_type( "_oik_parse_count", $post_type );
+  bw_register_field_for_object_type( "_oik_md5_hash", $post_type );
   
   if ( function_exists( "oikp_columns_and_titles" ) ) {
     oikp_columns_and_titles( $post_type );

@@ -1110,15 +1110,18 @@ function oikai_set_time_limit( $limit=120 ) {
  * 
  */
 function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
+	bw_trace2( $refFunc->methodname, $plugin_slug, false ); 
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
 	$saved_post = null;
 	$parsed_source_id = null;
+  oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+	$oiksc_parsed_source = oiksc_parsed_source::instance();
+  $parsed_source = $oiksc_parsed_source->get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id, $plugin_slug );
   
   if ( $post_id && $paged !== false ) {
-    oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+		
     // $parsed_source = bw_get_parsed_source_by_sourceref( $post_id );
-    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $fileName, $component_type, $post_id, $plugin_slug );
 		$saved_post = bw_global_post( $parsed_source );
 		if ( $parsed_source ) {
 			$parsed_source_id = $parsed_source->ID;
@@ -1130,7 +1133,8 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
   if ( !$parsed_source ) { 
 		$fileName = oiksc_real_file( $fileName, $component_type, $plugin_slug ); 
     $sources = oikai_load_from_file( $fileName, $refFunc );
-    if ( $paged === false ) {
+		$parsing_necessary = $oiksc_parsed_source->is_parsing_necessary( $sources );
+    if ( $paged === false && $parsing_necessary ) {
       oikai_set_time_limit();
       bw_push();
       oikai_syntax_source( $sources, 1 );
@@ -1144,7 +1148,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
       global $plugin;
       $plugin = $plugin_slug;
       // e( "flarg: $fileName" );
-      $parsed_source_id = bw_update_parsed_source( $post_id, $parsed_source, $fileName );   //   $files[$file]
+      $parsed_source_id = $oiksc_parsed_source->update_parsed_source( $post_id, $parsed_source, $fileName );   //   $files[$file]
     } else { 
       // We only handle a subset!
       // $parsed_source = null;
@@ -2450,28 +2454,30 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * @param bool $echo true if we actually want the source to be listed
  */
 function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id, $echo=true ) {
-  $func = oikai_get_func( $funcname, $classname );
-  bw_context( "func", $func );
-  $class = oikai_get_class( $funcname, $classname );
-  bw_context( "classname", $class );
-  // p( "Class: $class" );
-  $refFunc = oikai_pseudo_reflect( $func, $sourcefile, $plugin_slug, $class );
-  if ( $refFunc ) {
-    $docblock = oikai_reflect_docblock( $refFunc );
-    oikai_reflect_descriptions( $docblock );
-    oikai_reflect_usage( $refFunc, $docblock, $funcname );
-    oikai_reflect_parameters( $refFunc, $docblock );
-    oikai_print_return( $refFunc, $docblock );
-    oikai_print_todos( $refFunc, $docblock );
-    oikai_reflect_filename( $refFunc, $sourcefile, $plugin_slug );
-    // bw_flush();
-    //bw_push();
-    oik_require( "admin/oik-apis.php", "oik-shortcodes" );
-    $component_type = oiksc_query_component_type( $plugin_slug );
-    $source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo ); 
-  } else { 
-    p( "No API information available for: " . $funcname );
-  }  
+	$func = oikai_get_func( $funcname, $classname );
+	bw_context( "func", $func );
+	$class = oikai_get_class( $funcname, $classname );
+	bw_context( "classname", $class );
+	// p( "Class: $class" );
+	$refFunc = oikai_pseudo_reflect( $func, $sourcefile, $plugin_slug, $class );
+	if ( $refFunc ) {
+		if ( $echo ) {
+			$docblock = oikai_reflect_docblock( $refFunc );
+			oikai_reflect_descriptions( $docblock );
+			oikai_reflect_usage( $refFunc, $docblock, $funcname );
+			oikai_reflect_parameters( $refFunc, $docblock );
+			oikai_print_return( $refFunc, $docblock );
+			oikai_print_todos( $refFunc, $docblock );
+			oikai_reflect_filename( $refFunc, $sourcefile, $plugin_slug );
+			// bw_flush();
+			//bw_push();
+		}
+		oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+		$component_type = oiksc_query_component_type( $plugin_slug );
+		$source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo ); 
+	} else { 
+		p( "No API information available for: " . $funcname );
+	}  
 }
 
 /**

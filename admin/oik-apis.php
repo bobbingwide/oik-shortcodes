@@ -463,9 +463,10 @@ function oiksc_handle_association_differences( $previous, $current, $force=false
  * @param string $file
  * @param string $type
  * @param string $title
+ * @param bool $echo true for the front end, false in batch
  * @return ID 
  */
-function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
+function _oiksc_create_api( $plugin, $api, $file, $type, $title=null, $echo=true ) {
   p( "Creating API: $api file: $file" );
 	
   oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
@@ -494,11 +495,12 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null ) {
   
   bw_context( "paged", false );
   
-  oiksc_build_callees( $api, $file, $plugin, $post_id );
-  oikai_save_callees( $post_id );
-  
-  oiksc_save_hooks( $post_id );
-  oiksc_save_associations( $post_id );
+  oiksc_build_callees( $api, $file, $plugin, $post_id, $echo );
+	if ( $echo ) {
+		oikai_save_callees( $post_id );
+		oiksc_save_hooks( $post_id );
+		oiksc_save_associations( $post_id );
+	}
   return( $post_id );
 }
 
