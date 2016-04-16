@@ -1,5 +1,9 @@
 <?php // (C) Copyright Bobbing Wide 2016
 
+if ( PHP_SAPI !== "cli" ) { 
+	die();
+}
+
 /**
  * Lazy implementation of "run_oik-shortcodes.php" 
  *
@@ -274,31 +278,58 @@ function _ca_doapis_local( $file, $plugin_p, $component_type ) {
   global $plugin;
   $plugin = $plugin_p;
   echo "Processing valid: $plugin $file $component_type" . PHP_EOL;
-	
-	
   $apis = _oiksc_get_apis2( $file, true, $component_type, $plugin_p );
-	
   $file = strip_directory_path( ABSPATH, $file );
   foreach ( $apis as $api ) {
-		
 		$apiname = $api->getApiName();
-		
 		echo "Processing API: $apiname, $file, $plugin, $component_type " . PHP_EOL;
-		oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api );
+		$needs_processing = _ca_does_api_need_processing( $api, $file, $component_type, $plugin );
+		if ( $needs_processing ) {
+			oiksc_local_oiksc_create_api( $plugin, $file, $component_type, $api );
 			$discard = bw_ret();
-    /* $response = _ca_checkforselected_api( $apiname, $count );
-    if ( $response ) {
-      $response = oikb_get_response( "Continue to create API?" );
-    }  
-    if ( $response ) {
-		
-    } 
-		*/ 
-    
+		} else {
+			echo "Nothing to do for: $apiname" . PHP_EOL;
+		}	
   }
 }
 
- 
+/**
+ * Determine if this API needs processing
+ * 
+ * If the parsed source is the latest then no, it doesn't
+ * If the parsed source is not the latest then, we have to check if the API has changed since it was last parsed.
+ *
+ * @param object $api object
+ * @param string $file
+ * @param string $component_type
+ * @param string $plugin
+ * @return book true if it needs processing, false otherwise
+ */
+function _ca_does_api_need_processing( $api, $file, $component_type, $plugin ) {
+	$needs_processing = true;
+	$apiname = $api->getApiName();
+	$post_ids = oikai_get_oik_api_byname( $apiname );
+	if ( $post_ids ) {
+		$post_id = $post_ids[0];
+		oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
+		$oiksc_parsed_source = oiksc_parsed_source::instance();
+		$parsed_source = $oiksc_parsed_source->get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id, $plugin );
+		if ( $parsed_source ) {
+			$needs_processing = false;
+		} else {
+		
+			$fileName = oiksc_real_file( $file, $component_type, $plugin ); 
+			// Here we need refFunc
+			$refFunc = $api->load_and_reflect();
+			//print_r( $refFunc );
+			$sources = oikai_load_from_file( $fileName, $refFunc );
+			//print_r( $sources );
+			$needs_processing = $oiksc_parsed_source->is_parsing_necessary( $sources );
+		}
+	}
+	bw_trace2( $needs_processing, "Needs processing?", true, BW_TRACE_VERBOSE );
+	return( $needs_processing );	
+}
  
 /**
  * Check for the selected API
@@ -504,5 +535,9 @@ function oiksc_reassign_hooks() {
 	remove_filter( 'content_save_pre', 'convert_invalid_entities', 10 );
 	remove_filter( 'content_save_pre', 'wp_filter_post_kses', 10 );
 	remove_filter( 'content_save_pre', 'balanceTags', 50 );
+	remove_filter( "pre_get_posts", "oik_types_pre_get_posts", 10 );
+	remove_filter( "pre_get_posts", "oik_types_pre_get_posts_for_archive", 11 );
+	//remove_filter( "sanitize_title", "sanitize_title_with_dashes", 10 );
+	remove_filter( "pre_kses", "wp_pre_kses_less_than", 10 );
 }
 

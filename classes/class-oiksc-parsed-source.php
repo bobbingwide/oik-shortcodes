@@ -159,7 +159,7 @@ class oiksc_parsed_source {
 		$this->latest_md5_hash = $this->query_md5_hash( $source );
 		$stored = $this->get_md5_hash();
 		$parsing_is_necessary = ( $stored != $this->latest_md5_hash );
-		echo "{$this->latest_md5_hash} - $stored => $parsing_is_necessary" . PHP_EOL; 
+		//echo "{$this->latest_md5_hash} - $stored => $parsing_is_necessary" . PHP_EOL; 
 		return( $parsing_is_necessary );	
 	}
 	

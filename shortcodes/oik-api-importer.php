@@ -1047,8 +1047,14 @@ function oikai_reflect_parameters( $refFunc, $docblock ) {
  * @return array lines from the source file
  */ 
 function oikai_load_from_file( $fileName, $refFunc ) {
- 
-  $file = file( $fileName );
+	static $savedFileName = null;
+	static $savedFile = null;
+	if ( $savedFileName !== $fileName ) {
+		$savedFile = file( $fileName );
+		$savedFileName = $fileName;
+	} 
+	$file = $savedFile;
+ 	// $file = file( $fileName );
   bw_trace2( $file, null, true, BW_TRACE_DEBUG );
   $start = $refFunc->getStartLine();
   $sources = array();

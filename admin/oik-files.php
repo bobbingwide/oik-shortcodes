@@ -132,15 +132,21 @@ function oiksc_listfile_create_dummy_function( $contents_arr, $component_type ) 
  */
 function oiksc_display_oik_file( $file, $component_type, $file_id, $component_slug, $force=false ) {
    oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
-  if ( $file_id && !$force ) {
+	 bw_trace2();
+	 bw_backtrace();
+	 
+  if ( $file_id ) {
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
     //$parsed_source = bw_get_parsed_source_by_sourceref( $file_id );
-    $parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id, $component_slug );
+    //$parsed_source = bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id, $component_slug );
+		
+		$oiksc_parsed_source = oiksc_parsed_source::instance();
+		$parsed_source = $oiksc_parsed_source->get_latest_parsed_source_by_sourceref( $file, $component_type, $file_id, $component_slug );
   } else {
     $parsed_source = null;
   }
   
-  if ( $parsed_source ) {
+  if ( $parsed_source && !$force ) {
     oikai_navi_parsed_source( $parsed_source->post_content );
   } else { 
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
@@ -149,6 +155,8 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $component_sl
     $contents_arr = oiksc_load_file( $file, $component_type, $component_slug );
     $contents_arr = oiksc_listfile_strip_apis( $contents_arr, $apis );
     $contents = oiksc_listfile_create_dummy_function( $contents_arr, $component_type );
+		
+		$needs_processing = $oiksc_parsed_source->is_parsing_necessary( $contents );
   
     /**
      * And now we can parse the $tempfile object
@@ -186,7 +194,9 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $component_sl
     $content = bw_ret();
     oik_require( "classes/class-oiksc-parsed-source.php", "oik-shortcodes" );
 		$real_file = oiksc_real_file( $file, $component_type, $component_slug );
-    bw_update_parsed_source( $file_id, $content, $real_file );
+    //bw_update_parsed_source( $file_id, $content, $real_file );
+		
+    $parsed_source_id = $oiksc_parsed_source->update_parsed_source( $file_id, $content, $real_file );   //   $files[$file]
     
     oikai_save_callees( $file_id );
     oiksc_save_hooks( $file_id );

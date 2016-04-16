@@ -121,8 +121,14 @@ class oiksc_api_cache {
 		return( $posts );
 	}
 	
+	/**
+	 * Return the cached post IDs for this API
+	 *
+	 * @return array of post IDs 
+	 */
 	function get_cached() {
 		bw_trace2( $this->meta_values, "meta_values", false, BW_TRACE_VERBOSE );
+		//bw_backtrace();
 		if ( isset( $this->meta_values[ $this->meta_key][ $this->meta_value ] ) ) {
 			$posts = $this->meta_values[ $this->meta_key][ $this->meta_value ];
 			
