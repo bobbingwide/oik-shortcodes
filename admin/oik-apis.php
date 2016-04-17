@@ -613,7 +613,28 @@ function oikai_save_callees( $post_id ) {
   //if ( $oikai_callee[0] == $post_id ) {
   //  array_shift( $oikai_callee );
   //}
-  bw_update_post_meta( $post_id, "_oik_api_calls", $oikai_callee );
+	$oikai_mapped_callees = oikai_map_callees( $oikai_callee );
+  bw_update_post_meta( $post_id, "_oik_api_calls", $oikai_mapped_callees );
+}
+
+/**
+ * Map API names to post IDs
+ */
+function oikai_map_callees( $oikai_callee ) {
+	$mapped_callees = array();
+	if ( count( $oikai_callee ) ) {	
+		foreach ( $oikai_callee as $callee ) {
+			if ( is_numeric( $callee ) ) {
+				$mapped_callees[] = $callee;
+			} else {
+				$posts = oikai_get_oik_api_byname( $callee );
+				if ( $posts ) {
+					$mapped_callees[] = $posts[0];
+				} 
+			}
+		}	
+	}
+	return( $mapped_callees );		
 }
 
 /** 
