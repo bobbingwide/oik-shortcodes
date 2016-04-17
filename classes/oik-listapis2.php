@@ -105,8 +105,11 @@ function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) 
         }  
       }
     } else { 
+			// Yes, this can happen ( currently 2016/04/17 ) when dealing with WordPress core
       $real_file = ABSPATH . $filename;
-			gob();
+			//bw_trace2();
+			//bw_backtrace();
+			//gob();	
     } 
   //}
   bw_trace2( $real_file, "Plugin: $component_slug! Filename: $filename! Component_type: $component_type!", false, BW_TRACE_DEBUG );

@@ -1,7 +1,7 @@
 <?php // (C) Copyright Bobbing Wide 2016
 
 if ( PHP_SAPI !== "cli" ) { 
-	die();
+	die( "norty" );
 }
 
 /**
@@ -195,6 +195,7 @@ function build_hash( $post, $id, $sourceref ) {
 			break;
 		case 'oik_api':
 			echo "building hash for API: $sourceref";
+			$this->hash_oik_api( $post, $id, $sourceref, $source );
 			break;
 		case 'oik_class':
 			echo "building has for class: $sourceref";
@@ -224,6 +225,32 @@ function hash_oik_file( $post, $id, $sourceref, $source ) {
 	//$this->set_global_plugin_post( $component_id );
 	_lf_dofile_local( $filename, $component_slug, $component_type );
 }
+
+/**
+ * Rebuild the MD5 hash for an API
+ */
+function hash_oik_api( $post, $id, $sourceref, $source ) {
+	$fileref = get_post_meta( $sourceref, "_oik_fileref", true );
+	$filename = get_post_meta( $fileref, "_oik_file_name", true );
+	$apiname = get_post_meta( $sourceref, "_oik_api_name", true );
+	
+	$component_id = $this->get_component_id( $sourceref );
+	$component_type = $this->get_component_type( $component_id );
+	$component_slug = $this->get_component_slug( $component_id, $component_type );
+	$file = oiksc_real_file( $filename, $component_type, $component_slug ); 
+	echo "file: $file API: $apiname component: $component_slug type: $component_type" . PHP_EOL;
+	//$this->set_global_plugin_post( $component_id );
+	//_lf_dofile_local( $filename, $component_slug, $component_type );
+	$apis = _oiksc_get_apis2( $filename, true, $component_type, $component_slug );
+	foreach ( $apis as $api ) {
+		$current_apiname = $api->getApiName();
+		if ( $current_apiname === $apiname ) {
+			oiksc_local_oiksc_create_api( $component_slug, $filename, $component_type, $api );
+			$discard = bw_ret();
+		}
+	}
+}
+
 
 /**
  * Set the global plugin_post
