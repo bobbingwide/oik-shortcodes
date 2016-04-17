@@ -1,5 +1,9 @@
 <?php // (C) Copyright Bobbing Wide 2016
 
+if ( PHP_SAPI !== "cli" ) { 
+	die();
+}
+
 /**
  * Create oik-shortcodes entries programmatically in a batch process
  *
