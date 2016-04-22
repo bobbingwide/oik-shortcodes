@@ -438,6 +438,7 @@ function oiksc_file_should_have_parent( $file, $current_parent ) {
  * @param bool $force 
  */ 
 function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $plugin, $force=false ) {
+	oiksc_set_global_plugin_filename( $plugin, $file );
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
 	$real_file = oiksc_real_file( $file, $component_type, $plugin );
 	if ( file_exists( $real_file ) ) {
@@ -455,6 +456,20 @@ function oiksc_display_oik_file_or_folder( $file, $component_type, $file_id, $pl
 	} else {
 		p( "File: $file ( component type: $component_type ) does not exist" );
 	}
+}
+
+/**
+ * Set the global plugin and filename
+ * 
+ * @TODO Remove dependency on globals
+ * 
+ * @param string $component_name - Component name of the plugin or theme. May also be 'wordpress'
+ * @param string $file_name - File name - NOT fully qualified
+ */
+function oiksc_set_global_plugin_filename( $component_name, $file_name ) {
+  global $plugin, $filename;
+	$plugin = $component_name;
+	$file = $file_name;
 }
 
 /**
