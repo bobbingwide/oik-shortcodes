@@ -91,9 +91,6 @@ class md5_hasher {
 			}
 		}
 	}	
-	
-
-
 
 function load_parsed_source() {
 	$atts = array( "post_type" => "oik_parsed_source"
@@ -132,41 +129,6 @@ function load_components() {
 	return( $keyed_posts );
 }
 
-
-function load_all_post_meta() {
-	$meta_keys = array( "_oik_md5_hash", "_oik_parse_count", "_oik_sourceref" );
-	$meta_values = array();
-	foreach( $meta_keys as $meta_key ) { 
-		$meta_values[ $meta_key ] = $this->load_post_meta( $meta_key );
-	}
-	return( $meta_values );
-}
-
-function load_post_meta( $meta_key="_oik_md5_hash" ) {
-	global $wpdb;
-	$request = $wpdb->prepare( "select post_id, meta_value from $wpdb->postmeta where meta_key = '%s' order by post_id ASC", $meta_key );
-	echo $request;
-	$results = $wpdb->get_results( $request );
-	//print_r( $results );
-	$reduced = simplify_results( $results );
-	return( $reduced );
-}
-
-
-function simplify_results( $results ) {
-	$reduced = array();	
-	if ( count( $results ) ) {
-		foreach ( $results as $result ) {
-			$post_id = $result->post_id;
-			$meta_value = $result->meta_value;
-			$reduced[ $post_id ] = $meta_value;
-		}
-	}
-	echo count( $reduced );
-	echo PHP_EOL;	
-	return( $reduced );
-}
-
 function key_posts( $posts ) {
 	$key_posts = array();
 	foreach ( $posts as $post ) {
@@ -182,9 +144,7 @@ function key_posts( $posts ) {
  * @param ID $id
  * @param ID $sourceref
  * @param array $sourcerefs 
- 
  */
-
 function build_hash( $post, $id, $sourceref ) {
 	$source = bw_array_get( $this->sourcerefs, $sourceref, null );
 	$source_type = $source->post_type;
@@ -194,19 +154,17 @@ function build_hash( $post, $id, $sourceref ) {
 			$this->hash_oik_file( $post, $id, $sourceref, $source );
 			break;
 		case 'oik_api':
-			echo "building hash for API: $sourceref";
+			echo "building hash for API: $sourceref" . PHP_EOL;
 			$this->hash_oik_api( $post, $id, $sourceref, $source );
 			break;
 		case 'oik_class':
-			echo "building has for class: $sourceref";
+			echo "building hash for class: $sourceref" . PHP_EOL;
+			gob();
 			break;
 			
 		default:
 			gob();
-			
 	}
-
-
 }
 
 /**
@@ -221,15 +179,22 @@ function hash_oik_file( $post, $id, $sourceref, $source ) {
 	$component_type = $this->get_component_type( $component_id );
 	$component_slug = $this->get_component_slug( $component_id, $component_type );
 	$file = oiksc_real_file( $filename, $component_type, $component_slug ); 
-	echo "file $file" . PHP_EOL;
+	echo PHP_EOL;
+	echo "file: $file slug: $component_slug" . PHP_EOL;
 	//$this->set_global_plugin_post( $component_id );
 	_lf_dofile_local( $filename, $component_slug, $component_type );
 }
 
 /**
  * Rebuild the MD5 hash for an API
+ *
+ * @param object $post - the current parsed_source object
+ * @param ID $id the parsed_source post ID
+ * @param ID $sourceref - the original source post
+ * @param 
  */
 function hash_oik_api( $post, $id, $sourceref, $source ) {
+	global $filename;
 	$fileref = get_post_meta( $sourceref, "_oik_fileref", true );
 	$filename = get_post_meta( $fileref, "_oik_file_name", true );
 	$apiname = get_post_meta( $sourceref, "_oik_api_name", true );
@@ -237,6 +202,7 @@ function hash_oik_api( $post, $id, $sourceref, $source ) {
 	$component_id = $this->get_component_id( $sourceref );
 	$component_type = $this->get_component_type( $component_id );
 	$component_slug = $this->get_component_slug( $component_id, $component_type );
+	
 	$file = oiksc_real_file( $filename, $component_type, $component_slug ); 
 	echo "file: $file API: $apiname component: $component_slug type: $component_type" . PHP_EOL;
 	//$this->set_global_plugin_post( $component_id );
@@ -245,6 +211,7 @@ function hash_oik_api( $post, $id, $sourceref, $source ) {
 	foreach ( $apis as $api ) {
 		$current_apiname = $api->getApiName();
 		if ( $current_apiname === $apiname ) {
+			
 			oiksc_local_oiksc_create_api( $component_slug, $filename, $component_type, $api );
 			$discard = bw_ret();
 		}
@@ -270,13 +237,19 @@ function get_component_id( $sourceref ) {
 	return( $component_id );
 }
 
-
+/**
+ * Find the component slug
+ * 
+ * @TODO Remove need for global $plugin
+ */
 function get_component_slug( $component_id , $component_type ) {
 	if ( $component_type == "plugin" ) { 
 		$component_slug = get_post_meta( $component_id, "_oikp_slug", true );
 	} else {
 		$component_slug = get_post_meta( $component_id, "_oikth_slug", true );
 	}
+	global $plugin;
+	$plugin = $component_slug;
 	return( $component_slug );
 }
 
