@@ -1356,6 +1356,7 @@ function oiksc_run_oik_shortcodes() {
  * 
  */ 
 function oiksc_genesis_404() {
+	oiksc_autoload();
 	$oiksc_404_handler = oiksc_404_handler::instance();
 	$oiksc_404_handler->attach_post_type_handler();
 }
