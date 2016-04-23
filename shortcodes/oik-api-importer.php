@@ -651,9 +651,20 @@ function oikai_format_markdown_heading( $line ) {
 /**
  * Preprocess a line for subsequent formatting
  *
- * When the line appears to be a table line then prepend a pipe character followed by a space
+ * When the line appears to be a table line then prepend a pipe character followed by a space.
+ * 
+ * We also detect unordered lists created using 
+ *  * blank star blank
+ *  * like this
+ *
+ * And another way is to use 
+ *   two blanks
+ *   like this 
+ *   which may represent a simple list.
+ *
  * @TODO Allow for left, right and centred alignment
- * @TODO Allow for table lines like " | fred " - where there's an intentional blank in cell 1.
+ * @TODO Allow for table lines where there's an intentional blank in cell 1.
+ * @TODO Support nested lists
  * 
  * @param string $line - the line from the docblock
  * @return string - the preprocessed line
@@ -665,6 +676,16 @@ function oikai_format_preprocess_line( $line ) {
     $line = "| " . $line; 
     //e( "tr: $line" );
   }
+	
+	$pos = strpos( $line, " * " );
+	if ( $pos === 0 ) {
+		$line = trim( $line );
+	}
+	
+	$pos = strpos( $line, "  " );
+	if ( $pos === 0 ) {
+		$line = "* " .  trim( $line );
+	}
   return( $line );   
 
 }
@@ -909,19 +930,14 @@ function replace_at( $pos, $source, $replace, $line ) {
  * @param string $long_description
  */ 
 function oikai_format_description( $long_description ) {
-	//bw_trace2();
-  //stag( "pre" );
   $lines = explode( "\n", $long_description );
   bw_trace2( $lines, count( $lines ), false, BW_TRACE_DEBUG );
-  //sp();
   $backtick = false;
 	$curlybrace = false;
   $list = 0;
   $table = 0;
   foreach ( $lines as $line ) {
-  
     $line = oikai_format_preprocess_line( $line );
-    
     if ( strlen( $line ) ) {
       $char = $line[0];
     } else {
@@ -930,7 +946,6 @@ function oikai_format_description( $long_description ) {
     switch ( $char ) {
       case null: 
         e( "\n" );
-        
         $list = oikai_format_markdown_list( $list );
         $table = oikai_format_markdown_table( $table );
         break;
@@ -942,7 +957,6 @@ function oikai_format_description( $long_description ) {
         if ( $backtick ) {
           stag( "pre" );
         } else {
-        //gobang();
           etag( "pre" );
         }
       break;
@@ -974,7 +988,6 @@ function oikai_format_description( $long_description ) {
           etag( "li" );
         }  
         break;
-        
         
       case '|':
         $table = oikai_format_markdown_table_line( $table, $line );
