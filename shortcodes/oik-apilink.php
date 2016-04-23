@@ -145,12 +145,18 @@ function oikai_list_invokers( $post_id, $api_name ) {
  * 
  * Callees are the functions that this API calls directly.
  * 
+ * Note: This function does not cater for post meta data where the API name is stored rather than the post ID.
+ * We use admin/set_oik_api_calls.php to convert from the API name to post IDs
+ * Anything that's left over should be dealt with by a process to be created.
+ * 
+ * 
  * * 2014/11/11 Changed from using bw_navi_ids() to using bw_navi() since this allows us to list the posts sorted by title.
  * 
  * @param ID $post_id - of the API that's doing the calling
  */
 function oikai_list_callees( $post_id ) {
   $values = get_post_meta( $post_id, "_oik_api_calls" ); 
+	bw_trace2( $values, "values", true, BW_TRACE_VERBOSE );
   if ( $values ) {
     oik_require( "shortcodes/oik-navi.php" );
     // $atts['post_type'] = "oik_api"; 
