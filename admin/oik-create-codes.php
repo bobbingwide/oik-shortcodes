@@ -30,9 +30,9 @@ function oik_create_codes_loaded() {
 		// if we have the information then create the shortcode
 		
 		echo "$shortcode: $component" . PHP_EOL;
-		if ( $component == $required_component ) {
+		if ( $component == $required_component || $component == "oik-sc-help") {
 			oikb_get_response( "Continue?", true );
-			oik_create_codes_create_code( $shortcode, $component );
+			oik_create_codes_create_code( $shortcode, $required_component );
 		}	
 	}
 }
