@@ -747,14 +747,17 @@ function oiksc_template_redirect() {
  * Load the post for the selected plugin/theme
  * 
  * @param string $plugin - the plugin or theme slug
- * @param string $component_type - "plugin"|"slug"
+ * @param string $component_type - "plugin"|"theme"|"wordpress"
  */
 function oiksc_load_component( $plugin, $component_type ) {
   $plugin_post = null;
   switch ( $component_type ) {
     case "wordpress":
     case "plugin":
-      $plugin_post = oikp_load_plugin( $plugin );
+      if (!function_exists( "oikp_load_plugin" ) ) {
+				oik_require( "feed/oik-plugins-feed.php", "oik-plugins" );
+			}	
+			$plugin_post = oikp_load_plugin( $plugin );
       break;
       
     case "theme":
