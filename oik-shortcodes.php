@@ -149,7 +149,7 @@ function oik_register_oik_shortcodes() {
   add_post_type_support( $post_type, 'publicize' );
   
   bw_register_field( "_oik_sc_code", "text", "Shortcode" ); 
-  bw_register_field( "_oik_sc_plugin", "noderef", "Plugin ref", array( "#type" => "oik-plugins" )); 
+  bw_register_field( "_oik_sc_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes" ) ) ); 
   bw_register_field( "_oik_sc_func", "noderef", "API ref", array( "#type" => "oik_api" )); 
   bw_register_field( "_oik_sc_example_cb", "checkbox", "Generate the programmed example?", array( "#theme" => false ) ); 
   bw_register_field( "_oik_sc_live_cb", "checkbox", "Generate examples using Live data?", array( "#theme" => false ) );

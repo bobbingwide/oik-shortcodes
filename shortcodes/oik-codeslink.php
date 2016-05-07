@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2015
+<?php // (C) Copyright Bobbing Wide 2012-2016
 
 /** 
  * Automagically determine the shortcode list
@@ -8,6 +8,7 @@
  * ----------     -------------
  * oik_shortcode  n/a
  * oik-plugins    find ALL the shortcodes linked to the plugin through "_oik_sc_plugin"
+ * oik-themes     find ALL the shortcodes linked to the theme through "_oik_sc_plugin"
  * oik_api        find all the shortcodes linked to the API through "_oik_sc_func"
  * other          n/a
  * 
@@ -27,6 +28,11 @@ function oikai_listcodes( $atts ) {
       $atts['meta_value'] = $post->ID;
       e( bw_list( $atts ) );
     } elseif ( $post->post_type == "oik-plugins" ) {
+      $atts['post_type'] = "oik_shortcodes"; 
+      $atts['meta_key' ] = "_oik_sc_plugin";
+      $atts['meta_value'] = $post->ID;
+      e ( bw_list( $atts ) );
+    } elseif ( $post->post_type == "oik-themes" ) {
       $atts['post_type'] = "oik_shortcodes"; 
       $atts['meta_key' ] = "_oik_sc_plugin";
       $atts['meta_value'] = $post->ID;
