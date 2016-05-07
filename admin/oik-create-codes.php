@@ -23,6 +23,8 @@ oik_create_codes_loaded();
  */
 function oik_create_codes_loaded() {
 	$required_component = oik_batch_query_value_from_argv( 1, null );
+	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
+	$component_id = oiksc_get_component_by_name( $required_component );
 	do_action( "oik_add_shortcodes" );
 	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
 	$shortcodes = oik_create_codes_get_all_shortcodes();
@@ -32,7 +34,7 @@ function oik_create_codes_loaded() {
 		echo "$shortcode: $component" . PHP_EOL;
 		if ( $component == $required_component || $component == "oik-sc-help") {
 			oikb_get_response( "Continue?", true );
-			oik_create_codes_create_code( $shortcode, $required_component );
+			oik_create_codes_create_code( $shortcode, $component_id, $required_component );
 		}	
 	}
 }
@@ -127,14 +129,31 @@ function oiksc_get_component_name_from_file( $file ) {
  * This is run in batch - doing what front end did
  * 
  */ 
-function oik_create_codes_create_code( $shortcode, $component ) {
+function oik_create_codes_create_code( $shortcode, $component_id, $required_component ) {
 	$_REQUEST['_oiksc_create_shortcode'] = 'submit'; 
 	$_REQUEST['code'] = $shortcode;
-	$_REQUEST['plugin'] = $component;
-	echo "Creating $shortcode: $component" . PHP_EOL;
+	$_REQUEST['plugin'] = $component_id;
+	echo "Creating $shortcode: $required_component: $component_id" . PHP_EOL;
 	$ID = oiksc_create_shortcode();
 	bw_flush();
 }
+
+
+/**
+ * Return the component ID for the name
+ *
+ */
+function oiksc_get_component_by_name( $component_name ) {
+	$component_type = oiksc_query_component_type( $component_name );
+	$plugin_post = oiksc_load_component( $component_name, $component_type );
+	if ( $plugin_post ) {
+		$component_id = $plugin_post->ID;
+	} else {
+		gob();
+	}
+	return( $component_id );
+}
+	
 
 
 
