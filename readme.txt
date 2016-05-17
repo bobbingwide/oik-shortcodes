@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 4.2
-Tested up to: 4.5-RC1
-Stable tag: 1.27.4
+Tested up to: 4.5.2
+Stable tag: 1.27.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.27.5 = 
+Contains improvements and changes for oik-plugins and WP-a2z. Tested up to WordPress 4.5.2
+
 = 1.27.4 =
 A multitude of improvements and changes for oik-plugins and WP-a2z.	 Tested up to WordPress 4.5
 
@@ -218,6 +221,39 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.27.5 = 
+* Added: Add logic for reprocessing APIs
+* Added: Add logic to build the MD5 hash for an API
+* Added: Add logic to process all registered oik-plugins
+* Added: Add logic to set MD5 hash to reduce reprocessing time for unchanged functions/methods [github bobbingwide oik-shortcodes issue 17]
+* Added: Batch routine to convert _oik_api_calls from string to post ID
+* Added: Check if the function/method source has changed [github bobbingwide oik-shortcodes issue 17] 
+* Added: Load themes as well as plugins
+* Added: Logic to batch create oik-shortcodes
+* Added: Only add shortcodes for selected components
+* Added: QAD improvements to programmatically create oik-shortcodes
+* Added: Store parse status in post meta data for each component [github bobbingwide oik-shortcodes issue 21]
+* Added: [codes] shortcodes should work for oik-themese as well as oik-plugins [github bobbingwide oik-shortcodes issue 26]
+* Added: add component parameter to [codes] to support child themes [github bobbingwide oik-shortcodes issues 27]
+* Changed: Cater for remote git repositories when running locally [github bobbingwide oik-shortcodes issue 22]
+* Changed: Convert API names to post IDs before updating _oik_api_calls post meta
+* Changed: Crash when global plugin or filename is not set
+* Changed: Docblock for oikai_list_callees
+* Changed: More work on accessing the real file
+* Changed: Need autoloading for oiksc_genesis_404()
+* Changed: Only allow command line invocation
+* Changed: Temporary solution for adding Genesis shortcodes
+* Changed: Trace levels and docblocks
+* Fixed: Docblock markdown formatting error for some functions [github bobbingwide oik-shortcodes issue 25]
+* Fixed: Don't implement unnecessary filter hooks [github bobbingwide oik-shortcodes issue 9] [github bobbingwide oik-shortcodes issue 10]
+* Fixed: Ensure oikp_load_plugin exists in oiksc_load_component
+* Fixed: Fatal error when parsing shared library files [github bobbingwide oik-shortcodes issue 19]
+* Fixed: Get SHA only in get_to_sha()
+* Fixed: Improve logic for missing component
+* Fixed: Still need to set global plugin and filename in some situations
+* Fixed: Uncaught Error: Cannot access self:: when no class scope is active [github bobbingwide oik-shortcodes issue 23]
+* Fixed: We need to load the 'git' library manually at present
+
 = 1.27.4 =
 Added: Automate the creation of Yoast SEO post meta [github bobbingwide oik-shortcodes issue 20]
 Added: Implement 'genesis_404' action for 404 handler logic [github bobbingwide oik-shortcodes issue 18]
@@ -253,11 +289,11 @@ Fixed: use oikai_dummy_TCES( false ) for each API
 * Added: help and syntax for [md] shortcode
  
 = 1.27.2 =
-Added: Improve display of shortcode parameters ( Issue #3 )
-Changed: Better support for &#nn; characters and HTML inside strings ( Issue #4 )
-Changed: Cater for &#nn; and HTML tags in PHP comments ( Issue #4 )
-Fixed: Compatibility with WordPres SEO ( Issue #1 )
-Fixed: Notice undefined $post_id in oikai_apiref()
+* Added: Improve display of shortcode parameters ( Issue #3 )
+* Changed: Better support for &#nn; characters and HTML inside strings ( Issue #4 )
+* Changed: Cater for &#nn; and HTML tags in PHP comments ( Issue #4 )
+* Fixed: Compatibility with WordPres SEO ( Issue #1 )
+* Fixed: Notice undefined $post_id in oikai_apiref()
 
 = 1.27.1 =
 * Added: Compatible with shortcake checkbox for shortcodes
