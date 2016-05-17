@@ -23,8 +23,17 @@ class oiksc_function_loader {
   function __construct( $function ) {
 		//bw_backtrace();
     global $plugin, $filename;
+		if ( !$plugin ) {
+			echo "Global plugin not set: $plugin!" . PHP_EOL;
+			gob();
+		}
+		if ( !$filename ) {
+			echo "Global filename not set:$filename" . PHP_EOL;
+			gob();
+		}
     $this->plugin = $plugin;
     $this->filename = $filename;
+		
     $this->function_obj = $function;
     static $fid = 0;
     $this->dummy_function_name = "oiksc_dummy_function_$fid" ;

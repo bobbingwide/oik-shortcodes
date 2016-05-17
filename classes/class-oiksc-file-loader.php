@@ -23,6 +23,15 @@ class oiksc_file_loader extends oiksc_function_loader {
   function __construct( $contents_arr, $component_type ) {
     //parent::__construct( null );
     global $plugin, $filename;
+		
+		if ( !$plugin ) {
+			echo "Global plugin not set: $plugin!" . PHP_EOL;
+			gob();
+		}
+		if ( !$filename ) {
+			echo "Global filename not set:$filename" . PHP_EOL;
+			gob();
+		}
     $this->plugin = $plugin;
     $this->filename = $filename;
     $this->function_obj = null;
