@@ -7,7 +7,7 @@ if ( PHP_SAPI !== "cli" ) {
 /**
  * Create oik-shortcodes entries programmatically in a batch process
  *
- * Syntax: oikwp oik-create-codes.php
+ * Syntax: oikwp oik-create-codes.php	url=jetpack.wp.a2z
  * when in this directory as the current directory
  * 
  */
@@ -16,10 +16,8 @@ oik_create_codes_loaded();
 /**
  * Create oik-shortcode entries programmatically
  *
- * After the plugins, themes and APIs have been created
- * we need to update the definitions of all the shortcodes
+ * After the plugins, themes and APIs have been created we need to update the definitions of all the shortcodes
  *
- * How do we do this?
  */
 function oik_create_codes_loaded() {
 	$required_component = oik_batch_query_value_from_argv( 1, null );
@@ -30,9 +28,9 @@ function oik_create_codes_loaded() {
 	$shortcodes = oik_create_codes_get_all_shortcodes();
 	foreach ( $shortcodes as $shortcode => $component ) {
 		// if we have the information then create the shortcode
-		
+		echo PHP_EOL;
 		echo "$shortcode: $component" . PHP_EOL;
-		if ( $component == $required_component || $component == "oik-sc-help") {
+		if ( $component == $required_component ) {
 			oikb_get_response( "Continue?", true );
 			oik_create_codes_create_code( $shortcode, $component_id, $required_component );
 		}	
@@ -51,8 +49,8 @@ function oik_create_codes_get_all_shortcodes() : array {
 	global $shortcode_tags;
 	$shortcodes = array();
 	print_r( $shortcode_tags );
-	add_filter( "oiksc_shortcodes_components", "oiksc_shortcodes_components_wordpress" );
-	add_filter( "oiksc_shortcodes_components", "oiksc_shortcodes_components_oik" );
+	add_filter( "oiksc_shortcodes_components", "oiksc_shortcodes_components_wordpress", 10 );
+	add_filter( "oiksc_shortcodes_components", "oiksc_shortcodes_components_oik", 10 );
 	
 	$shortcodes = $shortcode_tags;
 	$shortcodes = apply_filters( "oiksc_shortcodes_components", $shortcodes );
@@ -89,7 +87,6 @@ function oiksc_shortcodes_components_wordpress( $shortcodes ) {
  * 
  * Doing the reverse of bw_add_shortcode_file().
  * 
- * @TODO Otherwise we can try using reflection functions.
  * 
  * @param array $shortcode associative array mapping shortcodes to implementing function or plugin
  * @return array updated to reflect the implementing plugin
