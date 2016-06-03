@@ -7,12 +7,23 @@ if ( PHP_SAPI !== "cli" ) {
 /**
  * Lazy implementation of "run_oik-shortcodes.php" 
  *
+ * Syntax: oikwp oik-create-apis.php [component [previous [start]]]
+ * run from the oik-shortcodes plugin directory
+ * 
+ * Where: 
+ * - component is the selected component e.g. wordpress
+ * - previous is the SHA of the previously completed run
+ * - start is the index of the file to start from
+ *
+ * In the case of a Git repository being updated/replaced such that the SHAs have changed
+ * then you need to pass a new previous SHA that is for a commit that is equivalent to, or earlier than the one
+ * that's been done. 
+ 
  * Perform createapi2.php against the local database
  * 
  * Uses _local versions of the functions from oik-batch/creatapi2.php
  *
  * @TODO libs/oik-git.php should be loaded as a library
-  
  *
  */
 function oiksc_lazy_run_oik_shortcodes() {
@@ -156,7 +167,7 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 					$oiksc_parse_status->set_component( $component_preloaded->ID );
 					$oiksc_parse_status->fetch_status();
 					$finished = $oiksc_parse_status->finished_two_passes();
-					if ( $finished ) {
+					if ( $finished && null == $previous ) {
 						$previous = $oiksc_parse_status->get_to_sha( $previous );
 						echo "We've finished the previous pass: $previous" . PHP_EOL;
 					} else {

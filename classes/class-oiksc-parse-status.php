@@ -202,10 +202,12 @@ class oiksc_parse_status {
 	 * @return string from_sha
 	 */
 	public function get_from_sha( $previous=null ) {
-		$from_sha = current( explode( ' ', $this->from_sha ) );
 		if ( $previous ) {
-			gob();
+			$this->reset();
+			$this->set_from_sha( $previous );
+			$this->update_status();
 		}
+		$from_sha = current( explode( ' ', $this->from_sha ) );
 		return( $from_sha );
 	}
 	
@@ -254,7 +256,7 @@ class oiksc_parse_status {
 				$this->to_sha = $this->current_sha;
 				$this->file_m = 0;
 				$this->of_n = $this->current_of_n;
-				echo "Restarting";
+				echo "Restarting" . PHP_EOL;
 				print_r( $this );
 			} else {
 				// It's the same - no need to do anything
