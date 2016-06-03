@@ -43,9 +43,13 @@ function oik_create_codes_loaded() {
  * Note: Shortcodes may be implemented by multiple components, although only one may be active at any one time.
  * 
  * @TODO... so this array is potentially wrong.
+ *
+ * Haha! Caught out by some fancy PHP 7 code
+ * 
+ * `function oik_create_codes_get_all_shortcodes() : array {`
  * 
  */
-function oik_create_codes_get_all_shortcodes() : array {
+function oik_create_codes_get_all_shortcodes() {
 	global $shortcode_tags;
 	$shortcodes = array();
 	print_r( $shortcode_tags );
@@ -146,6 +150,7 @@ function oiksc_get_component_by_name( $component_name ) {
 	if ( $plugin_post ) {
 		$component_id = $plugin_post->ID;
 	} else {
+		
 		gob();
 	}
 	return( $component_id );
