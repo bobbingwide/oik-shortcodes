@@ -46,6 +46,7 @@ function oik_shortcodes_init() {
   oik_register_api();
   oik_register_parsed_source();
 	//oik_register_parse_status();
+	oik_register_component_version_field();
 	
   add_action( 'the_content', "oiksc_the_content", 1, 1 );
   add_action( 'oik_admin_menu', 'oiksc_admin_menu' );
@@ -168,6 +169,7 @@ function oik_register_oik_shortcodes() {
   
   bw_register_field_for_object_type( "_oik_sc_code", $post_type );
   bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
+	bw_register_field_for_object_type( "_component_version", $post_type );
   bw_register_field_for_object_type( "_oik_sc_func", $post_type );
   bw_register_field_for_object_type( "_oik_sc_example_cb", $post_type );
   bw_register_field_for_object_type( "_oik_sc_live_cb", $post_type );
@@ -383,6 +385,7 @@ function oik_register_file() {
   
   bw_register_field_for_object_type( "_oik_file_name", $post_type );
   bw_register_field_for_object_type( "_oik_api_plugin", $post_type );
+	bw_register_field_for_object_type( "_component_version", $post_type );
   //bw_register_field_for_object_type( "_oik_file_passes", $post_type );
   bw_register_field_for_object_type( "_oik_file_deprecated_cb", $post_type );
   bw_register_field_for_object_type( "_oik_api_calls", $post_type );
@@ -420,6 +423,7 @@ function oik_register_class() {
   
   bw_register_field_for_object_type( "_oik_class_name", $post_type );
   bw_register_field_for_object_type( "_oik_api_plugin", $post_type );
+	bw_register_field_for_object_type( "_component_version", $post_type );
   bw_register_field_for_object_type( "_oik_api_source", $post_type );
   bw_register_field_for_object_type( "_oik_fileref", $post_type );
   if ( function_exists( "oikp_columns_and_titles" ) ) {
@@ -513,6 +517,7 @@ function oik_register_API() {
   bw_register_field_for_object_type( "_oik_api_name", $post_type );
   bw_register_field_for_object_type( "_oik_api_class", $post_type );
   bw_register_field_for_object_type( "_oik_api_plugin", $post_type );
+	bw_register_field_for_object_type( "_component_version", $post_type );
   bw_register_field_for_object_type( "_oik_api_source", $post_type );
   bw_register_field_for_object_type( "_oik_fileref", $post_type );
   bw_register_field_for_object_type( "_oik_api_type", $post_type );
@@ -572,7 +577,27 @@ function oik_register_parsed_source() {
   if ( function_exists( "oikp_columns_and_titles" ) ) {
     oikp_columns_and_titles( $post_type );
   }
-}    
+}
+
+/**
+ * Register the _component_version field
+ *
+ * This is a virtual field used to display the current component version.
+ * The field should be registered for each object type where we can determine the plugin/theme.
+ * 
+ * @TODO For some post types we also need the virtual "_component" field.
+ */
+function oik_register_component_version_field() {
+     
+  $field_args = array( "#callback" => "oik_component_version"
+                     , "#parms" => null
+                     , "#plugin" => "oik-shortcodes"
+                     , "#file" => "shortcodes/oik-component-version.php"
+                     , "#form" => false
+                     , "#hint" => "virtual field"
+                     ); 
+  bw_register_field( "_component_version", "virtual", "Version", $field_args );
+}
 
 /**
  * Add some content before other 'the_content' filtering is performed
