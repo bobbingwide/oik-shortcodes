@@ -65,6 +65,8 @@ function oik_shortcodes_init() {
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
 	add_action( "run_oik-create-codes.php", "oiksc_run_oik_create_codes" );
 	add_action( "genesis_404", "oiksc_genesis_404" );
+	
+	oik_shortcodes_define_shortcode_parameter_server();
 }
 
 /**
@@ -597,6 +599,15 @@ function oik_register_component_version_field() {
                      , "#hint" => "virtual field"
                      ); 
   bw_register_field( "_component_version", "virtual", "Version", $field_args );
+}
+
+/**
+ * Ensure links to oik_sc_param are to the current url  
+ */
+function oik_shortcodes_define_shortcode_parameter_server() {
+	if ( !defined( "BW_OIK_PLUGINS_SERVER" ) ) {
+		define( 'BW_OIK_PLUGINS_SERVER', get_site_url() );
+	}
 }
 
 /**
