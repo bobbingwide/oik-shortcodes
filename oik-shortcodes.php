@@ -436,10 +436,10 @@ function oik_register_class() {
 /**
  * Register custom post type: oik_hook
  * 
- * Action hooks and filters extend the processing of WordPress, plugins and themes
+ * Action hooks and filters extend the processing of WordPress, plugins and themes.
  * Rather than maintain a list of functions that the hook calls we need to list the functions that implement the hook.
  * We can determine this from the add_action(), add_filter() calls which specify the hook name and the API that implements it.
- * Since hook names can be dynamically specified we need to find a mechanism of looking up the hook using wild cards
+ * Since hook names can be dynamically specified we need to find a mechanism of looking up the hook using wild cards.
  * 
  * The plugin and sourcefile is required to identify where the hook documentation is originally held.
  * This seems a bit tricky doesn't it?
@@ -456,10 +456,13 @@ function oik_register_hook() {
   
   bw_register_field( "_oik_hook_name", "text", "Hook name" , array( "#length" => 80 ));
   bw_register_field( "_oik_hook_type", "select", "Hook type", array( "#options" => oiksc_hook_types()) );
+	
   bw_register_field( "_oik_hook_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes" ), "#optional" => true  )); 
   bw_register_field( "_oik_hook_source", "text", "Sourcefile" , array( "#length" => 80 ));
-  bw_register_field( "_oik_fileref", "noderef", "File ref", array( "#type" => "oik-plugins" )); 
-  bw_register_field( "_oik_hook_docblock", "textarea", "Docblock" ); 
+  //bw_register_field( "_oik_fileref", "noderef", "File ref", array( "#type" => "oik-plugins" )); 
+	
+  bw_register_field( "_oik_hook_docblock", "textarea", "Description" ); 
+	bw_register_field( "_oik_hook_parms", "textarea", "Parameters" );
   bw_register_field( "_oik_hook_deprecated_cb", "checkbox", "Deprecated?" );
   //
   // _oik_hook_invokers is a (yet to be developed) dummy field. 
@@ -470,10 +473,14 @@ function oik_register_hook() {
   
   bw_register_field_for_object_type( "_oik_hook_name", $post_type );
   bw_register_field_for_object_type( "_oik_hook_type", $post_type );
+	
   bw_register_field_for_object_type( "_oik_hook_plugin", $post_type );
   bw_register_field_for_object_type( "_oik_hook_source", $post_type );
   bw_register_field_for_object_type( "_oik_fileref", $post_type );
+	
   bw_register_field_for_object_type( "_oik_hook_docblock", $post_type );
+	bw_register_field_for_object_type( "_oik_hook_parms", $post_type );
+	
   bw_register_field_for_object_type( "_oik_hook_deprecated_cb", $post_type );
   bw_register_field_for_object_type( "_oik_hook_calls", $post_type );
 
