@@ -455,21 +455,74 @@ function oiksc_get_hook_type( $context ) {
 } 
 
 /**
+ * Build a docblock from the most recent docblock
+ *
+ * @return object|null 
+ */
+function oiksc_load_docblock() {
+	$docComment = bw_context( "docblock" );
+	if ( $docComment ) {
+		oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
+		$docblock = new DocBlock( $docComment );
+	} else {
+		$docblock = null;
+	}
+	bw_trace2( $docblock, "docblock", false, BW_TRACE_VERBOSE );
+	return( $docblock );
+}
+
+/**
  * Return a formatted docblock
  *
  * @TODO - leave the docblock post meta as unformatted so that multiple definitions can be recorded and analysed.
  *
  */
-function oiksc_get_docblock() {
-  $docComment = bw_context( "docblock" );
-  oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
-  $docblock = new DocBlock( $docComment );
+function oiksc_get_docblock( $docblock ) {
   $docblock_text = $docblock->getShortDescription();
   $docblock_text .= "&nbsp;";
   $docblock_text .= $docblock->getLongDescription();
+	$docblock_text .= " ";
+	//$docblock_text .= oiksc_get_docblock_tags( $docblock );
   return( $docblock_text );
 }
 
+/**
+ * Return the docblock tags for an action hook / filter
+ * 
+ * @param object $docblock 
+ * @return string formatted docblock tags
+ *
+ */
+function oiksc_get_docblock_tags( $docblock ) {
+	$tags = $docblock->getTags();
+	$text = null;
+	if ( is_array( $tags ) && count( $tags ) ) {
+		$text .= retstag( "dl" );
+		
+		foreach ( $tags as $tag ) {
+			//bw_trace2( $tag, "tag" );
+			list( $tagname, $type, $name, $description ) = explode( " ", $tag . " . . .", 4 );
+			$text .= oiksc_get_docblock_tag( $tagname, $type, $name, $description );
+		}
+		$text .= retetag( "dl" );
+	}
+	return( $text );
+}
+
+/** 
+ * Format a docblock tag as a definition list term
+ */
+function oiksc_get_docblock_tag( $tagname, $type, $name, $description ) {
+	$tag = "<dt>";
+	$tag .= $name;
+	$tag .= "</dt>";
+	$tag .= "<dd>";
+	$tag .= "( $type ) ";
+	$tag .= $description;
+	$tag .= "</dd>";
+	return( $tag );
+}
+	
 /**
  * Return the post_ID for the plugin name
  *
@@ -497,6 +550,10 @@ function oiksc_get_filename() {
   $filename = bw_array_get( $_REQUEST, "file", null );
   bw_trace2( $filename, "filename", false, BW_TRACE_VERBOSE );
   //bw_backtrace();
+	if ( !$filename ) {
+		bw_backtrace();
+		//global $filename;
+	}
   return( $filename );
 }
 
@@ -514,31 +571,39 @@ function oiksc_get_filename() {
  *
  */
 function oiksc_create_oik_hook( $hook, $context ) {
-  //bw_backtrace();
-  $type = oiksc_get_hook_type( $context );
-  $post_title = oiksc_oik_hook_post_title( $hook, $type );
-  $docblock = oiksc_get_docblock();
-  $post = array( 'post_type' => 'oik_hook'
-               , 'post_title' => $post_title
-               , 'post_name' => $hook
-               , 'post_content' => "$docblock<!--more -->[bw_fields][hooks]"
-               , 'post_status' => 'publish'
-               , 'comment_status' => 'closed'
-               );
-  /* Set metadata fields */
-  $plugin = oiksc_get_plugin();
-  $file = oiksc_get_filename();
-  $_POST['_oik_hook_name'] = $hook;
-  $_POST['_oik_hook_type'] = $type; 
-  $_POST['_oik_api_plugin'] = $plugin;
-  $_POST['_oik_api_source'] = $file;
-  oik_require( "admin/oik-files.php", "oik-shortcodes" );
-  $_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
-  $_POST['_oik_hook_docblock'] = $docblock;
-  //$_POST['_oik_hook_deprecated_cb'] = false;
-  $post_id = wp_insert_post( $post, TRUE );
-  bw_trace2( $post_id );	// Leave like this until the TODO is done 
-  return( $post_id );
+	//bw_backtrace();
+	$type = oiksc_get_hook_type( $context );
+	$post_title = oiksc_oik_hook_post_title( $hook, $type );
+	$docblock_obj = oiksc_load_docblock();
+	if ( $docblock_obj ) {
+		$docblock = oiksc_get_docblock( $docblock_obj );
+		$params = oiksc_get_docblock_tags( $docblock_obj );
+	} else {
+		$docblock = null;
+		$params = null;
+	}
+	$post = array( 'post_type' => 'oik_hook'
+							 , 'post_title' => $post_title
+							 , 'post_name' => $hook
+							 , 'post_content' => oiksc_build_oik_hook_post_content( $docblock, $params )
+							 , 'post_status' => 'publish'
+							 , 'comment_status' => 'closed'
+							 );
+	/* Set metadata fields */
+	$plugin = oiksc_get_plugin();
+	$file = oiksc_get_filename();
+	$_POST['_oik_hook_name'] = $hook;
+	$_POST['_oik_hook_type'] = $type; 
+	$_POST['_oik_api_plugin'] = $plugin;
+	$_POST['_oik_api_source'] = $file;
+	oik_require( "admin/oik-files.php", "oik-shortcodes" );
+	$_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
+	$_POST['_oik_hook_docblock'] = $docblock;
+	$_POST['_oik_hook_params'] = $params;
+	//$_POST['_oik_hook_deprecated_cb'] = false;
+	$post_id = wp_insert_post( $post, TRUE );
+	bw_trace2( $post_id );	// Leave like this until the TODO is done 
+	return( $post_id );
 }
 
 /**
@@ -582,22 +647,54 @@ function oiksc_update_oik_hook( $post, $hook, $context ) {
 	}
   $type = oiksc_get_hook_type( $context );
   $post->post_title = oiksc_oik_hook_post_title( $hook, $type );
-  $docblock = oiksc_get_docblock();
+	
+	$docblock_obj = oiksc_load_docblock();
+	if ( $docblock_obj ) {
+		$docblock = oiksc_get_docblock( $docblock_obj );
+		$params = oiksc_get_docblock_tags( $docblock_obj );
+		$post->post_content = oiksc_build_oik_hook_post_content( $docblock, $params );
+		
+		$_POST['_oik_hook_docblock'] = $docblock;
+		$_POST['_oik_hooks_params'] = $params;
+	} else {
+		$docblock = null;
+		$params = null;
+	}
+  //$docblock = oiksc_get_docblock();
   // Don't change the post content but do change the _oik_hook_docblock field
   // 
-  //$post->post_content = "$docblock<!--more -->[bw_fields][hooks]";
   /* Set metadata fields */
+  $_POST['_oik_hook_name'] = $hook;
+  $_POST['_oik_hook_type'] = $type;
+	
   $plugin = oiksc_get_plugin();
   $file = oiksc_get_filename();
-  $_POST['_oik_hook_name'] = $hook;
-  $_POST['_oik_hook_type'] = $type;  
   $_POST['_oik_hook_plugin'] = $plugin; 
   $_POST['_oik_hook_source'] = $file;
   oik_require( "admin/oik-files.php", "oik-shortcodes" );
   $_POST['_oik_fileref'] = oiksc_get_oik_fileref( $plugin, $file );
-  $_POST['_oik_hook_docblock'] = $docblock;
+	
+	
   //$_POST['_oik_hook_deprecated_cb'] = false;
   wp_update_post( $post );
+}
+
+/** 
+ * Build the post content for an oik_hook
+		//"$docblock<!--more -->[bw_fields][hooks]";
+ *
+ * @param string $docblock
+ * @param string $params
+ */
+function oiksc_build_oik_hook_post_content( $docblock, $params ) {
+	$post_content = $docblock;
+	$post_content .= "<!--more -->";
+	if ( $params ) {
+		$post_content .= "<h3>Parameters</h3>";
+		$post_content .= $params;
+	}
+	$post_content .= "[bw_fields][hooks]";
+	return( $post_content );
 }
 
 /**
