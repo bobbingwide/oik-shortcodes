@@ -291,7 +291,8 @@ function oiksc_get_oik_fileref( $plugin, $file ) {
   if ( $post ) {
     $post_id = $post->ID;
   } else { 
-    $post_id = null;
+		global $oikai_post_id;
+    $post_id = $oikai_post_id;
   }
   return( $post_id );
 }  
