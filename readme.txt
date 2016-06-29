@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 4.2
-Tested up to: 4.5.2
-Stable tag: 1.27.5
+Tested up to: 4.5.3
+Stable tag: 1.27.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.27.6 =
+Contains improvements and changes for oik-plugins and WP-a2z. Tested up to WordPress 4.5.3
+
 = 1.27.5 = 
 Contains improvements and changes for oik-plugins and WP-a2z. Tested up to WordPress 4.5.2
 
@@ -221,6 +224,16 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.27.6 = 
+* Added: Automate the creation of oik_shortcodes for a component [github bobbingwide oik-shortcodes issue 28]
+* Changed: Allow restart with a different previous SHA [github bobbingwide oik-shortcodes issue 21]
+* Changed: Add _component_version virtual field [github bobbingwide oik-shortcodes issue 29]
+* Changed: Keep links to shortcode parameters local [github bobbingwide oik-shortcodes issue 30]
+* Changed: Improve logic for hooks - parsing and displaying [github bobbingwide oik-shortcodes issue 31]
+* Changed: Move oiksc_yoastseo to admin/oik-yoastseo.php [github bobbingwide oik-shortcodes issue 32]
+* Fixed: Requests for form oik-shortcodes/shortcode/funcname result in 404 [github bobbingwide oik-shortcodes issue 33]
+* Fixed: Remove PHP 7 specific logic in oik_create_codes_get_all_shortcodes()
+
 = 1.27.5 = 
 * Added: Add logic for reprocessing APIs
 * Added: Add logic to build the MD5 hash for an API

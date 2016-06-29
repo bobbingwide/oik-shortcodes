@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.27.5
+Version: 1.27.6
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -443,7 +443,8 @@ function oik_register_class() {
  * 
  * The plugin and sourcefile is required to identify where the hook documentation is originally held.
  * This seems a bit tricky doesn't it?
- * We use _oik_hook_docblock to keep a copy of the most recent docblock comment for the hook.
+ * We use _oik_hook_docblock to keep a copy of the most recent docblock comment for the hook
+ * and _oik_hook_parms for the @param definitions
  * 
  */
 function oik_register_hook() {
@@ -773,7 +774,9 @@ function oiksc_shortcode_rewrite() {
 }
 
 /**
- * Handle the oik-shortcodes/%oik-shortcode% request
+ * Handle the oik-shortcodes/%oik-shortcode%/%oik-function%/ request
+ * 
+ * Is it worth doing this?
  */
 function oiksc_template_redirect() {
   $oik_shortcode = get_query_var( "oik-shortcode" );
@@ -1290,19 +1293,19 @@ function oik_shortcodes_loaded() {
   add_action( "admin_notices", "oik_shortcodes_activation", 11 );
   add_action( "wp_ajax_oiksc_create_api", "oiksc_ajax_oiksc_create_api" );
   add_action( "wp_ajax_nopriv_oiksc_create_api", "oiksc_ajax_nopriv_oiksc_create_api" );
-  
   add_action( "wp_ajax_oiksc_create_file", "oiksc_ajax_oiksc_create_file" );
   add_action( "wp_ajax_nopriv_oiksc_create_file", "oiksc_ajax_nopriv_oiksc_create_file" );
   //add_action( "shutdown", "oiksc_status_report" );
-	
-	
-	
 	add_filter( "oik_query_autoload_classes" , "oiksc_oik_query_autoload_classes" );
-  
 }
 
 /**
+ * Implement "request" filter for oik-shortcodes
  * 
+ * @TODO Decide whether or not we need to implement the template_redirect logic. Should it depend on a 404?
+ * 
+ * @param array $request - the current request
+ * @return array updated if this is a request to display a specific oik_shortcodes
  */
 function oiksc_request( $request ) {
 	$oik_shortcode = bw_array_get( $request, "oik-shortcode", null );
@@ -1314,14 +1317,16 @@ function oiksc_request( $request ) {
 		$request['post_type'] = "oik_shortcodes";
 		if ( $oik_function ) {
 			$meta_query = array();
-			$meta_query[] = array( "key" => "_oik_sc_func", "value" => $oik_function );
+			// The function passed is a string. _oik_sc_func is a noderef
+			//$meta_query[] = array( "key" => "_oik_sc_func", "value" => $oik_function );
 			$meta_query[] = array( "key" => "_oik_sc_code", "value" => $oik_shortcode ); 
 			$request['meta_query'] = $meta_query;
 		} else {
 			$request['meta_key'] = "oik_sc_code";
 			$request['meta_value'] = $oik_shortcode;
 		}
-	}	
+		// add_action( "template_redirect", "oiksc_template_redirect" ); 
+	}
 	return( $request );
 }
 

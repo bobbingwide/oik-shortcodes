@@ -903,6 +903,7 @@ function oiksc_lazy_redirect( $oik_shortcode, $function=null ) {
     $func = null;
   }
   $posts = oiksc_get_shortcodes_byname( $oik_shortcode, $func ); 
+	bw_trace2( $posts, "posts", true );
   if ( $posts ) {
     if ( count( $posts ) > 1 ) {
       bw_trace2( "more than one shortcode defined" );

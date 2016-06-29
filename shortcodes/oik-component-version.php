@@ -115,7 +115,6 @@ function oik_component_version_get_version( $component_name ) {
 			$version = _bw_get_plugin_version( $component_name );
 		} elseif ( $component_type == "oik-themes" ) {
 			$oik_themes = oik_require_lib( "oik_themes" );
-			
 			$version = _bw_get_theme_version( $component_name );
 		} else {
 			// Not determined - don't display anything
