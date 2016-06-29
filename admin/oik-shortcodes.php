@@ -338,7 +338,7 @@ function oiksc_create_shortcode() {
       $func = oiksc_get_func( $code, $plugin ); 
       $post_id = _oiksc_create_shortcode( $plugin, $code, $help, $func );
       if ( $post_id ) {
-				oik_require( "admin/oik-create-apis.php", "oik-shortcodes" );
+				oik_require( "admin/oik-yoastseo.php", "oik-shortcodes" );
 				oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 				$plugin_slug = oiksc_get_plugin_slug( $plugin );
 				oiksc_yoastseo( $post_id, $code, $plugin, "shortcode", $help );
@@ -455,17 +455,32 @@ function oiksc_get_hook_type( $context ) {
 } 
 
 /**
- * Build a docblock from the most recent docblock
+ * Build a docblock object from the most recent docblock
+ *
+ * @TODO - unless the docblock contains something like:
+ *
+ *  This action is documented in path/to/filename.php 
+ * 
+ * OR
+ *  
+ *  This filter is documented in path/to/filename.php
+ * 
+ * In these cases treat the docblock as null
+ * OR access the docblock from the specified file and see if they're telling the truth
+ *  
  *
  * @return object|null 
  */
 function oiksc_load_docblock() {
+	$docblock = null;
 	$docComment = bw_context( "docblock" );
 	if ( $docComment ) {
-		oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
-		$docblock = new DocBlock( $docComment );
-	} else {
-		$docblock = null;
+		$action_documented_elsewhere = strpos( $docComment, "This action is documented in" );
+		$filter_documented_elsewhere = strpos( $docComment, "This filter is documented in" );
+		if ( false === $action_documented_elsewhere && false === $filter_documented_elsewhere ) {
+			oik_require( "classes/oik-docblock.php", "oik-shortcodes" );
+			$docblock = new DocBlock( $docComment );
+		}
 	}
 	bw_trace2( $docblock, "docblock", false, BW_TRACE_VERBOSE );
 	return( $docblock );
@@ -491,14 +506,12 @@ function oiksc_get_docblock( $docblock ) {
  * 
  * @param object $docblock 
  * @return string formatted docblock tags
- *
  */
 function oiksc_get_docblock_tags( $docblock ) {
 	$tags = $docblock->getTags();
 	$text = null;
 	if ( is_array( $tags ) && count( $tags ) ) {
 		$text .= retstag( "dl" );
-		
 		foreach ( $tags as $tag ) {
 			//bw_trace2( $tag, "tag" );
 			list( $tagname, $type, $name, $description ) = explode( " ", $tag . " . . .", 4 );
@@ -511,6 +524,12 @@ function oiksc_get_docblock_tags( $docblock ) {
 
 /** 
  * Format a docblock tag as a definition list term
+ *
+ * @param string $tagname
+ * @param string $type
+ * @param string $name
+ * @param string $description
+ * @return string the formatted definition term and data
  */
 function oiksc_get_docblock_tag( $tagname, $type, $name, $description ) {
 	$tag = "<dt>";
@@ -526,6 +545,8 @@ function oiksc_get_docblock_tag( $tagname, $type, $name, $description ) {
 /**
  * Return the post_ID for the plugin name
  *
+ * @TODO Provide a value when global $plugin_post is not set.
+ * 
  * @return ID post ID for the plugin 
  */
 function oiksc_get_plugin() {
@@ -543,6 +564,8 @@ function oiksc_get_plugin() {
 
 /**
  * Return the filename
+ * 
+ * @TODO Provide a value when the $_REQUEST does not contain a value for "file"
  *
  * @return string filename
  */   
@@ -742,6 +765,7 @@ function _oiksc_create_shortcode( $plugin, $code, $help, $func ) {
   } else {
     $post_id = $post->ID;
   }
+	bw_backtrace();
   return( $post_id );
 }
 
