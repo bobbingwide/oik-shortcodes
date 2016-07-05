@@ -128,7 +128,10 @@ function oiksc_get_component_name_from_file( $file ) {
  * Programmatically create an oik-shortcode
  *
  * This is run in batch - doing what front end did
- * 
+ *
+ * @param string $shortcode the shortcode name
+ * @param ID $component_id the implementing component ID
+ * @param string $required_component the component name
  */ 
 function oik_create_codes_create_code( $shortcode, $component_id, $required_component ) {
 	$_REQUEST['_oiksc_create_shortcode'] = 'submit'; 
