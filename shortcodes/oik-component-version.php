@@ -12,7 +12,11 @@
 function oik_component_version( $ID ) {
 	if ( $ID ) {
 		$component_name = oik_query_component_by_ID( $ID );
-		$version = oik_component_version_get_version( $component_name );
+		if ( $component_name ) {
+			$version = oik_component_version_get_version( $component_name );
+		} else {
+			$version = null;
+		}
 		span( "_component_version" );
 		e( $version );	
 		epan();
