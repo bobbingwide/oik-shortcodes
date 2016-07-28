@@ -174,6 +174,7 @@ class oiksc_parsed_source {
 	 * @param string component_slug
 	 */
   function get_latest_parsed_source_by_sourceref( $file, $component_type, $post_id, $component_slug) {
+		bw_trace2();
 		$parsed_source = null;
 		$this->po_post = $this->get_parsed_source_by_sourceref( $post_id );
 		if ( $this->po_post ) {
@@ -184,9 +185,13 @@ class oiksc_parsed_source {
 				$file_time = bw_get_file_time( $file, $component_type, $component_slug );
 				if ( $parse_count < $file_time ) {
 					$parsed_source = null;
+				} else {
+					$parsed_source = $this->po_post;
 				}
 			}
-		}
+		}	else {
+		}	
+		bw_trace2( $parsed_source, "parsed_source", false );				
 		return( $parsed_source );
 	}
 		
@@ -468,11 +473,25 @@ function oikai_navi_parsed_source( $parsed_source ) {
 	if ( $start  ) {
 		e( "<pre>" );
 	}
+	$last = 0;
+	
+	// Find a safe place to start
+  while ( substr( $sources[ $start], 0, 1 ) != "<" && $start <= $end ) {
+		$start++;
+	}
 	for ( $i = $start; $i<= $end; $i++ ) {
 		// $selection[] = $sources[$i];
 		//$line = $i+1;
 		//e( "$line " );
 		e( $sources[$i] );
+		e( "\n" );
+		$last = $i;
+	}
+	//bw_trace2( $sources[ $last], "Last $last", false );
+	// Find a safe place to finish
+	while ( substr( $sources[ $last ], -1 ) != ">" && $last <= $end ) {
+		$last++;
+		e( $sources[ $last ] ) ;
 		e( "\n" );
 	}
 	if ( $end < $count ) {
