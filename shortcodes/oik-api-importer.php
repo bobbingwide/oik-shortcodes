@@ -3047,7 +3047,7 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 		alink( "svn", $url, "View on Trac" );	
 		
 	} else {
-    e( "Plugin type: $plugin_type :" );
+    //e( "Plugin type: $plugin_type :" );
 	}
 }
 		
