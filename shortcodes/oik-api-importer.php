@@ -3037,7 +3037,11 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 		}
 	}
 	if ( $url ) {
-		$startline = $refFunc->getStartLine();
+		if ( $refFunc ) {
+			$startline = $refFunc->getStartLine();
+		} else {
+			$startline = 1;
+		}
 		$url .= "$sourcefile#L$startline";
 		e( "&nbsp;" );
 		alink( "svn", $url, "View on Trac" );	
