@@ -2953,7 +2953,7 @@ function oiksc_get_permalink( $post_id=null ) {
 function oikai_external_links( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc) {
 	bw_trace2( null, null, true, BW_TRACE_VERBOSE );
 	oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc ); 
-	//oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc );
+	oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc );
 }
 
 /**
@@ -3017,12 +3017,13 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 	if ( null !== $plugin_type ) {
 		switch ( $plugin_type ) {
 			case '0':
-				$url = "https://core.trac.wordpress.org/browser/tags/4.5/src/";
+				global $wp_version;
+				$url = "https://core.trac.wordpress.org/browser/tags/$wp_version/src/";
 				break;
 				
 			case '1':
 			case '6': 
-				$url = "https://????";
+				//$url = "https://????";
 				break;
 			default: 
 		}	
@@ -3031,7 +3032,7 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 		switch ( $theme_type ) {
 			case '1':
 			case '6':
-				$url = "https://core.trac.wordpress.org/browser/tags/4.5/src";
+				//$url = "https://core.trac.wordpress.org/browser/tags/4.5/src";
 				break;
 		}
 	}
