@@ -2996,9 +2996,14 @@ function oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, 
  *
  * If the plugin or theme is in WordPress TRAC then we should be able to view it on TRAC
  *
- * General format for WordPres core is
+ * General format for WordPres core is:
  * 
  * `https://core.trac.wordpress.org/browser/tags/4.5/src/wp-includes/post.php#L1828`
+ * 
+ * For plugins we can just try the trunk version
+ *
+ * https://plugins.trac.wordpress.org/allow-reinstalls/trunk
+ 
  *
  * Determine root URL based on the plugin or theme type or name
  *
@@ -3023,7 +3028,7 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 				
 			case '1':
 			case '6': 
-				//$url = "https://????";
+				$url = "https://plugins.trac.wordpress.org/browser/$plugin_slug/trunk/";
 				break;
 			default: 
 		}	
