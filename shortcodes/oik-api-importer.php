@@ -2242,6 +2242,7 @@ function oikai_handle_token2( $key, $token ) {
  * 
  * Note: You can get sometimes get Warning messages when the source is truncated at an arbitrary line number
  * e.g.  Warning: Unterminated comment starting line 100 in \oik-shortcodes\shortcodes\oik-api-importer.php on line 1255
+ * @TODO Eliminate this Warning notice.
  *  
  * @param array $sources - source lines for the function
  * @param int $startline - the start line of the function ( future use )  
@@ -2471,8 +2472,9 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * @param string $classname - the class name for a method
  * @param ID $post_id - the post ID for the "api" 
  * @param bool $echo true if we actually want the source to be listed
+ * @param ID $plugin_id - the post ID for the plugin or theme
  */
-function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id, $echo=true ) {
+function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id, $echo=true, $plugin_id ) {
 	$func = oikai_get_func( $funcname, $classname );
 	bw_context( "func", $func );
 	$class = oikai_get_class( $funcname, $classname );
@@ -2494,6 +2496,7 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $c
 		oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 		$component_type = oiksc_query_component_type( $plugin_slug );
 		$source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo ); 
+		oikai_external_links( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc );
 	} else { 
 		p( "No API information available for: " . $funcname );
 	}  
@@ -2611,7 +2614,7 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
       }  
     }  
     if ( $funcname ) {
-      oikai_build_apiref( $funcname, $sourcefile, $plugin, $classname, $post_id );
+      oikai_build_apiref( $funcname, $sourcefile, $plugin, $classname, $post_id, true, $plugin_id );
       if ( $post_id ) { 
         oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
         oikai_list_callers_callees( $post_id );
@@ -2934,4 +2937,115 @@ function oiksc_get_permalink( $post_id=null ) {
 	}
 	return( $permalink );
 }
+
+/**
+ * Display external links
+ * 
+ * If the plugin or theme is on GitHub we can create a 'View on GitHub' link
+ * @TODO If the plugin or theme is on WordPress.org we can create a 'View on Trac' link 
+ *
+ * @param string $sourcefile
+ * @param string $plugin_slug 
+ * @param ID $post_id post ID
+ * @param ID $plugin_id plugin/theme ID
+ * @param object|null $refFunc 
+ */ 															
+function oikai_external_links( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc) {
+	bw_trace2( null, null, true, BW_TRACE_VERBOSE );
+	oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc ); 
+	//oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc );
+}
+
+/**
+ * Display "View on GitHub" link
+ * 
+ * If the plugin or theme is on GitHub we can create a 'View on GitHub' link
+ * 
+ * For an API we need to find the line number.
+ *
+ * General format for $giturl is `https://github.com/$owner/$repository/blob/$branch/$sourcefile`
+ * 
+ * Note: $gitrepo represents $owner/$repository
+ 
+ * Type | Link
+ * ---- | ------
+ * API  | $giturl#Lnnnnn where nnnnn is the start line  
+ 
+ * @param string $sourcefile
+ * @param string $plugin_slug 
+ * @param ID $post_id post ID
+ * @param ID $plugin_id plugin/theme ID
+ * @param object|null $refFunc 
+ */
+function oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc ) {
+	$gitrepo = get_post_meta( $plugin_id, "_oikp_git", true );
+	if ( $gitrepo ) {
+		if ( $refFunc ) {
+			$startline = $refFunc->getStartLine();
+		} else {
+			$startline = 1;
+		}
+		$giturl = "https://github.com/$gitrepo/blob/master/$sourcefile#L$startline";
+		e( "&nbsp;" );
+		alink( "github", $giturl, "View on GitHub" );
+	}
+}
+
+/**
+ * View on Trac
+ *
+ * If the plugin or theme is in WordPress TRAC then we should be able to view it on TRAC
+ *
+ * General format for WordPres core is
+ * 
+ * `https://core.trac.wordpress.org/browser/tags/4.5/src/wp-includes/post.php#L1828`
+ *
+ * Determine root URL based on the plugin or theme type or name
+ *
+ * @TODO Complete for plugins ( askismet, buddypress etc) and themes ( twenty-sixteen )
+ * @TODO Set the component version correctly 
+ *
+ * @param string $sourcefile
+ * @param string $plugin_slug 
+ * @param ID $post_id post ID
+ * @param ID $plugin_id plugin/theme ID
+ * @param object $refFunc 
+ */
+function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc ) {
+	$url = null;
+	$plugin_type = get_post_meta( $plugin_id, "_oikp_type", true );
+	if ( null !== $plugin_type ) {
+		switch ( $plugin_type ) {
+			case '0':
+				$url = "https://core.trac.wordpress.org/browser/tags/4.5/src/";
+				break;
+				
+			case '1':
+			case '6': 
+				$url = "https://????";
+				break;
+			default: 
+		}	
+	} else {
+		$theme_type = get_post_meta( $plugin_id, "oikth_type", true );
+		switch ( $theme_type ) {
+			case '1':
+			case '6':
+				$url = "https://core.trac.wordpress.org/browser/tags/4.5/src";
+				break;
+		}
+	}
+	if ( $url ) {
+		$startline = $refFunc->getStartLine();
+		$url .= "$sourcefile#L$startline";
+		e( "&nbsp;" );
+		alink( "svn", $url, "View on Trac" );	
+		
+	} else {
+    e( "Plugin type: $plugin_type :" );
+	}
+}
+		
+
+ 
 

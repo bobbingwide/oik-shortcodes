@@ -533,7 +533,7 @@ function oiksc_build_callees( $api, $file, $plugin, $post_id, $echo=true ) {
 		$slug = get_post_meta( $plugin, "_oikth_slug", true );
 	}
   oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-  oikai_build_apiref( $api, $file, $slug, null, $post_id, $echo );
+  oikai_build_apiref( $api, $file, $slug, null, $post_id, $echo, $plugin );
 }
 
 /** 

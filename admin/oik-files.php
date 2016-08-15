@@ -204,6 +204,9 @@ function oiksc_display_oik_file( $file, $component_type, $file_id, $component_sl
     
     e( $content ); 
   } 
+	
+	$plugin_id = get_post_meta( $file_id, "_oik_api_plugin", true );
+	oikai_external_links( $file, $component_slug, $file_id, $plugin_id, null );
   return( $parsed_source ); 
 }
 
