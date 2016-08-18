@@ -135,7 +135,7 @@ class oiksc_token_object {
     if ( function_exists( $this->dummyFunc->dummy_function_name ) ) {
       $refFunc = oikai_reflect( $this->dummyFunc->dummy_function_name );
     } else {
-      p( "Function does not exist" );
+      p( "Function does not exist" . $this->dummyFunc->dummy_function_name );
       $refFunc = null;
     }
     //echo $this->dummyFunc->dummy_function_name . PHP_EOL;  
