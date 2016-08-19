@@ -3003,15 +3003,17 @@ function oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, 
  * For plugins we can just try the trunk version
  *
  * https://plugins.trac.wordpress.org/allow-reinstalls/trunk
- 
+ *
+ * But for themes, trunk doesn't appear to exist so we need the version
+ * 
+ * https://themes.trac.wordpress.org/browser/$theme/$version/
+ * 
  *
  * Determine root URL based on the plugin or theme type or name
  *
- * @TODO Complete for plugins ( askismet, buddypress etc) and themes ( twenty-sixteen )
- * @TODO Set the component version correctly 
  *
  * @param string $sourcefile
- * @param string $plugin_slug 
+ * @param string $plugin_slug - plugin or theme slug 
  * @param ID $post_id post ID
  * @param ID $plugin_id plugin/theme ID
  * @param object $refFunc 
@@ -3019,7 +3021,8 @@ function oikai_link_to_github( $sourcefile, $plugin_slug, $post_id, $plugin_id, 
 function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc ) {
 	$url = null;
 	$plugin_type = get_post_meta( $plugin_id, "_oikp_type", true );
-	if ( null !== $plugin_type ) {
+	$theme_type = null;
+	if ( '' !== $plugin_type ) {
 		switch ( $plugin_type ) {
 			case '0':
 				global $wp_version;
@@ -3030,14 +3033,24 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 			case '6': 
 				$url = "https://plugins.trac.wordpress.org/browser/$plugin_slug/trunk/";
 				break;
+				
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+				break;
+				
 			default: 
+				bw_trace2( $plugin_type, "plugin_type", true );
 		}	
 	} else {
-		$theme_type = get_post_meta( $plugin_id, "oikth_type", true );
+		$theme_type = get_post_meta( $plugin_id, "_oikth_type", true );
 		switch ( $theme_type ) {
 			case '1':
 			case '6':
-				//$url = "https://core.trac.wordpress.org/browser/tags/4.5/src";
+				oik_require( "shortcodes/oik-component-version.php", "oik-shortcodes" );
+				$version = oik_query_component_version( $post_id );
+				$url = "https://themes.trac.wordpress.org/browser/$plugin_slug/$version/";
 				break;
 		}
 	}
@@ -3052,7 +3065,8 @@ function oikai_link_to_trac( $sourcefile, $plugin_slug, $post_id, $plugin_id, $r
 		alink( "svn", $url, "View on Trac" );	
 		
 	} else {
-    //e( "Plugin type: $plugin_type :" );
+    bw_trace2( $plugin_type, "Plugin type", true );
+		bw_trace2( $theme_type, "Theme type", false );
 	}
 }
 		
