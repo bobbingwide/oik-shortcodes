@@ -11,18 +11,29 @@
  */
 function oik_component_version( $ID ) {
 	if ( $ID ) {
-		$component_name = oik_query_component_by_ID( $ID );
-		if ( $component_name ) {
-			$version = oik_component_version_get_version( $component_name );
-		} else {
-			$version = null;
-		}
+		$version = oik_query_component_version( $ID );
 		span( "_component_version" );
 		e( $version );	
 		epan();
 	} else {
 		// No ID so don't display anything
 	}
+}
+
+/**
+ * Query the component version
+ *
+ * @param ID $ID
+ * @return string|null the component version
+ */
+function oik_query_component_version( $ID ) {
+	$component_name = oik_query_component_by_ID( $ID );
+	if ( $component_name ) {
+		$version = oik_component_version_get_version( $component_name );
+	} else {
+		$version = null;
+	}
+	return( $version );
 }
 
 /**
