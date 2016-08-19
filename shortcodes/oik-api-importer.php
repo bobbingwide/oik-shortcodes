@@ -1706,7 +1706,6 @@ function oikai_handle_token_T_STRING_VARNAME( $key, $token, &$tokens ) {
  * @return ID - post_id of the API if it's one of ours, or null
  */ 
 function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) {
-  //gobang();
   bw_trace2( null, null, true, BW_TRACE_VERBOSE );
   if ( is_array( $token ) ) {
     $value = $token[1];
@@ -1766,6 +1765,7 @@ function oikai_link_to_local_site( $key, &$tokens, $api_name, $doaction, $type, 
 		}
 		$post_id = null;
 	}
+	return( $post_id );
 }
 
 /**
@@ -1776,9 +1776,15 @@ function oikai_link_to_local_site( $key, &$tokens, $api_name, $doaction, $type, 
  * We don't know the post_id so we use the api_name instead
  * No need to link to WordPress separately as this should do.
  *
+ * @param integer $key 
+ * @param array $tokens
+ * @param string $api_name 
+ * @param bool $doaction true if the action should be invoked
+ * @param string $type function type
  */
 function oikai_pragmatic_link_to_api( $key, &$tokens, $api_name, $doaction, $type ) {
-	$url = site_url( "oik_api/" . $api_name );
+	//$url = site_url( "oik_api/" . $api_name );
+	$url = "/oik_api/" . $api_name;
 	if ( is_array( $tokens[$key] ) ) {
 		$tokens[$key][3] = retlink( null, $url, $tokens[$key][1] );
 	} else {
