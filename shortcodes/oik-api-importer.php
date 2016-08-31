@@ -7,10 +7,10 @@
  * @param string $type parameter type. e.g. string, integer, array, mixed, post or an object type
  * @param string $name parameter name - should match $param->getName()
  * @param string $description parameter description
- * The parameter description ends with *dot* **space** *dot* space dot?
- * 
  */
 function oikai_print_param_info( $param, $type="mixed", $name=null, $description=null ) {
+	//bw_trace2(); 
+	//bw_backtrace();
   if ( null == $name ) {
     $name = "$" . $param->getName();
   } 
@@ -45,7 +45,7 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
   $dd .= " - ";
   //$dd .= esc_html( substr( $description, 0, -5 ));
   e( $dd );
-  $description = substr( $description, 0, -5 );
+  //$description = substr( $description, 0, -5 );
   $description = ltrim( $description, "- " );
   oikai_format_description( $description );
   etag( "dd" );
@@ -98,7 +98,7 @@ function oikai_print_param( $param, $docblock ) {
 	$starteddl = false;
   foreach ( $tags as $tag ) {
     //bw_trace2( $tag, "tag" );
-    list( $tagname, $type, $name, $description ) = explode( " ", $tag . " . . .", 4 );
+    list( $tagname, $type, $name, $description ) = oikai_explode_tag( $tag ); 
     if ( $tagname == "@param" ) { 
       if ( $name == $parm ) {
         oikai_print_param_info( $param, $type, $name, $description );
@@ -130,6 +130,40 @@ function oikai_print_param( $param, $docblock ) {
   if ( null == $processed ) {
     oikai_print_param_info( $param );
   }
+} 
+
+/** 
+ * Parse the tag into separate fields
+ * 
+ * The expected format of the tag is:
+ * 
+ * `@tagname type name description`
+ * 
+ * with white space willy nilly. 
+ * 
+ * I'm sure a regex would be perfect for this... One day perhaps.
+ * Meanwhile something to improve on the original explode logic which didn't cater for whitespace
+ *
+ * @param string $tag - expected format @tagname type name description
+ * @return array consisting of tagname, type, name, description 
+ */
+function oikai_explode_tag( $tag ) {
+	$parts = explode( " ", $tag ); 
+	$list = array( null, null, null, null );
+	$index = 0;
+	foreach ( $parts as $part ) {
+		$part = trim( $part );
+		if ( $part != '' ) {
+			$list[ $index ] = $list[ $index ] . $part;
+			if ( $index <= 2 ) {
+				$index++;
+			} else {
+				$list[ $index ] .= " ";
+			}
+		}
+		
+	}
+	return( $list );
 } 
 
 /**
