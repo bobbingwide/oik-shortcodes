@@ -3,9 +3,9 @@
 * Contributors: bobbingwide
 * Donate link: http://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-* Requires at least: 4.2
-* Tested up to: 4.6-RC2
-* Stable tag: 1.27.7
+* Requires at least: 4.5
+* Tested up to: 4.6
+* Stable tag: 1.27.8
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.27.8 
+Contains improvements, changes and fixes for oik-plugins and WP-a2z. Tested up to WordPress 4.6 and WordPress Multisite
+
 # 1.27.7 
 Contains improvements and changes for oik-plugins and WP-a2z. Tested up to WordPress 4.6-RC2
 
@@ -228,6 +231,14 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.27.8 
+* Added: View on Trac for WordPress plugins and themes [github bobbingwide oik-shortcodes issue 38]
+* Changed: Display which function does not exist [github bobbingwide oik-shortcodes issue 40]
+* Changed: Don't use site_url() for relative links for /oik_api/ [github bobbingwide oik-shortcodes issue 7]
+* Changed: Enhanced hook shortcode for type '.' [github bobbingwide oik-shortcodes issue 6]
+* Fixed: Better support for formatting Descriptions [github bobbingwide oik-shortcodes issue 6]
+* Tested: With WordPress 4.6 and WordPress Multisite
+
 # 1.27.7 
 * Changed: Add links to GitHub and WordPress core's TRAC browser [github bobbingwide oik-shortcodes issue 38]
 * Changed: docblock params and Readme for GitHub
