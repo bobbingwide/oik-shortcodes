@@ -97,7 +97,7 @@ function oikai_print_param( $param, $docblock ) {
   $processed = null;
 	$starteddl = false;
   foreach ( $tags as $tag ) {
-    //bw_trace2( $tag, "tag" );
+    bw_trace2( $tag, "tag", false, BW_TRACE_VERBOSE );
     list( $tagname, $type, $name, $description ) = oikai_explode_tag( $tag ); 
     if ( $tagname == "@param" ) { 
       if ( $name == $parm ) {
@@ -118,8 +118,7 @@ function oikai_print_param( $param, $docblock ) {
         oikai_print_param_info( $param, $type, $name, $description );
 			}
     } else {
-			
-      break;
+			// I think we can do without the break!   break;
     } 
 		
   }
@@ -799,6 +798,7 @@ function oikai_format_markdown_table_line( $table, $line ) {
  * @param string $line
  */ 
 function oikai_format_markdown_line( $line ) {
+  $line = paired_replacements( "{@see '", "'}", "[hook ", " .] ", $line );
 	//bw_trace2( $line, "line", false );
   $line = esc_html( $line );
   $line .= " ";
@@ -808,8 +808,8 @@ function oikai_format_markdown_line( $line ) {
   $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
   $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
   $line = paired_replacements( "{@link ", "} ", "http://", " ", $line );
-  $line = paired_replacements( "{@see ", "} ", "http://", " ", $line );
   $line = URL_autolink( $line );
+	$line = bw_do_shortcode( $line );
   e( $line );
 }
 
