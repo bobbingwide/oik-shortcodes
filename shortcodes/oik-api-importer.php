@@ -964,108 +964,143 @@ function replace_at( $pos, $source, $replace, $line ) {
  * @param string $long_description
  */ 
 function oikai_format_description( $long_description ) {
-  $lines = explode( "\n", $long_description );
-  bw_trace2( $lines, count( $lines ), false, BW_TRACE_DEBUG );
-  $backtick = false;
+	$lines = explode( "\n", $long_description );
+	bw_trace2( $lines, count( $lines ), false, BW_TRACE_DEBUG );
+	$backtick = false;
 	$curlybrace = false;
-  $list = 0;
-  $table = 0;
-  foreach ( $lines as $line ) {
-    $line = oikai_format_preprocess_line( $line );
-    if ( strlen( $line ) ) {
-      $char = $line[0];
-    } else {
-      $char = null;
-    }  
-    switch ( $char ) {
-      case null: 
-        e( "\n" );
-        $list = oikai_format_markdown_list( $list );
-        $table = oikai_format_markdown_table( $table );
-        break;
-        
-      case '`':
-        //bw_trace2( $backtick, "backtick", false ) ;
-        $backtick = !$backtick;
-        //bw_trace2( $backtick, "! backtick", false );
-        if ( $backtick ) {
-          stag( "pre" );
-        } else {
-          etag( "pre" );
-        }
-      break;
+	$list = 0;
+	$table = 0;
+	$last_line_len = 0;
+	foreach ( $lines as $line ) {
+		$line = oikai_format_preprocess_line( $line );
+		if ( strlen( $line ) ) {
+			$char = $line[0];
+		} else {
+			$char = null;
+		}  
+		switch ( $char ) {
+			case null: 
+				e( "\n" );
+				$list = oikai_format_markdown_list( $list );
+				$table = oikai_format_markdown_table( $table );
+				break;
+					
+			case '`':
+				//bw_trace2( $backtick, "backtick", false ) ;
+				$backtick = !$backtick;
+				//bw_trace2( $backtick, "! backtick", false );
+				if ( $backtick ) {
+					stag( "pre" );
+				} else {
+					etag( "pre" );
+				}
+				break;
       
-      case '-':
-      case '*':
-        $list = oikai_format_markdown_list_hyphen( $list );
-        if ( $list ) {
-          stag( "li" );
-        }
-        $line = ltrim( $line, "*- " );
-        //e( esc_html( $line . " " ) );
-        oikai_format_markdown_line( $line );
-        if ( $list ) {
-          etag( "li" );
-        }  
-        break;
+			case '-':
+			case '*':
+				$really = oikai_check_its_a_list( $list, $line, $last_line_len );
+				if ( $really ) {
+					$list = oikai_format_markdown_list_hyphen( $list );
+					if ( $list ) {
+						stag( "li" );
+					}
+					$line = ltrim( $line, "*- " );
+					//e( esc_html( $line . " " ) );
+					oikai_format_markdown_line( $line );
+					if ( $list ) {
+						etag( "li" );
+					} 
+				} else {
+					oikai_format_markdown_line( $line );
+				}  
+				break;
         
-      case '0';  
-      case ctype_digit( $char ):
-        $list = oikai_format_markdown_list_number( $list );
-        if ( $list ) {
-          stag( "li" );
-        }
-        $line = ltrim( $line, "0123456789. " );
-        //e( esc_html( $line . " " ) );
-        oikai_format_markdown_line( $line );
-        if ( $list ) {
-          etag( "li" );
-        }  
-        break;
+			case '0';  
+			case ctype_digit( $char ):
+				$list = oikai_format_markdown_list_number( $list );
+				if ( $list ) {
+					stag( "li" );
+				}
+				$line = ltrim( $line, "0123456789. " );
+				//e( esc_html( $line . " " ) );
+				oikai_format_markdown_line( $line );
+				if ( $list ) {
+					etag( "li" );
+				}  
+				break;
         
-      case '|':
-        $table = oikai_format_markdown_table_line( $table, $line );
-        break;
+			case '|':
+				$table = oikai_format_markdown_table_line( $table, $line );
+				break;
         
-      case '#':
-        $list = oikai_format_markdown_list_end( $list );
-        $table = oikai_format_markdown_table( $table );
-        $hn = oikai_format_markdown_heading( $line );
-        break;
-			 
-      case '{':
+			case '#':
+				$list = oikai_format_markdown_list_end( $list );
+				$table = oikai_format_markdown_table( $table );
+				$hn = oikai_format_markdown_heading( $line );
+				break;
+
+			case '{':
 				$curlybrace = true;
-        oikai_format_markdown_line( $line );
-        break;
-			
+				oikai_format_markdown_line( $line );
+				break;
+
 			case '}':
 				$curlybrace = false;
-        oikai_format_markdown_line( $line );
+				oikai_format_markdown_line( $line );
 				break;
 				
-      case '@':
+			case '@':
 				bw_trace( $line, "Logic error. @ not expected", true, BW_TRACE_ERROR );
-        oikai_format_markdown_line( $line );
+				oikai_format_markdown_line( $line );
 			 	break;
     
-      default: 
-        $list = oikai_format_markdown_list_end( $list );
-        //e( esc_html( $line . " " ) );
-        oikai_format_markdown_line( $line );
-        if ( $backtick ) { 
-          e( "\n" );
-        }  
-        
-    }
-  }
-  /**
-   * End any tags we may have started 
-   */
-  $list = oikai_format_markdown_list_end( $list );
-  $table = oikai_format_markdown_table( $table );
-  if ( $backtick ) {
-    etag( "pre" );
-  }
+			default: 
+				$list = oikai_format_markdown_list_end( $list );
+				//e( esc_html( $line . " " ) );
+				oikai_format_markdown_line( $line );
+				if ( $backtick ) { 
+					e( "\n" );
+				}  
+		}
+		$last_line_len = strlen( $line );
+	}
+	/**
+	 * End any tags we may have started 
+	 */
+	$list = oikai_format_markdown_list_end( $list );
+	$table = oikai_format_markdown_table( $table );
+	if ( $backtick ) {
+		etag( "pre" );
+	}
+}
+
+/**
+ * Check that it really is a list item
+ * 
+ * True markdown requires lists to be separated by blank lines.
+ * But we were happy to create a list without the blank line.
+ * This caused a problem in some situations.
+ * 			-- like this one 
+ * 
+ * $last_line_len | $line starts | It's a list?
+ * -------------- | ------------ | ------------
+ * 0              | '--'         | true
+ * >0             | '--'         | $list
+ * 
+ * @param integer $list current list nesting level
+ * @param string $line 
+ * @param integer $last_line_len
+ * @return bool true if we think it's a list
+ */
+function oikai_check_its_a_list( $list, $line, $last_line_len ) {
+	$its_a_list = true;
+	if ( 0 < $last_line_len ) {
+		$line_starts = substr( $line, 0, 2 );
+		if ( $line_starts == "--" ) {
+			$its_a_list = $list;
+		}
+	}
+	return( $its_a_list ); 
 }  
 
 /**
