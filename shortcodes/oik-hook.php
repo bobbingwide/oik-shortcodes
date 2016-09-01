@@ -19,7 +19,13 @@ function oikho_query_hook_type( $post_id ) {
  *
  * If there's just one hook it's shown as "hook <i>hook type</i>".
  * If more than one then they're comma separated, but NOT in an HTML list "hook <i>type</i>, hook <i>type</i>"
- * Links are created to the local site. If the hook is not found then no link is created.
+ * Links are created to the local site. 
+ * If the hook is not found then no link is created.
+ *
+ * When the hook type is '.' then we treat it slightly differently. 
+ * 
+ * 1. Don't append the hook_type
+ * 2. Do create a link, even if not found. 
  *
  * @param array $atts - shortcode parameters
  * @param string $content - content
@@ -54,11 +60,17 @@ function oikho_hook( $atts=null, $content=null, $tag=null ) {
 					foreach ( $posts as $post ) {
 						alink( null, get_permalink( $post->ID), $hook );
 						$hook_type = oikho_query_hook_type( $post->ID );
-						e( " <i>$hook_type</i>" );
+						if ( $type <> '.' ) {
+							e( " <i>$hook_type</i>" );
+						}
 						
 					}
 				} else {
-					e( $hook );
+					if ( $type == '.' ) {
+						alink( null, site_url( "oik_hook/" . $hook ), "$hook" );
+					} else { 
+						e( $hook );
+					}
 				}
 			}
 		}
