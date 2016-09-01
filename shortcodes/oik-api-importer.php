@@ -792,8 +792,8 @@ function oikai_format_markdown_table_line( $table, $line ) {
  *  __     | <strong>
  *  **     | <strong>
  *  `      | <code>
- * {@link  | http://
- * {@see   | http://
+ * {@link xxx }  | http://
+ * {@see xxx }   | [hook   .]
  * 
  * @param string $line
  */ 
@@ -807,9 +807,10 @@ function oikai_format_markdown_line( $line ) {
   $line = paired_replacements( " __", "__ ", " <strong>", "</strong> ", $line );
   $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
   $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
-  $line = paired_replacements( "{@link ", "} ", "http://", " ", $line );
-  $line = URL_autolink( $line );
+  $line = paired_replacements( "{@link ", "} ", "[bw_link ", "] ", $line );
+	bw_trace2( $line, "line", false );
 	$line = bw_do_shortcode( $line );
+  //$line = URL_autolink( $line );
   e( $line );
 }
 
