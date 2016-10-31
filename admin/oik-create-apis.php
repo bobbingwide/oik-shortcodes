@@ -177,7 +177,8 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 					} else {
 						if ( "0" === $previous ) {
 							oiksc_delete_posts( $component_preloaded );
-							//$oiksc_parse_status->res
+							$oiksc_parse_status->set_component( $component_preloaded->ID );
+							
 						} else {
 							echo "Previous: $previous" . PHP_EOL;
 							
