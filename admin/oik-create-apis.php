@@ -69,6 +69,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	oiksc_preload_content(); 
 	
 	foreach ( $components as $component ) {
+	
 		_ca_doaplugin_local( $component, $previous, $start );
 	} 
 }
@@ -138,9 +139,10 @@ function oiksc_load_all_themes( $components ) {
  *
  * List the files for the component
  * Components supported:
- * "wordpress" - all files in the WordPress installation excluding wp-content
- * <i>plugin</i> - all the files in the named plugin 
- * <i>theme</i> - all the files in the named theme
+ * 
+ *  "wordpress" - all files in the WordPress installation excluding wp-content
+ *  <i>plugin</i> - all the files in the named plugin 
+ *  <i>theme</i> - all the files in the named theme
  *
  * Process each file in the component, defining the file, classes, methods and APIs
  * 
@@ -173,7 +175,13 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 						$previous = $oiksc_parse_status->get_to_sha( $previous );
 						echo "We've finished the previous pass: $previous" . PHP_EOL;
 					} else {
-						
+						if ( 0 === $previous ) {
+							oiksc_delete_posts( $component_preloaded );
+							//$oiksc_parse_status->res
+						} else {
+							echo "Previous: $previous" . PHP_EOL;
+							
+						}
 						$previous = $oiksc_parse_status->get_from_sha( $previous );
 						$start = $oiksc_parse_status->get_file_m( $start );
 						echo "Continuing previous pass: $previous from $start" . PHP_EOL;
@@ -527,4 +535,67 @@ function oiksc_reassign_hooks() {
 	//remove_filter( "sanitize_title", "sanitize_title_with_dashes", 10 );
 	remove_filter( "pre_kses", "wp_pre_kses_less_than", 10 );
 }
+
+/**
+ * Delete a component's posts 
+ * 
+ * Delete the posts that may be regenerated when the API reference is regenerated
+ * 
+ * post type | post meta | Delete parsed source?
+ * --------- | --------- | ---------------------
+ * oik_api   | _oik_api_plugin | Yes 
+ * oik_hook  | _oik_hook_plugin | No
+ * oik_class | _oik_api_plugin | Yes
+ * oik_file  | _oik_api_plugin | Yes
+ * oik_parsed_source | _oik_sourceref | No
+ *
+ * We delete in the order shown since this will prevent other post types that have not yet been deleted from referencing posts that no longer exist.
+ * 
+ * We don't delete other post types that reference the component: plugin versions, shortcodes, theme versions
+ *  
+ * @param post the post for the component - may be a plugin or theme
+ */
+function oiksc_delete_posts( $component_preloaded ) {
+	$id = $component_preloaded->ID;
+	//bw_trace2();
+	echo "Deleting posts: $id" . PHP_EOL;
+	oiksc_delete_referenced_posts( $id, "oik_api", "_oik_api_plugin", true );
+	oiksc_delete_referenced_posts( $id, "oik_hook", "_oik_hook_plugin" );
+	oiksc_delete_referenced_posts( $id, "oik_class", "_oik_api_plugin", true );
+	oiksc_delete_referenced_posts( $id, "oik_file", "_oik_api_plugin", true );
+}
+
+/**
+ * Delete the referenced posts
+ * 
+ * @param ID $id post ID of the component being tidied
+ * @param string $post_type the post type of the posts being tidied
+ * @param string $meta_key the post meta key name 
+ * @param bool $delete_parsed_source 
+ */																																					
+function oiksc_delete_referenced_posts( $id, $post_type, $meta_key, $delete_parsed_source=false ) {
+	$args = array( "post_type" => $post_type
+							 , "meta_key" => $meta_key
+							 , "meta_value" => $id
+							 , "numberposts" => -1
+							 );
+	$posts = bw_get_posts( $args );
+	foreach ( $posts as $post ) {
+		echo "Deleting {$post->post_type} {$post->ID}" . PHP_EOL;
+		if ( $delete_parsed_source ) {
+			oiksc_delete_parsed_source( $post->ID );
+		}
+		wp_delete_post( $post->ID, true ); 
+	}
+}
+
+/**
+ * Delete the matching parsed source post
+ * 
+ * @param ID $id ID of the post that's about to be deleted
+ */									 
+function oiksc_delete_parsed_source( $id ) {
+	oiksc_delete_referenced_posts( $id, "oik_parsed_source", "_oik_sourceref", false );
+}
+		
 
