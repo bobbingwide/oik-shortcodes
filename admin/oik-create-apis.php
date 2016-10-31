@@ -175,7 +175,7 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 						$previous = $oiksc_parse_status->get_to_sha( $previous );
 						echo "We've finished the previous pass: $previous" . PHP_EOL;
 					} else {
-						if ( 0 === $previous ) {
+						if ( "0" === $previous ) {
 							oiksc_delete_posts( $component_preloaded );
 							//$oiksc_parse_status->res
 						} else {
