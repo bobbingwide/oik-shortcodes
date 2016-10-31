@@ -66,8 +66,9 @@ function oiksc_lazy_run_oik_shortcodes() {
 	oiksc_preloader();
 	oiksc_reassign_hooks();
 	
-	oiksc_preload_content(); 
-	
+	if ( $previous !== "0" ) {
+		oiksc_preload_content(); 
+	}
 	foreach ( $components as $component ) {
 	
 		_ca_doaplugin_local( $component, $previous, $start );
@@ -178,6 +179,7 @@ function _ca_doaplugin_local( $component, $previous=null, $start=null ) {
 						if ( "0" === $previous ) {
 							oiksc_delete_posts( $component_preloaded );
 							$oiksc_parse_status->set_component( $component_preloaded->ID );
+							oiksc_preload_content(); 
 							
 						} else {
 							echo "Previous: $previous" . PHP_EOL;
