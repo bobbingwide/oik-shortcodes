@@ -779,7 +779,7 @@ function oikai_format_markdown_table_line( $table, $line ) {
 /**
  * Format a markdown line 
  *
- * The line may not end in a blank so we append one to make up for the new line character we've stripped off
+ * The line may not end in a blank so we append one to make up for the new line character we've stripped off.
  *
  * Now we have to decide about this esc_html() call.
  * There's no point doing it if we're about to add some HTML 
@@ -787,17 +787,20 @@ function oikai_format_markdown_table_line( $table, $line ) {
  * 
  * Wrapper | Becomes
  * ------- | ---------
- *  _      | <em>
- *  *      | <em>
- *  __     | <strong>
- *  **     | <strong>
- *  `      | <code>
- * {@link xxx }  | http://
+ *  _      | em
+ *  *      | em
+ *  __     | strong
+ *  **     | strong
+ *  `      | code
+ * {@link xxx }  | [bw_link xxx]
  * {@see xxx }   | [hook   .]
+ 
+ * Shortcodes such as [wp] are not expanded
  * 
  * @param string $line
  */ 
 function oikai_format_markdown_line( $line ) {
+	$line = str_replace( "[", "&#91;", $line );
   $line = paired_replacements( "{@see '", "'}", "[hook ", " .] ", $line );
 	//bw_trace2( $line, "line", false );
   $line = esc_html( $line );
@@ -808,9 +811,8 @@ function oikai_format_markdown_line( $line ) {
   $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
   $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
   $line = paired_replacements( "{@link ", "} ", "[bw_link ", "] ", $line );
-	bw_trace2( $line, "line", false );
+	bw_trace2( $line, "line", false, BW_TRACE_DEBUG );
 	$line = bw_do_shortcode( $line );
-  //$line = URL_autolink( $line );
   e( $line );
 }
 
