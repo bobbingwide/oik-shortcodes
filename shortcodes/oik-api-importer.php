@@ -584,7 +584,8 @@ function oikai_reflect_docblock( $refFunc ) {
  */ 
 function oikai_reflect_descriptions( $docblock ) {
   h2( "Description" );
-  p( esc_html( $docblock->getShortDescription() ) );
+  //p( esc_html( $docblock->getShortDescription() ) );
+	oikai_format_description( $docblock->getShortDescription() );
   //p( esc_html( $docblock->getLongDescription() ) );
   sp();
   oikai_format_description( $docblock->getLongDescription() );
@@ -719,6 +720,7 @@ function oikai_format_preprocess_line( $line ) {
 	if ( $pos === 0 ) {
 		$line = "* " .  trim( $line );
 	}
+	
   return( $line );   
 
 }
@@ -976,7 +978,8 @@ function oikai_format_description( $long_description ) {
 	$last_line_len = 0;
 	foreach ( $lines as $line ) {
 		$line = oikai_format_preprocess_line( $line );
-		if ( strlen( $line ) ) {
+		$line_len = strlen( $line );
+		if ( $line_len ) {
 			$char = $line[0];
 		} else {
 			$char = null;
@@ -990,13 +993,18 @@ function oikai_format_description( $long_description ) {
 					
 			case '`':
 				//bw_trace2( $backtick, "backtick", false ) ;
-				$backtick = !$backtick;
-				//bw_trace2( $backtick, "! backtick", false );
-				if ( $backtick ) {
-					stag( "pre" );
+				if ( $line_len > 1 ) {
+					oikai_format_markdown_line( " " . $line );
 				} else {
-					etag( "pre" );
-				}
+					
+					$backtick = !$backtick;
+					//bw_trace2( $backtick, "! backtick", false );
+					if ( $backtick ) {
+						stag( "pre" );
+					} else {
+						etag( "pre" );
+					}
+				}	
 				break;
       
 			case '-':
@@ -2332,7 +2340,7 @@ function oikai_syntax_source( $sources, $startline, $prepend_php=true ) {
     $content = null;
   }  
   $content .= implode( "", $sources );
-  // bw_trace2();
+  //bw_trace2( $content, "content" );
   $tokens = token_get_all( $content );
   if ( !$prepend_php ) {
     //array_pop( $tokens );
