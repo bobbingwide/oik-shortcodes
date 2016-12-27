@@ -10,6 +10,7 @@
  * @return string - currently expected to be null
  */
 function oik_component_version( $ID ) {
+	bw_trace2();
 	if ( $ID ) {
 		$version = oik_query_component_version( $ID );
 		span( "_component_version" );
@@ -83,12 +84,13 @@ function oik_query_component_by_ID( $ID ) {
 														 , "oik_file" => "_oik_api_plugin"
 														 );		
 		$pre_map_type = bw_array_get( $pre_mapping_types, $post_type, null );
+		$meta_value = null;
 		if ( $pre_map_type ) {
 			$pre_map_key = bw_array_get( $pre_mapping_keys, $post_type, null );
 			$component_ID = get_post_meta( $ID, $pre_map_key, true );
-			$meta_value = oik_query_component_by_ID( $component_ID);
-		} else {
-			$meta_value = null;
+			if ( $component_ID ) {
+				$meta_value = oik_query_component_by_ID( $component_ID);
+			}
 		}
 	}
 	return( $meta_value );
