@@ -3,9 +3,9 @@
 * Contributors: bobbingwide
 * Donate link: http://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-* Requires at least: 4.5
-* Tested up to: 4.6
-* Stable tag: 1.27.8
+* Requires at least: 4.6
+* Tested up to: 4.7.1
+* Stable tag: 1.27.9
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.27.9 
+Now supports complete reparse of a component. Tested up to WordPress 4.7.1 and WordPress Multisite
+
 # 1.27.8 
 Contains improvements, changes and fixes for oik-plugins and WP-a2z. Tested up to WordPress 4.6 and WordPress Multisite
 
@@ -231,45 +234,52 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.27.9 
+* Added: Support complete reparse with previous=0 https://github.com/bobbingwide/oik-shortcodes/issues/34
+* Fixed: Avoid recursion for ID=0  https://github.com/bobbingwide/oik-shortcodes/issues/45
+* Fixed: oikai_format_markdown_line() expanding more shortcodes than intended https://github.com/bobbingwide/oik-shortcodes/issues/42
+* Fixed: paging not working for get_avatar [githib bobbingwide oik-shortcodes issue 43]
+* Tested: With WordPress 4.7.1 and WordPress Multisite
+
 # 1.27.8 
-* Added: View on Trac for WordPress plugins and themes [github bobbingwide oik-shortcodes issue 38]
-* Changed: Display which function does not exist [github bobbingwide oik-shortcodes issue 40]
-* Changed: Don't use site_url() for relative links for /oik_api/ [github bobbingwide oik-shortcodes issue 7]
-* Changed: Enhanced hook shortcode for type '.' [github bobbingwide oik-shortcodes issue 6]
-* Fixed: Better support for formatting Descriptions [github bobbingwide oik-shortcodes issue 6]
+* Added: View on Trac for WordPress plugins and themes https://github.com/bobbingwide/oik-shortcodes/issues/38
+* Changed: Display which function does not exist https://github.com/bobbingwide/oik-shortcodes/issues/40
+* Changed: Don't use site_url() for relative links for /oik_api/ https://github.com/bobbingwide/oik-shortcodes/issues/7
+* Changed: Enhanced hook shortcode for type '.' https://github.com/bobbingwide/oik-shortcodes/issues/6
+* Fixed: Better support for formatting Descriptions https://github.com/bobbingwide/oik-shortcodes/issues/6
 * Tested: With WordPress 4.6 and WordPress Multisite
 
 # 1.27.7 
-* Changed: Add links to GitHub and WordPress core's TRAC browser [github bobbingwide oik-shortcodes issue 38]
+* Changed: Add links to GitHub and WordPress core's TRAC browser https://github.com/bobbingwide/oik-shortcodes/issues/38
 * Changed: docblock params and Readme for GitHub
-* Fixed: Cater for not finding the component name [github bobbingwide oik-shortcodes issue 29]
-* Fixed: oik_file display not paginated on wp-a2z.org [github bobbingwide oik-shortcodes issue 36]
+* Fixed: Cater for not finding the component name https://github.com/bobbingwide/oik-shortcodes/issues/29
+* Fixed: oik_file display not paginated on wp-a2z.org https://github.com/bobbingwide/oik-shortcodes/issues/36
 
 # 1.27.6 
-* Added: Automate the creation of oik_shortcodes for a component [github bobbingwide oik-shortcodes issue 28]
-* Changed: Allow restart with a different previous SHA [github bobbingwide oik-shortcodes issue 21]
-* Changed: Add _component_version virtual field [github bobbingwide oik-shortcodes issue 29]
-* Changed: Keep links to shortcode parameters local [github bobbingwide oik-shortcodes issue 30]
-* Changed: Improve logic for hooks - parsing and displaying [github bobbingwide oik-shortcodes issue 31]
-* Changed: Move oiksc_yoastseo to admin/oik-yoastseo.php [github bobbingwide oik-shortcodes issue 32]
-* Fixed: Requests for form oik-shortcodes/shortcode/funcname result in 404 [github bobbingwide oik-shortcodes issue 33]
+* Added: Automate the creation of oik_shortcodes for a component https://github.com/bobbingwide/oik-shortcodes/issues/28
+* Changed: Allow restart with a different previous SHA https://github.com/bobbingwide/oik-shortcodes/issues/21
+* Changed: Add _component_version virtual field https://github.com/bobbingwide/oik-shortcodes/issues/29
+* Changed: Keep links to shortcode parameters local https://github.com/bobbingwide/oik-shortcodes/issues/30
+* Changed: Improve logic for hooks - parsing and displaying https://github.com/bobbingwide/oik-shortcodes/issues/31
+* Changed: Move oiksc_yoastseo to admin/oik-yoastseo.php https://github.com/bobbingwide/oik-shortcodes/issues/32
+* Fixed: Requests for form oik-shortcodes/shortcode/funcname result in 404 https://github.com/bobbingwide/oik-shortcodes/issues/33
 * Fixed: Remove PHP 7 specific logic in oik_create_codes_get_all_shortcodes()
 
 # 1.27.5 
 * Added: Add logic for reprocessing APIs
 * Added: Add logic to build the MD5 hash for an API
 * Added: Add logic to process all registered oik-plugins
-* Added: Add logic to set MD5 hash to reduce reprocessing time for unchanged functions/methods [github bobbingwide oik-shortcodes issue 17]
+* Added: Add logic to set MD5 hash to reduce reprocessing time for unchanged functions/methods https://github.com/bobbingwide/oik-shortcodes/issues/17
 * Added: Batch routine to convert _oik_api_calls from string to post ID
-* Added: Check if the function/method source has changed [github bobbingwide oik-shortcodes issue 17]
+* Added: Check if the function/method source has changed https://github.com/bobbingwide/oik-shortcodes/issues/17
 * Added: Load themes as well as plugins
 * Added: Logic to batch create oik-shortcodes
 * Added: Only add shortcodes for selected components
 * Added: QAD improvements to programmatically create oik-shortcodes
-* Added: Store parse status in post meta data for each component [github bobbingwide oik-shortcodes issue 21]
-* Added: [codes] shortcodes should work for oik-themese as well as oik-plugins [github bobbingwide oik-shortcodes issue 26]
-* Added: add component parameter to [codes] to support child themes [github bobbingwide oik-shortcodes issues 27]
-* Changed: Cater for remote git repositories when running locally [github bobbingwide oik-shortcodes issue 22]
+* Added: Store parse status in post meta data for each component https://github.com/bobbingwide/oik-shortcodes/issues/21
+* Added: [codes] shortcodes should work for oik-themese as well as oik-plugins https://github.com/bobbingwide/oik-shortcodes/issues/26
+* Added: add component parameter to [codes] to support child themes https://github.com/bobbingwide/oik-shortcodes/issues/27
+* Changed: Cater for remote git repositories when running locally https://github.com/bobbingwide/oik-shortcodes/issues/22
 * Changed: Convert API names to post IDs before updating _oik_api_calls post meta
 * Changed: Crash when global plugin or filename is not set
 * Changed: Docblock for oikai_list_callees
@@ -278,44 +288,44 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 * Changed: Only allow command line invocation
 * Changed: Temporary solution for adding Genesis shortcodes
 * Changed: Trace levels and docblocks
-* Fixed: Docblock markdown formatting error for some functions [github bobbingwide oik-shortcodes issue 25]
-* Fixed: Don't implement unnecessary filter hooks [github bobbingwide oik-shortcodes issue 9] [github bobbingwide oik-shortcodes issue 10]
+* Fixed: Docblock markdown formatting error for some functions https://github.com/bobbingwide/oik-shortcodes/issues/25
+* Fixed: Don't implement unnecessary filter hooks https://github.com/bobbingwide/oik-shortcodes/issues/9 [github bobbingwide oik-shortcodes issue 10]
 * Fixed: Ensure oikp_load_plugin exists in oiksc_load_component
-* Fixed: Fatal error when parsing shared library files [github bobbingwide oik-shortcodes issue 19]
+* Fixed: Fatal error when parsing shared library files https://github.com/bobbingwide/oik-shortcodes/issues/19
 * Fixed: Get SHA only in get_to_sha()
 * Fixed: Improve logic for missing component
 * Fixed: Still need to set global plugin and filename in some situations
-* Fixed: Uncaught Error: Cannot access self:: when no class scope is active [github bobbingwide oik-shortcodes issue 23]
+* Fixed: Uncaught Error: Cannot access self:: when no class scope is active https://github.com/bobbingwide/oik-shortcodes/issues/23
 * Fixed: We need to load the 'git' library manually at present
 
 # 1.27.4 
-* Added: Automate the creation of Yoast SEO post meta [github bobbingwide oik-shortcodes issue 20]
-* Added: Implement 'genesis_404' action for 404 handler logic [github bobbingwide oik-shortcodes issue 18]
-* Added: Improve performance of oiksc_create_api() [github bobbingwide oik-shortcodes issue 9]
-* Added: Improve performance of oiksc_create_file [github bobbingwide oik-shortcodes issue 10]
-* Added: Improve performance with pragmatic links [github bobbingwide oik-shortcodes issue 18]
+* Added: Automate the creation of Yoast SEO post meta https://github.com/bobbingwide/oik-shortcodes/issues/20
+* Added: Implement 'genesis_404' action for 404 handler logic https://github.com/bobbingwide/oik-shortcodes/issues/18
+* Added: Improve performance of oiksc_create_api() https://github.com/bobbingwide/oik-shortcodes/issues/9
+* Added: Improve performance of oiksc_create_file https://github.com/bobbingwide/oik-shortcodes/issues/10
+* Added: Improve performance with pragmatic links https://github.com/bobbingwide/oik-shortcodes/issues/18
 * Added: Logic to enable AJAX pagination of parsed_source
 * Added: Preload all APIs
-* Added: Reflect the folder structure in the oik_file post type hierarchy [github bobbingwide oik-shortcodes issue 15]
+* Added: Reflect the folder structure in the oik_file post type hierarchy https://github.com/bobbingwide/oik-shortcodes/issues/15
 * Added: Support the start parameter for files
 * Changed: Don't display Class ref or API type if null
 * Changed: First pass working with _oik_api_calls as string or post_id
-* Changed: Format parameters which are arrays [[github bobbingwide oik-shortcodes issue 6]
-* Changed: Improve class oiksc_function_loaded for PHP 7 [github bobbingwide oik-shortcodes issue 8]
+* Changed: Format parameters which are arrays [https://github.com/bobbingwide/oik-shortcodes/issues/6
+* Changed: Improve class oiksc_function_loaded for PHP 7 https://github.com/bobbingwide/oik-shortcodes/issues/8
 * Changed: Improve component processing
-* Changed: Improve the contents of oik_parsed_source [github bobbingwide oik-shortcodes issue 7]
+* Changed: Improve the contents of oik_parsed_source https://github.com/bobbingwide/oik-shortcodes/issues/7
 * Changed: Need oiksc_autoload for oik options > create API
 * Changed: Trace levels
 * Changed: Various performance improvements and fixes
 * Changed: autoloading improvements
 * Changed: docblock improvements
 * Fixed: Allow for bw_get_latest_parsed_source_by_sourceref() to return null
-* Fixed: Also cater for instanceof self and new self [github bobbingwide oik-shortcodes issue 8]
+* Fixed: Also cater for instanceof self and new self https://github.com/bobbingwide/oik-shortcodes/issues/8
 * Fixed: No longer need dummy wp_enqueue_style() function
-* Fixed: Parsing a theme produces "Source file not available" [github bobbingwide oik-shortcodes issue 11]
-* Fixed: _oiksc_get_php_files should ignore the .git folder [github bobbingwide oik-shortcodes issue 12]
-* Fixed: oiksc_update_oik_hook() allowed to run when DOING_AJAX [github bobbingwide oik-shortcodes issue 13]
-* Fixed: update _oik_api_hooks even if empty [github bobbingwide oik-shortcodes issue 17]
+* Fixed: Parsing a theme produces "Source file not available" https://github.com/bobbingwide/oik-shortcodes/issues/11
+* Fixed: _oiksc_get_php_files should ignore the .git folder https://github.com/bobbingwide/oik-shortcodes/issues/12
+* Fixed: oiksc_update_oik_hook() allowed to run when DOING_AJAX https://github.com/bobbingwide/oik-shortcodes/issues/13
+* Fixed: update _oik_api_hooks even if empty https://github.com/bobbingwide/oik-shortcodes/issues/17
 * Fixed: use oikai_dummy_TCES( false ) for each API
 
 # 1.27.3 
