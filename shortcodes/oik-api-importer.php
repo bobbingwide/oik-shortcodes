@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2016
+<?php // (C) Copyright Bobbing Wide 2012-2017
 
 /**
  * Print a function's parameters in a definition list 
@@ -854,8 +854,10 @@ function URL_autolink( $line ) {
 /**
  * Perform replacements of paired markup strings
  *
- * Note: This logic requires the paired replacements to appear on the same line.
- * It should cater for nested pairs. 
+ * Notes: 
+ * - This logic requires the paired replacements to appear on the same line.
+ * - It should cater for nested pairs.
+ * - It should ensure that the pairs don't overlap. 
  *
  * @param string $before - the start of the markdown string
  * @param string $after - the end of the markdown string
@@ -868,7 +870,7 @@ function paired_replacements( $before, $after, $beforetag, $aftertag, $line ) {
   $spos = strpos( $line, $before );
   while ( $spos !== false ) {
     $epos = strpos( $line, $after );
-    if ( $epos > $spos ) {
+    if ( $epos > ( $spos + strlen( $before ) ) ) {
       $line = replace_at( $epos, $after, $aftertag, $line );
       $line = replace_at( $spos, $before, $beforetag, $line );
       $spos = strpos( $line, $before );
