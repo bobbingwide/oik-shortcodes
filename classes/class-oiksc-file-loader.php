@@ -61,7 +61,7 @@ class oiksc_file_loader extends oiksc_function_loader {
    */
   function extract_to_tmp() { 
 		bw_trace2();
-    $this->tempnam = tempnam( "/tmp", "oikscloa");
+    $this->tempnam = tempnam( sys_get_temp_dir(), "oikscloa");
     $line = "<?php function ";
     $line .= $this->dummy_function_name;
     $line .= "(){ ?>\n";

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2016
+<?php // (C) Copyright Bobbing Wide 2014-2017
 
 /**
  * Implement the dummy function for Reflection
@@ -113,7 +113,7 @@ class oiksc_function_loader {
   
     // We need to specify the file name and component type here
     $contents_arr = oiksc_load_file( null, $this->component_type, $this->plugin ); 
-    $this->tempnam = tempnam( "/tmp", "oikscloa");
+    $this->tempnam = tempnam( sys_get_temp_dir(), "oikscloa");
     $start = $this->function_obj->getStartLine();
     $start--;
     $end = $this->function_obj->getEndLine();
