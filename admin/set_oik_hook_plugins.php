@@ -69,9 +69,12 @@ function set_oik_hook_plugins() {
 
 class oik_hook_plugins {
 
+	public $hook_names;
 	public $hook_plugins;
 	public $filerefs;
 	public $api_plugins;
+	
+	public $hook_plugin;
 	public $fileref; 
 	public $api_plugin;
 	
@@ -79,14 +82,18 @@ class oik_hook_plugins {
 	}
 	
 	function process() {
+		
 		$meta_values = $this->load_all_post_meta();
+		echo count( $meta_values['_oik_hook_name'] );
+		echo PHP_EOL;
 		echo count( $meta_values['_oik_hook_plugin'] );
 		echo PHP_EOL;
 		echo count( $meta_values['_oik_fileref'] ) ;
 		echo PHP_EOL;
 		echo count( $meta_values['_oik_api_plugin'] );
 		echo PHP_EOL;
-		$this->hook_plugins = $meta_values['_oik_hook_plugin'];
+		$this->hook_names = $meta_values['_oik_hook_name'];
+		$this->hook_plugins = $this->simplify_results( $meta_values['_oik_hook_plugin'] );
 		$this->filerefs = $this->simplify_results( $meta_values['_oik_fileref' ] );
 		$this->api_plugins = $this->simplify_results( $meta_values['_oik_api_plugin'] );
 		//$this->create_map();
@@ -101,7 +108,7 @@ class oik_hook_plugins {
 	 *
 	 */
 	function load_all_post_meta() {
-		$meta_keys = array( "_oik_hook_plugin", "_oik_fileref", "_oik_api_plugin" );
+		$meta_keys = array( "_oik_hook_name", "_oik_hook_plugin", "_oik_fileref", "_oik_api_plugin" );
 		$meta_values = array();
 		foreach( $meta_keys as $meta_key ) { 
 			$meta_values[ $meta_key ] = $this->load_post_meta( $meta_key );
@@ -109,7 +116,7 @@ class oik_hook_plugins {
 		return( $meta_values );
 	}
 
-	function load_post_meta( $meta_key="_oik_api_calls" ) {
+	function load_post_meta( $meta_key="_oik_hook_name" ) {
 		global $wpdb;
 		$request = $wpdb->prepare( "select meta_id, post_id, meta_value from $wpdb->postmeta where meta_key = '%s' order by post_id ASC", $meta_key );
 		echo $request;
@@ -138,24 +145,22 @@ class oik_hook_plugins {
 	}
 	
 	function convert_all_hook_plugins() {
-		$total = count( $this->hook_plugins );
+		$total = count( $this->hook_names );
 		$count = 0;
 		$failed = 0;
 		$updated = 0;
 		$ok = 0;
-		foreach ( $this->hook_plugins as $meta_data ) {
+		foreach ( $this->hook_names as $meta_data ) {
 			$count++;
 			echo "$count/$total/$failed/$updated/$ok ";
-			$meta_value = $meta_data->meta_value;
 			echo "ID: " . $meta_data->post_id ; 
-			echo " Current plugin: " .  $meta_value;
-			//$this->get_fileref( $meta_data->post_id );
+			echo " hook: " . $meta_data->meta_value;
+			$hook_plugin = $this->get_hook_plugin( $meta_data->post_id );
 			$api_plugin = $this->get_api_plugin( $meta_data->post_id );
 			if ( null === $api_plugin ) {
 				$failed++;
-				//gob();
-			} elseif ( $api_plugin != $meta_value ) {
-				$this->update( $meta_data, $api_plugin );
+			} elseif ( $api_plugin != $hook_plugin ) {
+				$this->update_post_meta( $meta_data->post_id, $api_plugin );
 				$updated++;
 			} else {
 				$ok++;
@@ -163,6 +168,12 @@ class oik_hook_plugins {
 		}
 		
 		echo "$count/$total/$failed/$updated/$ok ";
+	}
+	
+	function get_hook_plugin( $post_id ) {
+		$this->hook_plugin = bw_array_get( $this->hook_plugins, $post_id, null );
+		echo " Hook plugin: " .  $this->hook_plugin;
+		return $this->hook_plugin;
 	}
 	
 	function get_fileref( $post_id ) {
@@ -215,6 +226,11 @@ class oik_hook_plugins {
 		
 		//gob();													
 		
+	}
+	
+	function update_post_meta( $post_id, $meta_value ) {
+		echo " updating... " . PHP_EOL;
+		update_post_meta( $post_id, "_oik_hook_plugin", $meta_value ); 
 	}
 		
 		
