@@ -1,7 +1,7 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2017
 
 /**
- * Report the current status of the system
+ * Reports the current status of the system
  *
  * @param bool $detail - show details
  * 
@@ -43,6 +43,11 @@ function oikai_api_status_functions() {
   p( "User functions: $count " );  
 }
 
+/**
+ * Displays details of classes.
+ *
+ * @param array $classes
+ */
 function oikai_api_status_classes_details( $classes ) {
   if ( $classes ) {
     //bw_trace2( $classes );
@@ -59,7 +64,11 @@ function oikai_api_status_classes_details( $classes ) {
   }
 }  
 
-
+/**
+ * Displays status of classes
+ * 
+ * @param bool $detail - future use
+ */
 function oikai_api_status_classes( $detail=false ) {
   $declared_classes = get_declared_classes(); 
   $count = count( $declared_classes );
@@ -130,16 +139,30 @@ function oikai_api_status_plugins( $detail=false ) {
   return( $plugins );  
 }
 
+/**
+ * Queries number of plugins
+ * 
+ * @param array|null $plugins
+ * @return integer count of plugins - never expected to be 0
+ */
 function oikai_query_plugin_count( $plugins=null ) {
   if ( !$plugins ) {
     $plugins = oikai_query_plugins();
   }   
   $count = count( $plugins );
   return( $count );
-}  
+}
 
+/**
+ * Queries plugins.
+ * 
+ * Calls bw_get_active_plugins only if WordPress is active.
+ * @TODO Validate sequence of tests. Could we check bw_is_wordpress() first?
+ *
+ * @return array active plugins
+ */  
 function oikai_query_plugins() {
-  if ( PHP_SAPI == "cli" ) {
+  if ( php_sapi_name() == "cli" ) {
     $plugins = array( "oik-batch" );
   } elseif ( bw_is_wordpress() ) {  
     oik_require( "admin/oik-depends.inc" );

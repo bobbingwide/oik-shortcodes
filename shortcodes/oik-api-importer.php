@@ -1173,12 +1173,12 @@ function oikai_load_from_file( $fileName, $refFunc ) {
  * Set the time limit except in batch mode
  *
  * Note: Some plugins check if it's OK to set this. e.g. Easy-Digital-Downloads
- * Here we just check if we're running in batch ( PHP from the command line )
+ * Here we just check if we're running in batch ( PHP from the command line ).
  * 
  * @param integer $limit time limit in seconds
  */
 function oikai_set_time_limit( $limit=120 ) {
-	if ( PHP_SAPI == "cli" ) {
+	if ( php_sapi_name() == "cli" ) {
 		//
 	} else {
 		set_time_limit( $limit );

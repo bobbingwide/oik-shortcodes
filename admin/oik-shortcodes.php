@@ -665,7 +665,7 @@ function oiksc_update_oik_api( $post, $plugin, $func, $file, $type, $title ) {
  * 
  */
 function oiksc_update_oik_hook( $post, $hook, $context ) {
-	if ( !defined( 'DOING_AJAX' ) && !is_user_logged_in() && PHP_SAPI !== "cli" ) {
+	if ( !defined( 'DOING_AJAX' ) && !is_user_logged_in() && php_sapi_name() !== "cli" ) {
 		return;
 	}
   $type = oiksc_get_hook_type( $context );
