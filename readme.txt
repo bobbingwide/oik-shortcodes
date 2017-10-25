@@ -1,10 +1,10 @@
 === oik shortcodes server ===
 Contributors: bobbingwide
-Donate link: http://www.oik-plugins.com/oik/oik-donate/
+Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-Requires at least: 4.6
-Tested up to: 4.7.1
-Stable tag: 1.27.9
+Requires at least: 4.8
+Tested up to: 4.9-beta3
+Stable tag: 1.28.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,10 +85,7 @@ New in version 1.08
 
 == Frequently Asked Questions ==
 = Where is the FAQ? =
-[oik FAQ](http://www.oik-plugins.com/oik/oik-faq)
-
-= Is there a support forum? =
-Yes - please use the standard WordPress forum - http://wordpress.org/tags/oik?forum_id=10
+[oik FAQ](https://www.oik-plugins.com/oik/oik-faq)
 
 = Can I get support? = 
 Yes - see above 
@@ -98,6 +95,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.28.0 = 
+Better supports actual usage in wp-a2z.org and oik-plugins
+
 = 1.27.9 =
 Now supports complete reparse of a component. Tested up to WordPress 4.7.1 and WordPress Multisite
 
@@ -233,6 +233,17 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.28.0 = 
+* Added: Batch routine to create _oik_hook_plugin post meta for oik_hook posts [github bobbingwide oik-shortcodes issues 48]
+* Added: Set only one value for compatible_up_to based on publication date [github bobbingwide oik-shortcodes issues 50]
+* Changed: API ref field temporarily not displayed [github bobbingwide oik-shortcodes issues [52]
+* Changed: Registration of oik_shortcodes [github bobbingwide oik-shortcodes issues 55]
+* Fixed: Support PHP 7.1 - replace '/tmp' by sys_get_temp_dir() [github bobbingwide oik-shortcodes issues 47]
+* Fixed: Use php_sapi() instead of PHP_SAPI to resolve environmental problem [github bobbingwide oik-shortcodes issues 48]
+* Fixed: paired_replacements() should not convert a single ' * ' to '<em>/em>' [github bobbingwide oik-shortcodes issues 46]
+* Tested: With WordPress 4.8.2 and 4.9-beta3
+* Tested: With PHP 7.0 and PHP 7.1
+
 = 1.27.9 =
 * Added: Support complete reparse with previous=0 [github bobbingwide oik-shortcodes issue 34]
 * Fixed: Avoid recursion for ID=0  [github bobbingwide oik-shortcodes issue 45]
@@ -604,7 +615,7 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 
 == Further reading ==
 If you want to read more about the oik plugins then please visit the
-[oik plugin](http://www.oik-plugins.com/oik) 
+[oik plugin](https://www.oik-plugins.com/oik) 
 **"the oik plugin - for often included key-information"**
 
 For more information about the WordPress Code Reference
