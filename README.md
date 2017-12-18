@@ -4,8 +4,8 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 4.8
-* Tested up to: 4.9-beta3
-* Stable tag: 1.28.0
+* Tested up to: 4.9.1
+* Stable tag: 1.29.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,6 +96,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.29.0 
+Upgrade for compatibility with oik v3.2.3
+
 # 1.28.0 
 Better supports actual usage in wp-a2z.org and oik-plugins
 
@@ -234,6 +237,11 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.29.0 
+* Changed: Dependent upon oik v3.2.3, oik-plugins v1.16.0, oik-themes v1.3.0 and oik-fields v1.50.1 https://github.com/bobbingwide/oik-shortcodes/issues/57
+* Tested: With WordPress 4.9.1 and WordPress Multisite
+* Tested: With PHP 7.0, 7.1 and 7.2
+
 # 1.28.0 
 * Added: Batch routine to create _oik_hook_plugin post meta for oik_hook posts https://github.com/bobbingwide/oik-shortcodes/issues/48
 * Added: Set only one value for compatible_up_to based on publication date https://github.com/bobbingwide/oik-shortcodes/issues/50
