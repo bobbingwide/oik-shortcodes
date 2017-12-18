@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2016
+<?php // (C) Copyright Bobbing Wide 2014-2017
 /**
  * Functions to dynamically "load" methods and functions from source files that are not already loaded
  * 
@@ -137,7 +137,7 @@ function oiksc_load_file( $file=null, $component_type_p=null, $component_slug ) 
  * 
  *
  * Original commentary note:
- * The wp_doc_link_parse() function in wp-admin/includes/misc.inc does almost exactly the opposite of what we want.
+ * The wp_doc_link_parse() function in wp-admin/includes/misc.php does almost exactly the opposite of what we want.
  * It lists functions that might be documented as WordPress or PHP functions.
  * We want to list the ones that aren't.. so basically we want the contents of the $ignore_functions array! 
  * 

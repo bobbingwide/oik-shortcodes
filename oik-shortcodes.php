@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.28.0
+Version: 1.29.0
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
@@ -860,7 +860,7 @@ function oiksc_ajax_oiksc_create_api() {
   $title = bw_array_get( $_REQUEST, "title", null );
   // We don't need the $type **?**
   if ( $api && $file ) {
-    oik_require( "includes/bw_posts.inc" ); 
+    oik_require( "includes/bw_posts.php" ); 
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
     oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
     oik_require( "feed/oik-plugins-feed.php", "oik-plugins" );
@@ -911,7 +911,7 @@ function oiksc_ajax_oiksc_create_file() {
   $file = bw_array_get( $_REQUEST, "file", null );
   $plugin = bw_array_get( $_REQUEST, "plugin", null );
   if ( $file ) {
-    oik_require( "includes/bw_posts.inc" ); 
+    oik_require( "includes/bw_posts.php" ); 
     oik_require( "admin/oik-apis.php", "oik-shortcodes" );
     oik_require( "admin/oik-files.php", "oik-shortcodes" );
     //oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );

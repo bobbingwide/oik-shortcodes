@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2016
+<?php // (C) Copyright Bobbing Wide 2012-2017
 /** 
  * Automagically determine the API list
  *
@@ -243,7 +243,7 @@ function oikai_apilink( $atts=null, $content, $tag ) {
  * @return array $posts - array of posts found
  */
 function oikai_get_oik_apis_byname( $functions ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $posts = bw_get_by_metakey_array( "oik_api", "_oik_api_name", $functions );
   return( $posts );
 }

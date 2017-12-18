@@ -165,7 +165,7 @@ function oikai_query_plugins() {
   if ( php_sapi_name() == "cli" ) {
     $plugins = array( "oik-batch" );
   } elseif ( bw_is_wordpress() ) {  
-    oik_require( "admin/oik-depends.inc" );
+		oik_require_lib( "oik-depends" );
     $plugins = bw_get_active_plugins();
   } else {
     $plugins = array( "oik-batch" );

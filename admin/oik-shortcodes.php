@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2016
+<?php // (C) Copyright Bobbing Wide 2012-2017
 
 /**
  * Admin functions for oik_shortcodes
@@ -88,7 +88,7 @@ function oiksc_get_help( $code ) {
   $help = bw_array_get( $_REQUEST, "help", null );
   if ( !$help ) {
     // obtain the help using the action
-    oik_require( "includes/oik-sc-help.inc" );
+    oik_require( "includes/oik-sc-help.php" );
     do_action( "oik_add_shortcodes" );
     $help = _bw_lazy_sc_help( $code );
   }
@@ -254,7 +254,7 @@ function _oiksc_create_params( $plugin, $code, $post_id ) {
     }  
   }
   bw_trace2( $syntax, "syntax", true, BW_TRACE_DEBUG );
-  oik_require( "includes/oik-sc-help.inc" );
+  oik_require( "includes/oik-sc-help.php" );
   $syntax_code = _bw_lazy_sc_syntax( $code );
   bw_trace2( $syntax_code, "syntax_code", false, BW_TRACE_VERBOSE );
   
@@ -332,7 +332,7 @@ function oiksc_create_shortcode() {
       $code = bw_array_get( $_REQUEST, "codes", null );
     }  
     if ( $code ) {
-      oik_require( "includes/bw_posts.inc" ); 
+      oik_require( "includes/bw_posts.php" ); 
       $plugin = bw_array_get( $_REQUEST, "plugin", null );
       $help = oiksc_get_help( $code );
       $func = oiksc_get_func( $code, $plugin ); 
@@ -777,7 +777,7 @@ function _oiksc_create_shortcode( $plugin, $code, $help, $func ) {
 function oiksc_code_list() {
   global $shortcode_tags; 
   
-  oik_require( "includes/oik-sc-help.inc" );
+  oik_require( "includes/oik-sc-help.php" );
   do_action( "oik_add_shortcodes" );
   $sc_list = array();
   $sc_list[] = "None";
@@ -834,7 +834,7 @@ function oiksc_options() {
  * @return $post    
 */
 function oiksc_get_oik_api_byname( $function ) {
-  oik_require( "includes/bw_posts.inc" ); 
+  oik_require( "includes/bw_posts.php" ); 
   $atts = array();
   $atts['post_type'] = "oik_api" ;
   $atts['numberposts'] = 1; 
@@ -853,7 +853,7 @@ function oiksc_get_oik_api_byname( $function ) {
  * @return $post    
 */
 function oiksc_get_oik_hook_byname( $hook ) {
-  oik_require( "includes/bw_posts.inc" ); 
+  oik_require( "includes/bw_posts.php" ); 
   $atts = array();
   $atts['post_type'] = "oik_hook" ;
   $atts['numberposts'] = 1; 
@@ -873,7 +873,7 @@ function oiksc_get_oik_hook_byname( $hook ) {
  * 
  */
 function oiksc_get_shortcodes_byname( $oik_shortcode, $func=null ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $atts = array();
   $atts['post_type'] = "oik_shortcodes" ;
   $meta_query = array();

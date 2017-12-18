@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014
+<?php // (C) Copyright Bobbing Wide 2014-2017
 /** 
  * Automagically determine the class list
  *
@@ -87,7 +87,7 @@ function oikai_classlink( $atts=null, $content, $tag ) {
  * 
  */
 function oikai_get_oik_classes_byname( $classes ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $posts = bw_get_by_metakey_array( "oik_class", "_oik_class_name", $classes );
   return( $posts );
 }

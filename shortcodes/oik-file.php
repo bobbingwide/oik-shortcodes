@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2016
+<?php // (C) Copyright Bobbing Wide 2014-2017
 
 /** 
  * Get the file name from the current post
@@ -11,7 +11,7 @@
  * @return array|null  - array( $filename, $component_type ) - the fully qualified file name to load and component type or null
  */ 
 function oikai_get_current_post_filename() {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $filename = null; 
   $post_id = bw_global_post_id(); 
   bw_trace2( $post_id ); 

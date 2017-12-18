@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2014
+<?php // (C) Copyright Bobbing Wide 2012, 2017
  
 /**
  * Determine the reference_type from PHP tokens
@@ -263,7 +263,7 @@ function api__syntax( $shortcode="api" ) {
  * Example hook for [api] shortcode
  */
 function api__example( $shortcode="api" ) {
-  oik_require( "includes/oik-sc-help.inc" );
+  oik_require( "includes/oik-sc-help.php" );
   $text = "Links to different APIs: PHP,locally documented,WordPress reference" ;
   $example = "require,oik_require,hello_dolly";
   bw_invoke_shortcode( $shortcode, $example, $text );

@@ -56,7 +56,7 @@ function set_oik_hook_plugins() {
 	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
 	oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
 	oik_require( "feed/oik-plugins-feed.php", "oik-plugins" );
-	oik_require( "includes/bw_posts.inc" );
+	oik_require( "includes/bw_posts.php" );
 	oik_require( "oik-list-wordpress-files.php", "oik-batch" );
 	oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
 

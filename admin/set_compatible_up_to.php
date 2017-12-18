@@ -26,7 +26,7 @@ function set_compatible_up_to() {
 	$atts = array( "post_type" =>  "oik_pluginversion,oik_premiumversion,oik_themeversion,oik_themiumversion" 
 							, "numberposts" => -1
 							);
-	oik_require( "includes/bw_posts.inc" );
+	oik_require( "includes/bw_posts.php" );
 	$posts = bw_get_posts( $atts );
 	foreach ( $posts as $post ) {
 		

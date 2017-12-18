@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2016
+<?php // (C) Copyright Bobbing Wide 2014-2017
 /**
  * oiksc_parsed_source class
  *
@@ -202,7 +202,7 @@ class oiksc_parsed_source {
 	 * @return post - the post object - there should be a maximum of one
 	 */
 	function get_parsed_source_by_sourceref( $id ) {
-		oik_require( "includes/bw_posts.inc" );
+		oik_require( "includes/bw_posts.php" );
 		$atts = array(); 
 		$atts['post_type'] = "oik_parsed_source";
 		$atts['meta_key'] = "_oik_sourceref" ;
@@ -358,7 +358,7 @@ function bw_get_latest_parsed_source_by_sourceref( $file, $component_type, $post
  * @return post - the post object - there should be a maximum of one
  */
 function bw_get_parsed_source_by_sourceref( $id ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $atts = array(); 
   $atts['post_type'] = "oik_parsed_source";
   $atts['meta_key'] = "_oik_sourceref" ;

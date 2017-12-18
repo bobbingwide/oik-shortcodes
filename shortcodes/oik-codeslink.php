@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2016
+<?php // (C) Copyright Bobbing Wide 2012-2017
 
 /** 
  * Automagically determine the shortcode list
@@ -65,7 +65,7 @@ function oikai_listcodes( $atts ) {
  * @result array $posts - array of posts found
  */
 function oiksc_get_shortcodes_bycode( $shortcodes ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $atts = array();
   $atts['post_type'] = "oik_shortcodes" ;
   //$atts['numberposts'] = -1; 

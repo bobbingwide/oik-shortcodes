@@ -2406,7 +2406,7 @@ function oikai_get_class( $funcname, $classname=null ) {
  * @return $post    
 */
 function oikai_get_oik_class_byname( $class ) {
-  oik_require( "includes/bw_posts.inc" ); 
+  oik_require( "includes/bw_posts.php" ); 
   $atts = array();
   $atts['post_type'] = "oik_class" ;
   $atts['numberposts'] = 1; 
@@ -2670,7 +2670,7 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
     oikai_build_dynamic_docs( $content );
   } else { 
     if ( !$funcname ) {
-      oik_require( "includes/bw_posts.inc" ); 
+      oik_require( "includes/bw_posts.php" ); 
       $post_id = bw_global_post_id(); 
       bw_trace2( $post_id, "post_id", true, BW_TRACE_VERBOSE ); 
       $sourcefile = get_post_meta( $post_id, "_oik_api_source", true );

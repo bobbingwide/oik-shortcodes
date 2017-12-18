@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2016
+<?php // (C) Copyright Bobbing Wide 2012-2017
 /**
  * Display the "Create API" admin page
  */
@@ -314,7 +314,7 @@ function oiksc_create_api() {
     $type = _oiksc_get_type();
     // $code = _oiksc_get_shortcode(); **?**
     if ( $type && $api && $file && $plugin_id ) {
-      oik_require( "includes/bw_posts.inc" ); 
+      oik_require( "includes/bw_posts.php" ); 
       $post_id = _oiksc_create_api( $plugin_id, $api, $files[$file], $type ); // Note: No $title 
       
       //$content = bw_ret();
@@ -622,7 +622,7 @@ function oikai_save_callees( $post_id ) {
  */
 function oikai_map_callees( $oikai_callee ) {
 	$mapped_callees = array();
-	if ( count( $oikai_callee ) ) {	
+	if ( is_array( $oikai_callee) && count( $oikai_callee ) ) {	
 		foreach ( $oikai_callee as $callee ) {
 			if ( is_numeric( $callee ) ) {
 				$mapped_callees[] = $callee;
@@ -640,7 +640,7 @@ function oikai_map_callees( $oikai_callee ) {
 /** 
  * List functions implemented in the file
  *
- * The wp_doc_link_parse() function in wp-admin/includes/misc.inc does almost exactly the opposite of what we want.
+ * The wp_doc_link_parse() function in wp-admin/includes/misc.php does almost exactly the opposite of what we want.
  * It lists functions that might be documented as WordPress or PHP functions.
  * We want to list the ones that aren't.. so basically we want the contents of the $ignore_functions array! 
  * 

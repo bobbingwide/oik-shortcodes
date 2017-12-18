@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2016
+<?php // (C) Copyright Bobbing Wide 2016,2017
 /**
  * 404 handler for oik-shortcodes
  *
@@ -173,7 +173,7 @@ class oiksc_404_handler {
 		$name = substr( $name, 0, 1 );
 		$like = $name;
 		oik_require( "shortcodes/oik-navi.php" );
-		oik_require( "includes/bw_posts.inc" );
+		oik_require( "includes/bw_posts.php" );
 		$atts = array( "post_type" => $this->post_type_object->name 
 								, "orderby" => 'title'
 								, "numberposts" => 10
@@ -313,7 +313,7 @@ class oiksc_404_handler {
 	 * @return string Generated HTML
 	 */
 	function perform_queries( $atts ) {
-		oik_require( "includes/bw_posts.inc" );
+		oik_require( "includes/bw_posts.php" );
 		oik_require( "shortcodes/oik-navi.php" );
 		$posts = bw_get_posts( $atts );
 		if ( $posts ) {

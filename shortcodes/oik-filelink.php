@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2015
+<?php // (C) Copyright Bobbing Wide 2012-2017
 /** 
  * Automagically determine the file list
  *
@@ -91,7 +91,7 @@ function oikai_filelink( $atts=null, $content, $tag ) {
  * @return array $posts - array of posts found
  */
 function oikai_get_oik_files_byname( $files ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $posts = bw_get_by_metakey_array( "oik_file", "_oik_file_name", $files );
   return( $posts );
 }

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2016
+<?php // (C) Copyright Bobbing Wide 2014-2017
 
 /**
  * Strip all the classes, methods and APIs from the file
@@ -264,7 +264,7 @@ function _oikai_create_file( $plugin, $file ) {
  * @return post - the oik_file post or null
  */
 function oiksc_get_oik_file_byname( $plugin, $file ) {
-  oik_require( "includes/bw_posts.inc" );
+  oik_require( "includes/bw_posts.php" );
   $atts = array();
   $atts['post_type'] = "oik_file" ;
   $atts['numberposts'] = 1;

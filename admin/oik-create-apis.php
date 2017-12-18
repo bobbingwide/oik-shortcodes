@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2016
+<?php // (C) Copyright Bobbing Wide 2016,2017
 
 if ( PHP_SAPI !== "cli" ) { 
 	die();
@@ -105,7 +105,7 @@ function oiksc_load_all_components( $components) {
  *
  */
 function oiksc_load_all_plugins( $components ) {
-	oik_require( "includes/bw_posts.inc" );
+	oik_require( "includes/bw_posts.php" );
 	$atts = array( "post_type" => "oik-plugins"
 							 , "numberposts" => -1
 							 );
@@ -123,7 +123,7 @@ function oiksc_load_all_plugins( $components ) {
  *
  */
 function oiksc_load_all_themes( $components ) {
-	oik_require( "includes/bw_posts.inc" );
+	oik_require( "includes/bw_posts.php" );
 	$atts = array( "post_type" => "oik-themes"
 							 , "numberposts" => -1
 							 );
@@ -377,7 +377,7 @@ function oiksc_preloader() {
 	oiksc_autoload();
 	
 	
-	oik_require( "includes/bw_posts.inc" ); 
+	oik_require( "includes/bw_posts.php" ); 
 	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 	oik_require( "admin/oik-files.php", "oik-shortcodes" );
 	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
