@@ -152,6 +152,7 @@ function oik_register_oik_shortcodes() {
   $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author', 'publicize' );
 	// Not using query_var for this post type
 	// $post_type_args['query_var'] = "oik-shortcodes";
+	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
   //add_post_type_support( $post_type, 'publicize' );
 	//add_post_type_support( $post_type, 'author' );
@@ -160,7 +161,8 @@ function oik_register_oik_shortcodes() {
   
   bw_register_field( "_oik_sc_code", "text", "Shortcode" ); 
   bw_register_field( "_oik_sc_plugin", "noderef", "Plugin ref", array( "#type" => array( "oik-plugins", "oik-themes" ) ) ); 
-  bw_register_field( "_oik_sc_func", "noderef", "API ref", array( "#type" => "oik_api", "#theme" => false )); 
+  //bw_register_field( "_oik_sc_func", "noderef", "API ref", array( "#type" => "oik_api", "#theme" => false, '#form' => false )); 
+	bw_register_field( "_oik_sc_func", "sctext", "API ref", array( "#type" => "oik_api",  "#theme" => true, '#theme_null' => false ) );
   bw_register_field( "_oik_sc_example_cb", "checkbox", "Generate the programmed example?", array( "#theme" => false ) ); 
   bw_register_field( "_oik_sc_live_cb", "checkbox", "Generate examples using Live data?", array( "#theme" => false ) );
   bw_register_field( "_oik_sc_snippet_cb", "checkbox", "Generate snippets?", array( "#theme" => false ) ); 
@@ -202,7 +204,30 @@ function oik_shortcodes_columns( $columns, $arg2=null ) {
   $columns["_oik_sc_plugin"] = __("Plugin"); 
   // bw_trace2();
   return( $columns ); 
-} 
+}
+
+/**
+ * Themes the "_oik_sc_func" field
+ *
+ * Since there can be thousands of APIs we don't want to use the noderef field type since
+ * the select list can be very long. 
+ * So we cater for it by passing the post ID to
+ *
+ * @param string $key
+ * @param array $value the field value - more often than not passed as an array
+ */
+function bw_theme_field_sctext__oik_sc_func( $key, $value, $field ) {
+	$value = implode( ",", $value );
+	if ( $value ) {
+		if ( is_numeric( $value ) ) {
+			bw_theme_field_sctext( $key, "[bw_link $value]" );
+			//bw_theme_field_noderef( $key, $value, $field );
+		} else {
+			bw_theme_field_sctext( $key, "[api $value]" );
+		}
+	}
+		
+}	
 
 /**
  * Theme the "_oik_hook_deprecated_cb" field, type checkbox 
@@ -262,8 +287,11 @@ function oik_register_oik_sc_param() {
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcode parameters';
   $post_type_args['description'] = 'Parameter definitions for shortcodes';
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   // This might reduce the amount of gumpf we see when searching. Herb 2014/01/10
   // $post_type_args['searchable'] = false;
+	
+	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
   
   bw_register_field( "_sc_param_code", "noderef", "Shortcode", array( '#type' => 'oik_shortcodes') );
@@ -294,8 +322,9 @@ function oik_register_oik_shortcode_example() {
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcode examples';
   $post_type_args['description'] = 'Example shortcode usage';
-  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail' );
+  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
   $post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
   add_post_type_support( $post_type, 'publicize' );
   // bw_register_field( "_sc_param_code", "noderef", "Shortcode", array( '#type' => 'oik_shortcodes') );
@@ -382,6 +411,8 @@ function oik_register_file() {
   $post_type_args['description'] = 'Files';
   $post_type_args['has_archive'] = true;
   $post_type_args['hierarchical'] = true; 
+	$post_type_args['show_in_rest'] = true;
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   bw_register_post_type( $post_type, $post_type_args );
   add_post_type_support( $post_type, 'page-attributes' );
   
@@ -423,6 +454,8 @@ function oik_register_class() {
   $post_type_args['description'] = 'Classes';
   $post_type_args['has_archive'] = true;
   $post_type_args['hierarchical'] = true; 
+	$post_type_args['show_in_rest'] = true;
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   bw_register_post_type( $post_type, $post_type_args );
   add_post_type_support( $post_type, 'page-attributes' );
   
@@ -460,6 +493,8 @@ function oik_register_hook() {
   $post_type_args['label'] = 'Hooks';
   $post_type_args['description'] = 'Action and filter hooks';
   $post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   bw_register_post_type( $post_type, $post_type_args );
   
   bw_register_field( "_oik_hook_name", "text", "Hook name" , array( "#length" => 80 ));
@@ -515,7 +550,9 @@ function oik_register_API() {
   $post_type_args = array();
   $post_type_args['label'] = 'APIs';
   $post_type_args['description'] = 'Application Programming Interfaces';
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   $post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
   
   bw_register_field( "_oik_api_name", "text", "Function name" , array( "#length" => 80 ));
