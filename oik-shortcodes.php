@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.29.0
+Version: 1.30.0
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
@@ -1028,7 +1028,12 @@ function oiksc_ajax_nopriv_oiksc_create_file() {
 /**
  * Implement "admin_notices" action for oik-shortcodes" 
  *
- * - v1.27 now dependent upon oik v2.4
+ * Dependency checking:
+ * 
+ * Version | Dependency
+ * ------- | ---------------
+ * v1.27	 | oik v2.4
+ * v1.30.0 | oik v3.2.4, oik-fields v1.50.1, oik-plugins v1.16, oik-sc-help
  */ 
 function oik_shortcodes_activation() {
   static $plugin_basename = null;
@@ -1039,7 +1044,7 @@ function oik_shortcodes_activation() {
       require_once( "admin/oik-activation.php" );
     }
   }  
-  $depends = "oik:2.4,oik-fields:1.36,oik-plugins:1.10,oik-sc-help";
+  $depends = "oik:3.2.4,oik-fields:1.50.1,oik-plugins:1.16,oik-sc-help";
   oik_plugin_lazy_activation( __FILE__, $depends, "oik_plugin_plugin_inactive" );
 }
 
