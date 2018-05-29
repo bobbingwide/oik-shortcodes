@@ -70,16 +70,19 @@ function oik_shortcodes_init() {
 }
 
 /**
- * Implement "get_the_excerpt" for oik-shortcodes
+ * Implements "get_the_excerpt" for oik-shortcodes
  *
  * WordPress SEO ( Yoast SEO ) has a nasty habit of asking for the Excerpt if you don't set a Meta description.
  * This can invoke a whole bunch of filters. We don't need this. 
+ * 
  * While it quite easy to type the Meta description when you hand create content, it may not be created
  * for automatically generated stuff. 
- * This filter will return an excerpt either from the excerpt or the part of the content before any comment
- * This allows for <!--more and <!--page tags
- * If there isn't one we return the full post content.
- * That can be dealt with by the subsequent filters. 
+ * 
+ * - This filter will return an excerpt either from the excerpt or the part of the content before any <!--more comment
+ * - This allows for <!--more 
+ * - It doesn't allow for <!--page or <!--noteaser
+ * - If there isn't a <!--more tag we return the full post content.
+ * - That can be dealt with by the subsequent filters. 
  * 
  * @param string $excerpt
  * @return string the excerpt we think will do
@@ -93,8 +96,8 @@ function oik_get_the_excerpt( $excerpt=null ) {
 				$excerpt = $post->post_excerpt;
 				
 			} else {
-				$pos_more = strpos( $post->post_content, "<!--" );
-				if ( $pos_more ) {
+				$pos_more = strpos( $post->post_content, "<!--more" );
+				if ( false !== $pos_more ) {
 					$excerpt = substr( $post->post_content, 0, $pos_more );
 				} else {
 					$excerpt = $post->post_content;
