@@ -1473,3 +1473,30 @@ function oiksc_run_oik_create_codes() {
 	oik_require( "admin/oik-create-codes.php", "oik-shortcodes" );
 	//oiksc_lazy_run_oik_shortcodes();
 }
+
+/**
+ * Decides if the request is from a bot
+ *
+ * It's maybe since we allow some level of override
+ * 
+ * @return bool true if determined to be a bot
+ */												 
+function oiksc_is_bot_maybe() {
+	static $is_bot = null;
+	if ( null === $is_bot ) {
+		$is_bot = false;
+		$http_user_agent = bw_array_get( $_SERVER, 'HTTP_USER_AGENT', "" );
+		if ( false === stripos( $http_user_agent, "bot" ) ) {
+			bw_trace2( $http_user_agent, "HTTP_USER_AGENT bot not detected", false );
+		
+			//gob();
+		} else {
+			$is_bot = true;
+			
+			bw_trace2( $http_user_agent, "HTTP_USER_AGENT bot detected", false );
+			
+			//gob();
+		}
+	}	
+	return $is_bot;
+}

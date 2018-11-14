@@ -2659,6 +2659,12 @@ function oikai_get_noderef_value( $post_id, $noderef_name, $field_name ) {
  */
 function oikai_apiref( $atts=null, $content=null, $tag=null ) {
 
+	$is_bot_maybe = oiksc_is_bot_maybe();
+	
+	if ( $is_bot_maybe ) {
+		p( "You appear to be a bot. Output may be restricted" );
+	}
+	
 	oiksc_autoload();
 
   $funcname = bw_array_get( $atts, "funcname", null );
@@ -2705,8 +2711,10 @@ function oikai_apiref( $atts=null, $content=null, $tag=null ) {
       oikai_build_apiref( $funcname, $sourcefile, $plugin, $classname, $post_id, true, $plugin_id );
       if ( $post_id ) { 
         oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
-        oikai_list_callers_callees( $post_id );
-        do_action( "bw_metadata", $post_id );
+				if ( !$is_bot_maybe ) {
+					oikai_list_callers_callees( $post_id );
+					do_action( "bw_metadata", $post_id );
+				}
       }  
     } else {
       e( "bw_api cannot determine the funcname" );
