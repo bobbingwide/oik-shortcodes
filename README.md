@@ -3,10 +3,10 @@
 * Contributors: bobbingwide
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-* Requires at least: 4.8
-* Tested up to: 5.0-alpha
-* Gutenberg compatible: Testing
-* Stable tag: 1.30.0
+* Requires at least: 4.9.8
+* Tested up to: 5.0
+* Gutenberg compatible: Yes
+* Stable tag: 1.30.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,6 +97,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.30.1 
+Upgrade for improved performed responding to bots, and for improved coexistence with the new Block Editor - Gutenberg / WordPress 5.0, especially when using Yoast SEO.
+
 # 1.30.0 
 Upgrade for peaceful coexistence with the new block editor.
 
@@ -241,6 +244,13 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.30.1 
+* Changed: Attempt to improve performance by restricting output to bots https://github.com/bobbingwide/oik-shortcodes/issues/60
+* Changed: oik_get_the_excerpt needs to allow for Gutenberg comments https://github.com/bobbingwide/oik-shortcodes/issues/59
+* Tested: With WordPress 5.0
+* Tested: With Gutenberg 4.6.1
+* Tested: With PHP 7.2
+
 # 1.30.0 
 * Changed: Improve _oik_sc_func field processing in the editor's meta box https://github.com/bobbingwide/oik-shortcodes/issues/52
 * Changed: Support WordPress 5.0 and the new block editor https://github.com/bobbingwide/oik-shortcodes/issues/#58
