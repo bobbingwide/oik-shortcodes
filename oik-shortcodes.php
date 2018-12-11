@@ -45,8 +45,11 @@ function oik_shortcodes_init() {
   oik_register_hook();
   oik_register_api();
   oik_register_parsed_source();
-	//oik_register_parse_status();
+  //oik_register_parse_status();
 	oik_register_component_version_field();
+	oik_register_block_editor_stuff();
+
+
 	
   add_action( 'the_content', "oiksc_the_content", 1, 1 );
   add_action( 'oik_admin_menu', 'oiksc_admin_menu' );
@@ -214,14 +217,15 @@ function oik_shortcodes_columns( $columns, $arg2=null ) {
  *
  * Since there can be thousands of APIs we don't want to use the noderef field type since
  * the select list can be very long. 
- * So we cater for it by passing the post ID to
+ * So we cater for it by passing the post ID to the API
  *
  * @param string $key
  * @param array $value the field value - more often than not passed as an array
  */
 function bw_theme_field_sctext__oik_sc_func( $key, $value, $field ) {
 	$value = implode( ",", $value );
-	if ( $value ) {
+	$value = trim( $value );
+	if ( !empty( $value ) ) {
 		if ( is_numeric( $value ) ) {
 			bw_theme_field_sctext( $key, "[bw_link $value]" );
 			//bw_theme_field_noderef( $key, $value, $field );
@@ -332,6 +336,44 @@ function oik_register_oik_shortcode_example() {
   add_post_type_support( $post_type, 'publicize' );
   // bw_register_field( "_sc_param_code", "noderef", "Shortcode", array( '#type' => 'oik_shortcodes') );
   bw_register_field_for_object_type( "_sc_param_code", $post_type );
+}
+
+/**
+ *  Registers CPTs relevant to the Block Editor
+ *
+ *  Blocks, Meta boxes and Panels
+ */
+
+function oik_register_block_editor_stuff() {
+	oik_register_block_CPT();
+	//oik_register_metabox_CPT();
+	//oik_register_panel_CPT();
+
+}
+
+/**
+ *  Registers custom post type for "Blocks"
+ *
+ *  Registers the "block" CPT and associated fields
+ */
+function oik_register_block_CPT() {
+	$post_type = 'block';
+	$post_type_args = array();
+	$post_type_args['label'] = 'Blocks';
+	$post_type_args['description'] = 'WordPress blocks';
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+	$post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
+	bw_register_post_type( $post_type, $post_type_args );
+	add_post_type_support( $post_type, 'publicize' );
+	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
+
+	bw_register_field( "_block_type_name", "text", "Block type name" );
+	bw_register_field_for_object_type( "_block_type_name", $post_type );
+
+
+
+
 }
 
 /**

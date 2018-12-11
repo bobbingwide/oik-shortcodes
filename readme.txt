@@ -244,8 +244,8 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 
 == Changelog ==
 = 1.30.1 =
-* Changed: Attempt to improve performance by restricting output to bots [github bobbingwide oik-shortcodes issues 60]
-* Changed: oik_get_the_excerpt needs to allow for Gutenberg comments [github bobbingwide oik-shortcodes issues 59]
+* Changed: Attempt to improve performance by restricting output to bots, [github bobbingwide oik-shortcodes issues 60]
+* Changed: oik_get_the_excerpt needs to allow for Gutenberg comments, [github bobbingwide oik-shortcodes issues 59]
 * Tested: With WordPress 5.0
 * Tested: With Gutenberg 4.6.1
 * Tested: With PHP 7.2
