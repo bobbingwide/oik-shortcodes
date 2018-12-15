@@ -345,6 +345,8 @@ function oik_register_oik_shortcode_example() {
  */
 
 function oik_register_block_editor_stuff() {
+	$args = [ 'labels' => [ 'name' => 'Block categories', 'singular_name' => 'Block category' ] ];
+	bw_register_custom_category( "block_category", null, $args );
 	oik_register_block_CPT();
 	//oik_register_metabox_CPT();
 	//oik_register_panel_CPT();
@@ -364,12 +366,17 @@ function oik_register_block_CPT() {
 	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
+	$post_type_args['taxonomies'] = [ 'block_category' ];
+	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
 	bw_register_post_type( $post_type, $post_type_args );
 	add_post_type_support( $post_type, 'publicize' );
-	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 
 	bw_register_field( "_block_type_name", "text", "Block type name" );
+	bw_register_field( "_block_icon", "sctext", "Icon", ['#label' => false ]);
+
+	bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
+	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 
 
 
