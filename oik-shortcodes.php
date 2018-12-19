@@ -61,8 +61,8 @@ function oik_shortcodes_init() {
 	 * but since we need oik-plugins, oik-themes and oik-shortcodes
 	 * all together it's just as good here as any.
 	 */
-	remove_filter( "get_the_excerpt", "wp_trim_excerpt" );
-	add_filter( "get_the_excerpt", "oik_get_the_excerpt" );
+	//remove_filter( "get_the_excerpt", "wp_trim_excerpt" );
+	add_filter( "get_the_excerpt", "oik_get_the_excerpt", 9 );
 	
 	add_filter( "request", "oiksc_request" );
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
@@ -348,6 +348,7 @@ function oik_register_block_editor_stuff() {
 	$args = [ 'labels' => [ 'name' => 'Block categories', 'singular_name' => 'Block category' ] ];
 	bw_register_custom_category( "block_category", null, $args );
 	oik_register_block_CPT();
+	oik_register_block_example_CPT();
 	//oik_register_metabox_CPT();
 	//oik_register_panel_CPT();
 
@@ -377,10 +378,30 @@ function oik_register_block_CPT() {
 	bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
-
-
-
-
+}
+/**
+ * Register custom post type "block_example"
+ *
+ * A block example refers to a particular block.
+ * It refers to the block for which it's an example.
+ * It may also reference the shortcodes it implements
+ * Post type support of "publicize" is added to enable publicizing using JetPack.
+ *
+ */
+function oik_register_block_example_CPT() {
+	$post_type = 'block_example';
+	$post_type_args = array();
+	$post_type_args['label'] = 'Block examples';
+	$post_type_args['description'] = 'Example block usage';
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+	$post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
+	$post_type_args['taxonomies'] = [ 'block_category' ];
+	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
+	bw_register_post_type( $post_type, $post_type_args );
+	add_post_type_support( $post_type, 'publicize' );
+	bw_register_field( "_block_ref", "noderef", "Block", array( '#type' => 'block') );
+	bw_register_field_for_object_type( "_block_ref", $post_type );
 }
 
 /**
