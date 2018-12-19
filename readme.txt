@@ -243,6 +243,7 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+
 = 1.30.1 = 
 * Changed: Attempt to improve performance by restricting output to bots [github bobbingwide oik-shortcodes issue 60]
 * Fixed: oik_get_the_excerpt needs to allow for Gutenberg comments [github bobbingwide oik-shortcodes issue 59]
