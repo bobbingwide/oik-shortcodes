@@ -4,12 +4,12 @@ Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.30.1
+Version: 1.31.0
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
 
-    Copyright 2012-2018 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2019 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -130,7 +130,9 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "apis", "oikai_apilink", oik_path( "shortcodes/oik-apilink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "hooks", "oikho_hooklink", oik_path( "shortcodes/oik-hookslink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "codes", "oikai_codeslink", oik_path( "shortcodes/oik-codeslink.php", "oik-shortcodes" ), false );
-  bw_add_shortcode( "file", "oikai_fileref", oik_path( "shortcodes/oik-file.php", "oik-shortcodes" ), false );
+	bw_add_shortcode( "blocks", "oikai_blockslink", oik_path( "shortcodes/oik-blockslink.php", "oik-shortcodes" ), false );
+
+	bw_add_shortcode( "file", "oikai_fileref", oik_path( "shortcodes/oik-file.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "classes", "oikai_classlink", oik_path( "shortcodes/oik-classlink.php", "oik-shortcodes" ), false ); 
   bw_add_shortcode( "hook", "oikho_hook", oik_path( "shortcodes/oik-hook.php", "oik-shortcodes" ), false );
