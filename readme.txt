@@ -3,9 +3,9 @@ Contributors: bobbingwide
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 4.9.8
-Tested up to: 5.0
+Tested up to: 5.0.2
 Gutenberg compatible: Yes
-Stable tag: 1.30.1
+Stable tag: 1.31.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,7 @@ It provides the following shortcodes:
 * [bw_api] - automatically report the syntax for an API
 * [api] - link to selected API(s)
 * [apis] - link to related APIs (in a list)
+* [blocks] - link to related Blocks
 * [classes] - list of classes
 * [codes] - link to related shortcodes
 * [file] - display file contents
@@ -41,6 +42,9 @@ Features
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox? 
 
+New in version 1.31.0
+
+* Adds support for WordPress Blocks and Block examples
 
 New in version 1.22
 
@@ -96,6 +100,10 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.31.0 =
+Now supports documentation of WordPress Blocks and Block examples, implemented similarly to Shortcodes.
+To be rolled out to oik-plugins, WP-a2z and other sites that will benefit.
+
 = 1.30.1 =
 Upgrade for improved performed responding to bots, and for improved coexistence with the new Block Editor - Gutenberg / WordPress 5.0, especially when using Yoast SEO.
 
@@ -243,6 +251,10 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.31.0 = 
+* Added: Blocks tab - based on the Shortcodes tab - using the [bw_code blocks] shortcode,[github bobbingwide oik-shortcodes issue 61]
+* Added: Block and block examples CPTs, custom taxonomy and fields to document WordPress/Gutenberg blocks, [github bobbingwide oik-shortcodes issue 61]
+* Fixed: Allow for blank _oik_sc_func, [github bobbingwide oik-shortcoes issue 52]
 
 = 1.30.1 = 
 * Changed: Attempt to improve performance by restricting output to bots [github bobbingwide oik-shortcodes issue 60]
