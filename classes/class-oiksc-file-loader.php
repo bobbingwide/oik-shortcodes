@@ -71,6 +71,8 @@ class oiksc_file_loader extends oiksc_function_loader {
       if ( $line != "" ) {
 				$line = str_replace( "parent::", "Quarent::", $line );
 				$line = str_replace( "self", "Telf", $line );
+				//$line = str_replace( "new static", "new Ttatic", $line );
+
 				 
         $this->write( $line );
         $this->contents[] = $line ;

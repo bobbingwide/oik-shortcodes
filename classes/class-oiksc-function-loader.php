@@ -140,6 +140,8 @@ class oiksc_function_loader {
       } else { 
 				$line = str_replace( "parent::", "Quarent::", $line );
 				$line = str_replace( "self", "Telf", $line );
+	            $line = str_replace( "new static", "new Ttatic", $line );
+	            $line = str_replace( "static::", "Ttatic::", $line );
 			//$line = str_replace( "Telf::", 'self__', $line );
 			}
       $this->write( $line );

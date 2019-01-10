@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="" tests="4" assertions="4" errors="0" failures="0" skipped="0" time="0.025173">
-    <testsuite name="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" tests="4" assertions="4" errors="0" failures="0" skipped="0" time="0.025173">
-      <testcase name="test_paired_replacements_overlap" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="18" assertions="1" time="0.022715"/>
-      <testcase name="test_paired_replacements_sidebyside" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="29" assertions="1" time="0.001076"/>
-      <testcase name="test_paired_replacements_one_blank_space" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="39" assertions="1" time="0.000682"/>
-      <testcase name="test_emphasis_markdown" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="49" assertions="1" time="0.000700"/>
+  <testsuite name="" tests="6" assertions="6" errors="0" failures="0" skipped="0" time="0.014608">
+    <testsuite name="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" tests="4" assertions="4" errors="0" failures="0" skipped="0" time="0.013668">
+      <testcase name="test_paired_replacements_overlap" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="18" assertions="1" time="0.010128"/>
+      <testcase name="test_paired_replacements_sidebyside" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="29" assertions="1" time="0.001283"/>
+      <testcase name="test_paired_replacements_one_blank_space" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="39" assertions="1" time="0.001683"/>
+      <testcase name="test_emphasis_markdown" class="Tests_issue_46" classname="Tests_issue_46" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-46.php" line="49" assertions="1" time="0.000574"/>
+    </testsuite>
+    <testsuite name="Tests_issue_62" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-62.php" tests="2" assertions="2" errors="0" failures="0" skipped="0" time="0.000940">
+      <testcase name="test_return_new_static" class="Tests_issue_62" classname="Tests_issue_62" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-62.php" line="23" assertions="1" time="0.000486"/>
+      <testcase name="test_static_coloncolon_method" class="Tests_issue_62" classname="Tests_issue_62" file="C:\apache\htdocs\wordpress\wp-content\plugins\oik-shortcodes\tests\test-issue-62.php" line="34" assertions="1" time="0.000454"/>
     </testsuite>
   </testsuite>
 </testsuites>
