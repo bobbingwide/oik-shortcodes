@@ -160,7 +160,7 @@ function oik_register_oik_shortcodes() {
   $post_type_args['label'] = 'Shortcodes';
   $post_type_args['description'] = 'Shortcode definitions';
   $post_type_args['has_archive'] = true;
-  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author', 'publicize' );
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author', 'publicize', 'clone' );
 	// Not using query_var for this post type
 	// $post_type_args['query_var'] = "oik-shortcodes";
 	$post_type_args['show_in_rest'] = true;
@@ -334,7 +334,7 @@ function oik_register_oik_shortcode_example() {
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcode examples';
   $post_type_args['description'] = 'Example shortcode usage';
-  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
   $post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
@@ -369,7 +369,7 @@ function oik_register_block_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Blocks';
 	$post_type_args['description'] = 'WordPress blocks';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
@@ -380,9 +380,10 @@ function oik_register_block_CPT() {
 	bw_register_field( "_block_type_name", "text", "Block type name" );
 	bw_register_field( "_block_icon", "sctext", "Icon", ['#label' => false ]);
 
-	bw_register_field_for_object_type( "_block_icon", $post_type );
+	//bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
+	bw_register_field_for_object_type( "block_category", $post_type );
 }
 /**
  * Register custom post type "block_example"
@@ -398,7 +399,7 @@ function oik_register_block_example_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Block examples';
 	$post_type_args['description'] = 'Example block usage';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
@@ -849,24 +850,37 @@ function oiksc_the_post_oik_sc_param( $post ) {
  * 
  */
 function oiksc_the_content( $content ) {
-	global $post;
-	static $contented = null;
-	bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
-	if ( $post ) {
-		if ( ( $post->post_type == "oik_shortcodes" ) && $contented === null && ( false === strpos( $content, "[bw_code ") ) ) {
-			$contented = $content;
-			$content .= oiksc_the_post_oik_shortcodes( $post );
-			//$post->post_content = $content;
-		}	elseif ( ( $post->post_type == "oik_class" ) && $contented === null && ( false === strpos( $content, "[") ) ) {
-			$contented = $content;
-			$content .= oiksc_the_post_oik_class( $post );
-			//$post->post_content = $content;
-		}	elseif ( ( $post->post_type == "oik_sc_param" ) && $contented === null && ( false === strpos( $content, "[") ) ) { 
-			$contented = $content;
-			$content .= oiksc_the_post_oik_sc_param( $post );
+
+	if ( !oiksc_is_block_editor() ) {
+		global $post;
+		static $contented = null;
+		bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
+		if ( $post ) {
+			if ( ( $post->post_type == "oik_shortcodes" ) && $contented === null && ( false === strpos( $content, "[bw_code " ) ) ) {
+				$contented = $content;
+				$content   .= oiksc_the_post_oik_shortcodes( $post );
+				//$post->post_content = $content;
+			} elseif ( ( $post->post_type == "oik_class" ) && $contented === null && ( false === strpos( $content, "[" ) ) ) {
+				$contented = $content;
+				$content   .= oiksc_the_post_oik_class( $post );
+				//$post->post_content = $content;
+			} elseif ( ( $post->post_type == "oik_sc_param" ) && $contented === null && ( false === strpos( $content, "[" ) ) ) {
+				$contented = $content;
+				$content   .= oiksc_the_post_oik_sc_param( $post );
+			}
 		}
 	}
 	return( $content );
+}
+
+function oiksc_is_block_editor() {
+	$is_block_editor = false;
+	if ( function_exists( "get_current_screen" ) ) {
+		$current_screen = get_current_screen();
+		bw_trace2( $current_screen, "current_screen" );
+		$is_block_editor = $current_screen && $current_screen->is_block_editor();
+	}
+	return $is_block_editor;
 }
 
 /**
