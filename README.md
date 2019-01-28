@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 4.9.8
-* Tested up to: 5.0.2
+* Tested up to: 5.0.3
 * Gutenberg compatible: Yes
-* Stable tag: 1.31.0
+* Stable tag: 1.31.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.31.1 
+Upgrade for improved support for WordPress 5.0 with/without Gutenberg.
+
 # 1.31.0 
 Now supports documentation of WordPress Blocks and Block examples, implemented similarly to Shortcodes.
 To be rolled out to oik-plugins, WP-a2z and other sites that will benefit.
@@ -252,6 +255,13 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.31.1 
+* Fixed: Support editing oik_shortcode and shortcode_example posts with WordPress 5.0 and/or Gutenberg., https://github.com/bobbingwide/oik-shortcodes/issues/58
+* Changed: Update CPTs and fields, https://github.com/bobbingwide/oik-shortcodes/issues/61
+* Fixed: Don't fatal when processing 'new static' or 'static::' in methods, https://github.com/bobbingwide/oik-shortcodes/issues/62
+* Tested: With WordPress 5.0.3
+* Tested: With Gutenberg 4.9.0
+
 # 1.31.0 
 * Added: Blocks tab - based on the Shortcodes tab - using the [bw_code blocks] shortcode,https://github.com/bobbingwide/oik-shortcodes/issues/61
 * Added: Block and block examples CPTs, custom taxonomy and fields to document WordPress/Gutenberg blocks, https://github.com/bobbingwide/oik-shortcodes/issues/61
