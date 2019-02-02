@@ -5,7 +5,7 @@ Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis],
 Requires at least: 4.9.8
 Tested up to: 5.0.3
 Gutenberg compatible: Yes
-Stable tag: 1.31.1
+Stable tag: 1.31.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.31.2 =
+Upgrade for improved support for WordPress blocks. 
+
 = 1.31.1 = 
 Upgrade for improved support for WordPress 5.0 with/without Gutenberg.
 
@@ -254,6 +257,9 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.31.2 =
+* Changed: Add post type support author to: Shortcodes, Shortcode examples, Blocks [github bobbingwide oik-shortcodes issues 61]
+
 = 1.31.1 =
 * Fixed: Support editing oik_shortcode and shortcode_example posts with WordPress 5.0 and/or Gutenberg., [github bobbingwide oik-shortcodes issues 58]
 * Changed: Update CPTs and fields, [github bobbingwide oik-shortcodes issues 61]
