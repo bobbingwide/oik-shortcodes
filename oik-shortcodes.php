@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.31.1
+Version: 1.31.2
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
@@ -94,6 +94,7 @@ function oik_shortcodes_init() {
  * @return string the excerpt we think will do
  */
 function oik_get_the_excerpt( $excerpt=null ) {
+
 	global $post;
 	bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
 	if ( !$excerpt ) {
@@ -160,7 +161,7 @@ function oik_register_oik_shortcodes() {
   $post_type_args['label'] = 'Shortcodes';
   $post_type_args['description'] = 'Shortcode definitions';
   $post_type_args['has_archive'] = true;
-  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author', 'publicize', 'clone' );
+  $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author', 'publicize', 'clone', 'author' );
 	// Not using query_var for this post type
 	// $post_type_args['query_var'] = "oik-shortcodes";
 	$post_type_args['show_in_rest'] = true;
@@ -334,7 +335,7 @@ function oik_register_oik_shortcode_example() {
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcode examples';
   $post_type_args['description'] = 'Example shortcode usage';
-  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
+  $post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author' );
   $post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
   bw_register_post_type( $post_type, $post_type_args );
@@ -369,7 +370,7 @@ function oik_register_block_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Blocks';
 	$post_type_args['description'] = 'WordPress blocks';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
@@ -399,7 +400,7 @@ function oik_register_block_example_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Block examples';
 	$post_type_args['description'] = 'Example block usage';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
