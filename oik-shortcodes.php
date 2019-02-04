@@ -370,7 +370,7 @@ function oik_register_block_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Blocks';
 	$post_type_args['description'] = 'WordPress blocks';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
@@ -400,7 +400,7 @@ function oik_register_block_example_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Block examples';
 	$post_type_args['description'] = 'Example block usage';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
