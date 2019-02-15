@@ -6,7 +6,7 @@
 * Requires at least: 4.9.8
 * Tested up to: 5.0.3
 * Gutenberg compatible: Yes
-* Stable tag: 1.31.2
+* Stable tag: 1.31.4
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,12 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.31.4 
+Upgrade for Block CPT templates.
+
+# 1.31.3 
+Upgrade for Blocks and Block examples to be displayed on the Home page.
+
 # 1.31.2 
 Upgrade for improved support for WordPress blocks.
 
@@ -258,6 +264,12 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.31.4 
+* Added: Add template for the Block CPT, https://github.com/bobbingwide/oik-shortcodes/issues/61
+
+# 1.31.3 
+* Changed: Add post type support home to Blocks and Block examples, https://github.com/bobbingwide/oik-shortcodes/issues/61
+
 # 1.31.2 
 * Changed: Add post type support author to: Shortcodes, Shortcode examples, Blocks https://github.com/bobbingwide/oik-shortcodes/issues/61
 

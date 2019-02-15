@@ -4,7 +4,7 @@ Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.31.2
+Version: 1.31.4
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
@@ -72,7 +72,7 @@ function oik_shortcodes_init() {
 	add_action( "run_oik-create-codes.php", "oiksc_run_oik_create_codes" );
 	add_action( "genesis_404", "oiksc_genesis_404" );
 	
-	oik_shortcodes_define_shortcode_parameter_server();
+	//oik_shortcodes_define_shortcode_parameter_server();
 }
 
 /**
@@ -375,6 +375,7 @@ function oik_register_block_CPT() {
 	$post_type_args['show_in_rest'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category' ];
 	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
+	$post_type_args['template'] = oik_block_CPT_template();
 	bw_register_post_type( $post_type, $post_type_args );
 	add_post_type_support( $post_type, 'publicize' );
 
@@ -385,6 +386,23 @@ function oik_register_block_CPT() {
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 	bw_register_field_for_object_type( "block_category", $post_type );
+}
+
+function oik_block_CPT_template() {
+	$template = array();
+	$template[] = ['oik-block/blockinfo', [ 'className' => 'svg64' ] ];
+	$template[] = ['core/paragraph', ['backgroundColor' => 'very-light-gray'] ];
+	$template[] = ['core/more' ];
+	$template[] = ['core/heading', [ 'content' => "Screenshot" ] ];
+	$template[] = ['oik-block/fields', [ 'fields' => 'featured'] ];
+	$template[] = ['core/heading', [ 'content' => 'Example'] ];
+	$template[] = ['core/paragraph', ['placeholder' => 'Type / to choose the sample block' ]];
+	$template[] = ['core/spacer'];
+	$template[] = ['core/separator'];
+	$template[] = ['core/heading', [ 'content' => 'Notes'] ];
+	$template[] = ['core/list'];
+
+	return $template;
 }
 /**
  * Register custom post type "block_example"
@@ -734,7 +752,9 @@ function oik_register_component_version_field() {
 }
 
 /**
- * Ensure links to oik_sc_param are to the current url  
+ * Ensure links to oik_sc_param are to the current url
+ *
+ *
  */
 function oik_shortcodes_define_shortcode_parameter_server() {
 	if ( !defined( "BW_OIK_PLUGINS_SERVER" ) ) {
