@@ -396,6 +396,7 @@ function oik_block_CPT_template() {
 	$template[] = ['core/heading', [ 'content' => "Screenshot" ] ];
 	$template[] = ['oik-block/fields', [ 'fields' => 'featured'] ];
 	$template[] = ['core/heading', [ 'content' => 'Example'] ];
+	$template[] = ['core/spacer'];
 	$template[] = ['core/paragraph', ['placeholder' => 'Type / to choose the sample block' ]];
 	$template[] = ['core/spacer'];
 	$template[] = ['core/separator'];
