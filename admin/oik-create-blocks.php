@@ -115,6 +115,7 @@ function oiksc_create_block_content( $block_type_name ) {
 	$content .= oiksc_generate_block( "spacer", null, '<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>' );
 	$placeholder = oiksc_block_atts_encode( [ "placeholder" => "Type / to choose the sample block"]);
 	$content .= oiksc_generate_block( "paragraph", $placeholder, "<p></p>");
+	$content .= oiksc_generate_block( $block_type_name );
 	$content .= oiksc_generate_block( "spacer", null, '<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>' );
 	$content .= oiksc_generate_block( "separator", null, '<hr class="wp-block-separator"/>');
 	$content .= oiksc_generate_block( "heading", null, "<h2>Notes</h2>");
