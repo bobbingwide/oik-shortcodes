@@ -82,7 +82,7 @@ function oiksc_create_block( $block_type_name, $title, $required_component ) {
 		$post['post_content' ] = oiksc_create_block_content( $block_type_name );
 		$_POST['_block_type_name'] = $block_type_name;
 		$_POST['_oik_sc_plugin'] = $component_id;
-		oikb_get_response( "Continue?", true );
+		//oikb_get_response( "Continue?", true );
 		$post_id = wp_insert_post( $post );
 		echo "Created: " . $post_id;
 		echo PHP_EOL;
