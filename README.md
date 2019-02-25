@@ -6,7 +6,7 @@
 * Requires at least: 4.9.8
 * Tested up to: 5.0.3
 * Gutenberg compatible: Yes
-* Stable tag: 1.32.0
+* Stable tag: 1.33.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.33.0 
+Upgrade for batch update of block's taxonomy terms using admin/oik-update-blocks.php
+
 # 1.32.0 
 Upgrade for batch creation of blocks using admin/oik-create-blocks.php
 
@@ -267,6 +270,11 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.33.0 
+* Changed: Redefine taxonomies for Block CPT, https://github.com/bobbingwide/oik-shortcodes/issues/61
+* Changed: Add oik-update-blocks.php batch routine to populate Block keywords and Block categories, https://github.com/bobbingwide/oik-shortcodes/issues/64
+* Change: Don't call oikb_get_response in oik-create-blocks.php, https://github.com/bobbingwide/oik-shortcodes/issues/64
+
 # 1.32.0 
 * Added: Add create blocks batch routine, https://github.com/bobbingwide/oik-shortcodes/issues/64
 
