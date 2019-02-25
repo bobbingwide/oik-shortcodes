@@ -347,12 +347,19 @@ function oik_register_oik_shortcode_example() {
 /**
  *  Registers CPTs relevant to the Block Editor
  *
- *  Blocks, Meta boxes and Panels
+ *  CPTs: Blocks, Block examples
+ *  Future CPTs: Metaboxes, panels, block_plugins
  */
 
 function oik_register_block_editor_stuff() {
 	$args = [ 'labels' => [ 'name' => 'Block categories', 'singular_name' => 'Block category' ] ];
-	bw_register_custom_category( "block_category", null, $args );
+	bw_register_custom_tags( "block_category", null, $args );
+	$args = [ 'labels' => [ 'name' => 'Block keywords', 'singular_name' => 'Block keyword' ] ];
+	bw_register_custom_tags( "block_keyword", null, $args );
+	$args = [ 'labels' => [ 'name' => 'Block classification', 'singular_name' => 'Block classification' ] ];
+	bw_register_custom_category( "block_classification", null, $args );
+
+
 	oik_register_block_CPT();
 	oik_register_block_example_CPT();
 	//oik_register_metabox_CPT();
@@ -373,19 +380,23 @@ function oik_register_block_CPT() {
 	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
-	$post_type_args['taxonomies'] = [ 'block_category' ];
+	$post_type_args['taxonomies'] = [ 'block_category', 'block_keyword', 'block_classification' ];
 	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
 	$post_type_args['template'] = oik_block_CPT_template();
 	bw_register_post_type( $post_type, $post_type_args );
 	add_post_type_support( $post_type, 'publicize' );
 
 	bw_register_field( "_block_type_name", "text", "Block type name" );
-	bw_register_field( "_block_icon", "sctext", "Icon", ['#label' => false ]);
+	//bw_register_field( "_block_icon", "sctext", "Icon", ['#label' => false ]);
 
 	//bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 	bw_register_field_for_object_type( "block_category", $post_type );
+	bw_register_field_for_object_type( "block_keyword", $post_type );
+	bw_register_field_for_object_type( "block_classification", $post_type );
+
+
 }
 
 function oik_block_CPT_template() {
