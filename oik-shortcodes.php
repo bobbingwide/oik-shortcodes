@@ -131,7 +131,7 @@ function oik_shortcodes_add_shortcodes() {
   bw_add_shortcode( "apis", "oikai_apilink", oik_path( "shortcodes/oik-apilink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "hooks", "oikho_hooklink", oik_path( "shortcodes/oik-hookslink.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "codes", "oikai_codeslink", oik_path( "shortcodes/oik-codeslink.php", "oik-shortcodes" ), false );
-	bw_add_shortcode( "blocks", "oikai_blockslink", oik_path( "shortcodes/oik-blockslink.php", "oik-shortcodes" ), false );
+  bw_add_shortcode( "blocks", "oikai_blockslink", oik_path( "shortcodes/oik-blockslink.php", "oik-shortcodes" ), false );
 
 	bw_add_shortcode( "file", "oikai_fileref", oik_path( "shortcodes/oik-file.php", "oik-shortcodes" ), false );
   bw_add_shortcode( "files", "oikai_filelink", oik_path( "shortcodes/oik-filelink.php", "oik-shortcodes" ), false );
@@ -392,6 +392,7 @@ function oik_register_block_CPT() {
 	//bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
+	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
 	bw_register_field_for_object_type( "block_category", $post_type );
 	bw_register_field_for_object_type( "block_keyword", $post_type );
 	bw_register_field_for_object_type( "block_classification", $post_type );
@@ -439,6 +440,7 @@ function oik_register_block_example_CPT() {
 	add_post_type_support( $post_type, 'publicize' );
 	bw_register_field( "_block_ref", "noderef", "Block", array( '#type' => 'block') );
 	bw_register_field_for_object_type( "_block_ref", $post_type );
+	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
 }
 
 /**
