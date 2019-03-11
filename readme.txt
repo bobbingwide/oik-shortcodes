@@ -2,10 +2,10 @@
 Contributors: bobbingwide
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-Requires at least: 4.9.8
-Tested up to: 5.0.3
+Requires at least: 5.0.3
+Tested up to: 5.1.0
 Gutenberg compatible: Yes
-Stable tag: 1.33.0
+Stable tag: 1.34.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,7 @@ The oik shortcodes server is used to document and serve the help documentation f
 * lazy smart shortcodes
 * oik APIs, classes and methods - documenting the public and private oik/bw Application Programming Interface
 * hooks - the action and filter hooks that oik plugins Invoke or Implement
+* blocks - for the WordPress block editor aka Gutenberg
 
 It provides the following shortcodes:
 * [bw_api] - automatically report the syntax for an API
@@ -41,6 +42,10 @@ Features
 * Parses WordPress core, plugins and themes (v1.20)
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox? 
+
+New in version 1.34.0
+
+* Adds Depends on field for Block and Block examples custom post types
 
 New in version 1.31.0
 
@@ -100,6 +105,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.34.0 = 
+Upgrade for the Depends on - plugin dependency field 
+
 = 1.33.0 = 
 Upgrade for batch update of block's taxonomy terms using admin/oik-update-blocks.php 
 
@@ -269,6 +277,13 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.34.0 = 
+* Added: Plugin dependency field for Block and Block examples, [github bobbingwide oik-shortcodes issues 68] 
+* Changed: Added Block icon to the Banner and icon files 
+* Tested: With WordPress 5.1 and WordPress Multi Site
+* Tested: With PHP 7.2
+* Tested: With Gutenberg 5.1.1
+
 = 1.33.0 =
 * Changed: Redefine taxonomies for Block CPT, [github bobbingwide oik-shortcodes issues 61]
 * Changed: Add oik-update-blocks.php batch routine to populate Block keywords and Block categories, [github bobbingwide oik-shortcodes issues 64]

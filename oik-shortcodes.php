@@ -2,9 +2,9 @@
 /*
 Plugin Name: oik shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
-Description: oik shortcodes, APIs, hooks and classes and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
+Description: oik shortcodes, APIs, hooks, classes, files and blocks and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.33.0
+Version: 1.34.0
 Author: bobbingwide
 Author URI: https://www.oik-plugins.com/author/bobbingwide
 License: GPL2
