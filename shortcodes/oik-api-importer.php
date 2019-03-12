@@ -1211,7 +1211,9 @@ function oikai_set_time_limit( $limit=120 ) {
  * 
  */
 function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
-	bw_trace2( $refFunc->methodname, $plugin_slug, false ); 
+	bw_trace2( $refFunc->methodname, $plugin_slug, false );
+	//remove_action( "save_post", [ 'WPSEO_Link_Watcher', 'save_post']);
+	remove_all_filters( "save_post", 10 );
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
 	$saved_post = null;
@@ -1231,7 +1233,8 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
     $parsed_source = null;
   }
   
-  if ( !$parsed_source ) { 
+  if ( !$parsed_source ) {
+
 		$fileName = oiksc_real_file( $fileName, $component_type, $plugin_slug ); 
     $sources = oikai_load_from_file( $fileName, $refFunc );
 		$parsing_necessary = $oiksc_parsed_source->is_parsing_necessary( $sources );
@@ -1261,6 +1264,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
 	
 	if ( $echo ) { 
 		if ( $parsed_source ) {
+
 			//oikai_navi_parsed_source( $parsed_source );
 			oik_require( "shortcodes/oik-parsed-source.php", "oik-shortcodes" );
 			$atts = array( "paged" => $paged, "id" => $parsed_source_id ); 
@@ -1290,21 +1294,26 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
  * @param array $sources - array of source lines to paginate
  */
 function oikai_navi_source( $sources ) {
-  oik_require( "shortcodes/oik-navi.php" );
-  $bwscid = bw_get_shortcode_id( true );
-  $page = bw_check_paged_shortcode( $bwscid );
-  $posts_per_page = 100; // get_option( "posts_per_page" );
-  $count = count( $sources );
-  $pages = ceil( $count / $posts_per_page );
-  $start = ( $page-1 ) * $posts_per_page;
-  $end = min( $start + $posts_per_page, $count ) -1;
-  bw_navi_s2eofn( $start, $end, $count, bw_translate( "Lines: " ) );
-  for ( $i = $start; $i<= $end; $i++ ) {
-    $selection[] = $sources[$i];
-  }
-  //e( "countsel " . count( $selection ) );
-  oikai_syntax_source( $selection, 1 ); 
-  bw_navi_paginate_links( $bwscid, $page, $pages );
+	oik_require( "shortcodes/oik-navi.php" );
+	$bwscid = bw_get_shortcode_id( true );
+	$page = bw_check_paged_shortcode( $bwscid );
+	$posts_per_page = 100; // get_option( "posts_per_page" );
+	$count = count( $sources );
+	$pages = ceil( $count / $posts_per_page );
+	$start = ( $page-1 ) * $posts_per_page;
+	$end = min( $start + $posts_per_page, $count ) -1;
+	bw_navi_s2eofn( $start, $end, $count, bw_translate( "Lines: " ) );
+	for ( $i = $start; $i<= $end; $i++ ) {
+		$selection[] = $sources[$i];
+	}
+	bw_trace2( "prepush" );
+	//gob();
+	//bw_push();
+	oikai_syntax_source( $selection, 1 );
+	//$parsed = bw_ret();
+	//bw_pop();
+	//e( $parsed );
+	bw_navi_paginate_links( $bwscid, $page, $pages );
 } 
 
 /**
@@ -1548,7 +1557,9 @@ function oikai_set_pragmatic_links( $url, $title, $context, &$tokens ) {
  */ 
 function oikai_handle_hook( $key, $value, &$tokens, $context, $doaction=true ) {
   $hook = oikai_concoct_hook_name2( $tokens );
+  bw_push();
   $post_id = _oikai_create_oik_hook( $hook, $context );
+  bw_pop();
   if ( $post_id ) {
     //e( $hook['prehook'] );
     
@@ -2578,12 +2589,12 @@ function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $c
 			oikai_print_return( $refFunc, $docblock );
 			oikai_print_todos( $refFunc, $docblock );
 			oikai_reflect_filename( $refFunc, $sourcefile, $plugin_slug );
-			// bw_flush();
+			//bw_flush();
 			//bw_push();
 		}
 		oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 		$component_type = oiksc_query_component_type( $plugin_slug );
-		$source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo ); 
+		$source = oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo );
 		oikai_external_links( $sourcefile, $plugin_slug, $post_id, $plugin_id, $refFunc );
 	} else { 
 		p( "No API information available for: " . $funcname );

@@ -178,20 +178,23 @@ class oiksc_parsed_source {
 		$parsed_source = null;
 		$this->po_post = $this->get_parsed_source_by_sourceref( $post_id );
 		if ( $this->po_post ) {
-			$parse_count = $this->get_parse_count( $parsed_source );
+			$parse_count = $this->get_parse_count();
 			if ( $parse_count <= 1 ) {
 				$parsed_source = null;
+				// It's not been parsed twice
 			} else {
 				$file_time = bw_get_file_time( $file, $component_type, $component_slug );
 				if ( $parse_count < $file_time ) {
 					$parsed_source = null;
+					// It's been updated since parsed
 				} else {
 					$parsed_source = $this->po_post;
 				}
 			}
 		}	else {
+			// It's not been parsed
 		}	
-		bw_trace2( $parsed_source, "parsed_source", false );				
+		bw_trace2( $parsed_source, "parsed_source", false, BW_TRACE_VERBOSE );
 		return( $parsed_source );
 	}
 		
@@ -313,6 +316,7 @@ function bw_get_file_time( $file, $component_type, $plugin ) {
   oik_require( "classes/oik-listapis2.php", "oik-shortcodes" );
   $real_file = oiksc_real_file( $file, $component_type, $plugin );
   $filemtime = filemtime( $real_file );
+  bw_trace2( $filemtime, "filemtime", true, BW_TRACE_DEBUG );
   return( $filemtime );
 }
 
