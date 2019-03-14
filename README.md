@@ -107,7 +107,7 @@ Yes - see above
 
 ## Upgrade Notice 
 # 1.34.0 
-Upgrade for the Depends on - plugin dependency field
+Upgrade for the Depends on - plugin dependency field and a fix for issue 67
 
 # 1.33.0 
 Upgrade for batch update of block's taxonomy terms using admin/oik-update-blocks.php
@@ -281,6 +281,7 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 # 1.34.0 
 * Added: Plugin dependency field for Block and Block examples, https://github.com/bobbingwide/oik-shortcodes/issues/68
 * Changed: Added Block icon to the Banner and icon files
+* Fixed: Avoid problems when [bw_fields] invoked during save_post for a new/updated 'hook', https://github.com/bobbingwide/oik-shortcodes/issues/67
 * Tested: With WordPress 5.1 and WordPress Multi Site
 * Tested: With PHP 7.2
 * Tested: With Gutenberg 5.1.1

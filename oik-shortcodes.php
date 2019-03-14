@@ -1,8 +1,8 @@
 <?php 
 /*
-Plugin Name: oik shortcodes server
+Plugin Name: oik blocks and shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
-Description: oik shortcodes, APIs, hooks, classes, files and blocks and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
+Description: blocks, shortcodes, APIs, hooks, classes, files and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
 Version: 1.34.0
 Author: bobbingwide
@@ -403,6 +403,7 @@ function oik_register_block_CPT() {
 function oik_block_CPT_template() {
 	$template = array();
 	$template[] = ['oik-block/blockinfo', [ 'className' => 'svg64' ] ];
+	$template[] = ['core/more' ];
 	$template[] = ['core/paragraph', ['backgroundColor' => 'very-light-gray'] ];
 	$template[] = ['core/more' ];
 	$template[] = ['core/heading', [ 'content' => "Screenshot" ] ];
