@@ -39,7 +39,9 @@ function oikai_listblocks( $atts ) {
 				$atts['post_type'] = "block";
 				$atts['meta_key' ] = "_oik_sc_plugin";
 				$atts['meta_value'] = $post_id;
-				e ( bw_list( $atts ) );
+				$atts['fields'] = 'title,excerpt,block_category,block_keyword,block_classification';
+				oik_require( "shortcodes/oik-table.php");
+				e ( bw_table( $atts ) );
 			} elseif ( $post->post_type == "oik-themes" ) {
 				$atts['post_type'] = "block";
 				$atts['meta_key' ] = "_oik_sc_plugin";
