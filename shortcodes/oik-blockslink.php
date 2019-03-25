@@ -83,7 +83,7 @@ function oiksc_get_blocks_byblock( $blocks ) {
 } 
 
 /**
- * Implement a link to a (set of) blocks
+ * Implements links to blocks
  * 
  * [blocks blocks=oik-block/wp]
  * [blocks oik-block/wp]
@@ -105,13 +105,9 @@ function oikai_blockslink( $atts=null, $content, $tag ) {
     oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
     $posts = oiksc_get_blocks_byblock( $blocks );
     if ( $posts ) {
-      $class = bw_array_get( $atts, "class", "bw_blocks" );
-      sul( $class );
-      foreach ( $posts as $post ) {
-        bw_format_list( $post, $atts );
-      }
-      eul();
-      
+	    oik_require( "shortcodes/oik-list.php" );
+	    $atts['uo'] = bw_array_get( $atts, "uo", "s");
+    	bw_simple_list( $posts, $atts );
     } else {
       p( "Cannot find block(s):" . implode( ",", $blocks) );
     } 
