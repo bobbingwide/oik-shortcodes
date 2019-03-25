@@ -6,7 +6,7 @@
 * Requires at least: 5.0.3
 * Tested up to: 5.1.0
 * Gutenberg compatible: Yes
-* Stable tag: 1.34.0
+* Stable tag: 1.34.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.34.1 
+Upgrade for improved [blocks] shortcode.
+
 # 1.34.0 
 Upgrade for the Depends on - plugin dependency field and a fix for issue 67
 
@@ -278,6 +281,12 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.34.1 
+* Changed: Improved [blocks] shortcode for ad-hoc usage, https://github.com/bobbingwide/oik-shortcodes/issues/70
+* Changed: Display Blocks tab in a table with Title, Excerpt and taxonomies, https://github.com/bobbingwide/oik-shortcodes/issues/61
+* Changed: Reduce the excerpt in the block template to just the block info block, https://github.com/bobbingwide/oik-shortcodes/issues/61
+* Tested: With Gutenberg 5.3.0
+
 # 1.34.0 
 * Added: Plugin dependency field for Block and Block examples, https://github.com/bobbingwide/oik-shortcodes/issues/68
 * Changed: Added Block icon to the Banner and icon files
