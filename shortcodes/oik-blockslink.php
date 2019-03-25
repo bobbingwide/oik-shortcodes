@@ -1,12 +1,13 @@
 <?php // (C) Copyright Bobbing Wide 2018
 
-/** 
- * Automagically determine the block list
+/**
+ * Implements [blocks] shortcode to automagically determine the block list
  * 
- * If no functions have been passed then we can determine the list of APIs
+ * If no functions have been passed then we can determine the list of blocks
  * either using the component ID or the context of the current post.
  * 
- * The component parameter was added to support displaying blocks for a Template ( parent ) theme
+ * Note: The component parameter was added to support displaying shortcodes for a Template ( parent ) theme.
+ * It may have no relevance for the blocks shortcode!
  * 
  * post_type     | action
  * ----------    | -------------
@@ -69,7 +70,7 @@ function oikai_listblocks( $atts ) {
 function oiksc_get_blocks_byblock( $blocks ) {
   oik_require( "includes/bw_posts.php" );
   $atts = array();
-  $atts['post_type'] = "blocks" ;
+  $atts['post_type'] = "block" ;
   //$atts['numberposts'] = -1; 
   $meta_query = array();
   $meta_query[] = array( "key" => "_block_type_name"
@@ -85,6 +86,7 @@ function oiksc_get_blocks_byblock( $blocks ) {
  * Implement a link to a (set of) blocks
  * 
  * [blocks blocks=oik-block/wp]
+ * [blocks oik-block/wp]
  *
  * @param array $atts - shortcode parameters
  * @param string $content - shortcode content - not expected
@@ -92,6 +94,7 @@ function oiksc_get_blocks_byblock( $blocks ) {
  * @return string generated HTML 
  */
 function oikai_blockslink( $atts=null, $content, $tag ) {
+	$atts['thumbnail'] = bw_array_get( $atts, "thumbnail", "none");
   $block = bw_array_get( $atts, "blocks", null );
   $blocks = bw_as_array( $block );
   $unkeyed = bw_array_get_unkeyed( $atts );
