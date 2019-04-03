@@ -405,7 +405,6 @@ function oik_block_CPT_template() {
 	$template[] = ['oik-block/blockinfo', [ 'className' => 'svg64' ] ];
 	$template[] = ['core/more' ];
 	$template[] = ['core/paragraph', ['backgroundColor' => 'very-light-gray'] ];
-	$template[] = ['core/more' ];
 	$template[] = ['core/heading', [ 'content' => "Screenshot" ] ];
 	$template[] = ['oik-block/fields', [ 'fields' => 'featured'] ];
 	$template[] = ['core/heading', [ 'content' => 'Example'] ];
