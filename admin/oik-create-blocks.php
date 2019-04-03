@@ -106,9 +106,10 @@ function oiksc_create_block( $block_type_name, $title, $required_component ) {
 function oiksc_create_block_content( $block_type_name ) {
 	$atts = oiksc_block_atts_encode( [ "className" => "svg64" ] );
 	$content = oiksc_generate_block( "oik-block/blockinfo", $atts, oiksc_default_blockinfo() );
+	$content .= oiksc_generate_block( "more", null, '<!--more-->' );
 	$para = '<p class="has-background has-very-light-gray-background-color">Under Construction</p>';
 	$content .= oiksc_generate_block( "paragraph", oiksc_block_atts_encode( ['backgroundColor' => 'very-light-gray'] ), $para );
-	$content .= oiksc_generate_block( "more", null, '<!--more-->' );
+	//$content .= oiksc_generate_block( "more", null, '<!--more-->' );
 	$content .= oiksc_generate_block( "heading", null, "<h2>Screenshot</h2>" );
 	$content .= oiksc_generate_block( "oik-block/fields", oiksc_block_atts_encode( [ "fields" => "featured"  ] ) );
 	$content .= oiksc_generate_block( "heading", null, "<h2>Example</h2>" );
@@ -131,7 +132,7 @@ function oiksc_block_atts_encode( $atts ) {
 }
 
 function oiksc_default_blockinfo() {
-	return '<div class="wp-block-oik-block-blockinfo svg64"><div><span class="editor-block-icon"><svg aria-hidden="true" role="img" focusable="false" class="dashicon dashicons-block-default" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 20 20"><path d="M15 6V4h-3v2H8V4H5v2H4c-.6 0-1 .4-1 1v8h14V7c0-.6-.4-1-1-1h-1z"></path></svg></span></div><div>oik-block/blockicon</div><div> Block icon </div><div> Displays a Block icon </div></div>';
+	return '<div class="wp-block-oik-block-blockinfo svg64"><div><span class="editor-block-icon"><svg aria-hidden="true" role="img" focusable="false" class="dashicon dashicons-block-default" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M15 6V4h-3v2H8V4H5v2H4c-.6 0-1 .4-1 1v8h14V7c0-.6-.4-1-1-1h-1z"></path></svg></span></div><div>oik-block/blockicon</div><div> Block icon </div><div> Displays a Block icon </div></div>';
 }
 
 /**
