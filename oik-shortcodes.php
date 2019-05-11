@@ -387,10 +387,10 @@ function oik_register_block_CPT() {
 	add_post_type_support( $post_type, 'publicize' );
 
 	bw_register_field( "_block_type_name", "text", "Block type name" );
-	//bw_register_field( "_block_icon", "sctext", "Icon", ['#label' => false ]);
+	bw_register_field( "_block_doc_link", "url", "Documentation");
 
-	//bw_register_field_for_object_type( "_block_icon", $post_type );
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
+	bw_register_field_for_object_type( "_block_doc_link", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
 	bw_register_field_for_object_type( "block_category", $post_type );
