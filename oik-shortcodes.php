@@ -1105,6 +1105,13 @@ function oiksc_ajax_oiksc_create_file() {
   exit();    
 }
 
+function oiksc_create_or_update_block() {
+	oik_require( "admin/oik-create-or-update-block.php", "oik-shortcodes" );
+	oiksc_lazy_create_or_update_block();
+	bw_flush();
+	exit();
+}
+
 /**
  * Validate the apikey field
  *
@@ -1473,6 +1480,8 @@ function oik_shortcodes_loaded() {
   add_action( "wp_ajax_nopriv_oiksc_create_file", "oiksc_ajax_nopriv_oiksc_create_file" );
   //add_action( "shutdown", "oiksc_status_report" );
 	add_filter( "oik_query_autoload_classes" , "oiksc_oik_query_autoload_classes" );
+
+	add_action( "wp_ajax_oiksc_create_or_update_block", "oiksc_create_or_update_block");
 }
 
 /**

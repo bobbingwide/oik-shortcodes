@@ -1,7 +1,8 @@
 <?php // (C) Copyright Bobbing Wide 2019
 
-if ( PHP_SAPI !== "cli" ) { 
-	die();
+if ( PHP_SAPI === "cli" ) {
+	oiksc_create_blocks_loaded();
+
 }
 
 /**
@@ -16,7 +17,6 @@ if ( PHP_SAPI !== "cli" ) {
  * oikwp oik-create-blocks.php oik-block/dashicon "Dash icon" oik-blocks
  * 
  */
-oiksc_create_blocks_loaded();
 
 /**
  * Create oik-shortcode entries programmatically
@@ -55,9 +55,11 @@ function oiksc_create_blocks_loaded() {
  * @param string $block_type_name
  * @param string $title
  * @param string $required_component
+ * @param string|null $icon
+ * @param string|null $description
 
  */ 
-function oiksc_create_block( $block_type_name, $title, $required_component ) {
+function oiksc_create_block( $block_type_name, $title, $required_component, $icon=null, $description=null ) {
 
 	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 	$component_id = oiksc_get_component_by_name( $required_component );
@@ -79,7 +81,7 @@ function oiksc_create_block( $block_type_name, $title, $required_component ) {
 		, 'post_status' => 'publish'
 		);
 		$post['title'] = $post_title;
-		$post['post_content' ] = oiksc_create_block_content( $block_type_name );
+		$post['post_content' ] = oiksc_create_block_content( $block_type_name, $icon, $title, $description );
 		$_POST['_block_type_name'] = $block_type_name;
 		$_POST['_oik_sc_plugin'] = $component_id;
 		//oikb_get_response( "Continue?", true );
@@ -103,9 +105,15 @@ function oiksc_create_block( $block_type_name, $title, $required_component ) {
  * @return array
  */
 
-function oiksc_create_block_content( $block_type_name ) {
-	$atts = oiksc_block_atts_encode( [ "className" => "svg64" ] );
-	$content = oiksc_generate_block( "oik-block/blockinfo", $atts, oiksc_default_blockinfo() );
+function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, $description=null ) {
+	$atts = oiksc_block_atts_encode( [ 'className' => 'svg64',  'blockicon' => $block_type_name,
+	'showBlockTypeName' => false, 'showTitle' => false, 'showCategory' => false, 'showKeywords' => false ] );
+	if ( $icon ) {
+		$iconinfo = oiksc_icon_blockinfo( $icon, $block_type_name, $title, $description );
+	} else {
+		$iconinfo = oiksc_default_blockinfo();
+	}
+	$content = oiksc_generate_block( "oik-block/blockinfo", $atts, $iconinfo );
 	$content .= oiksc_generate_block( "more", null, '<!--more-->' );
 	$para = '<p class="has-background has-very-light-gray-background-color">Under Construction</p>';
 	$content .= oiksc_generate_block( "paragraph", oiksc_block_atts_encode( ['backgroundColor' => 'very-light-gray'] ), $para );
@@ -132,7 +140,38 @@ function oiksc_block_atts_encode( $atts ) {
 }
 
 function oiksc_default_blockinfo() {
-	return '<div class="wp-block-oik-block-blockinfo svg64"><div><span class="editor-block-icon"><svg aria-hidden="true" role="img" focusable="false" class="dashicon dashicons-block-default" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M15 6V4h-3v2H8V4H5v2H4c-.6 0-1 .4-1 1v8h14V7c0-.6-.4-1-1-1h-1z"></path></svg></span></div><div>oik-block/blockicon</div><div> Block icon </div><div> Displays a Block icon </div></div>';
+	$icon = '<span class="editor-block-icon"><svg aria-hidden="true" role="img" focusable="false" class="dashicon dashicons-block-default" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M15 6V4h-3v2H8V4H5v2H4c-.6 0-1 .4-1 1v8h14V7c0-.6-.4-1-1-1h-1z"></path></svg></span>';
+	$iconinfo = oiksc_icon_blockinfo( $icon, 'oik-block/blockicon', 'Block icon', 'Displays a block icon' );
+	return $iconinfo;
+}
+
+
+/**
+ * Creates the HTML for the blockicon
+ *
+ * We only want the block description, not the block type name, block title or category and keywords
+ *
+ * @param $icon
+ * @param $block_type_name
+ * @param null $block_title
+ * @param null $block_description
+ *
+ * @return string
+ */
+
+
+function oiksc_icon_blockinfo( $icon, $block_type_name, $block_title=null, $block_description=null ) {
+	$iconinfo = '<div class="wp-block-oik-block-blockinfo svg64"><div>';
+	$iconinfo .= $icon;
+	$iconinfo .= '</div>';
+	$iconinfo .= '<div>';
+	//$iconinfo .= $block_type_name;
+	//$iconinfo .= '</div><div>';
+	//$iconinfo .= $block_title;
+ 	//$iconinfo .= '</div><div>';
+ 	$iconinfo .= $block_description;
+ 	$iconinfo .= '</div></div>';
+	return $iconinfo;
 }
 
 /**
@@ -151,19 +190,27 @@ function oiksc_get_component_by_name( $component_name ) {
 	return( $component_id );
 }
 
-function oiksc_get_block( $block_type_name ) {
-	$args  = array( "post_type"    => "block"
-		,"meta_key"     => "_block_type_name"
-		,"number_posts" => 1
-		,"meta_value"   => $block_type_name
+if ( !function_exists( 'oiksc_get_block')) {
+
+	function oiksc_get_block( $block_type_name ) {
+		$args  = array(
+			"post_type"    => "block"
+		,
+			"meta_key"     => "_block_type_name"
+		,
+			"number_posts" => 1
+		,
+			"meta_value"   => $block_type_name
 		);
-	$posts = bw_get_posts( $args );
-	if ( $posts ) {
-		$post = $posts[0];
-	} else {
-		$post = null;
+		$posts = bw_get_posts( $args );
+		if ( $posts ) {
+			$post = $posts[0];
+		} else {
+			$post = null;
+		}
+
+		return $post;
 	}
-	return $post;
 }
 
 /**

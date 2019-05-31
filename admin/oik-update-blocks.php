@@ -1,7 +1,7 @@
 <?php // (C) Copyright Bobbing Wide 2019
 
-if ( PHP_SAPI !== "cli" ) {
-	die();
+if ( PHP_SAPI === "cli" ) {
+	oiksc_update_blocks_loaded();
 }
 
 /**
@@ -17,7 +17,7 @@ if ( PHP_SAPI !== "cli" ) {
  * oikwp oik-update-blocks.php oik-block/dashicon "icon,oik,dash" widgets url=blocks.wp-a2z.org
  *
  */
-oiksc_update_blocks_loaded();
+
 
 /**
  * update oik-shortcode entries programmatically
@@ -83,20 +83,26 @@ function oiksc_update_block( $block_type_name, $keywords, $category ) {
 	bw_flush();
 }
 
+if ( !function_exists( 'oiksc_get_block')) {
+	function oiksc_get_block( $block_type_name ) {
+		$args  = array(
+			"post_type"    => "block"
+		,
+			"meta_key"     => "_block_type_name"
+		,
+			"number_posts" => 1
+		,
+			"meta_value"   => $block_type_name
+		);
+		$posts = bw_get_posts( $args );
+		if ( $posts ) {
+			$post = $posts[0];
+		} else {
+			$post = null;
+		}
 
-function oiksc_get_block( $block_type_name ) {
-	$args  = array( "post_type"    => "block"
-	,"meta_key"     => "_block_type_name"
-	,"number_posts" => 1
-	,"meta_value"   => $block_type_name
-	);
-	$posts = bw_get_posts( $args );
-	if ( $posts ) {
-		$post = $posts[0];
-	} else {
-		$post = null;
+		return $post;
 	}
-	return $post;
 }
 
 function oiksc_update_block_yoastseo( $post, $keywords ){
