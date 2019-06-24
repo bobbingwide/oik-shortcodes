@@ -1,10 +1,10 @@
-# Copyright (C) 2019 oik shortcodes server
-# This file is distributed under the same license as the oik shortcodes server package.
+# Copyright (C) 2019 oik blocks and shortcodes server
+# This file is distributed under the same license as the oik blocks and shortcodes server package.
 msgid ""
 msgstr ""
-"Project-Id-Version: oik shortcodes server 1.34.0\n"
+"Project-Id-Version: oik blocks and shortcodes server 1.35.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/oik-shortcodes\n"
-"POT-Creation-Date: 2019-03-11 15:34:40+00:00\n"
+"POT-Creation-Date: 2019-06-24 14:14:46+00:00\n"
 "MIME-Version: 1.0\n"
 "Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 "Language: en_GB\n"
@@ -56,6 +56,10 @@ msgstr "Choose 'List' each time you make a choice of plugin or file then 'Create
 msgid "To process all the APIs in a plugin use the oik-batch plugin"
 msgstr "To process all the APIs in a plugin use the oik-batch plugin"
 
+#: admin/oik-create-or-update-block.php:51
+msgid "[Edit]"
+msgstr "[Edit]"
+
 #: admin/oik-shortcodes.php:30
 msgid "shortcodes options"
 msgstr "shortcodes options"
@@ -101,8 +105,8 @@ msgstr "Type the shortcode's implementing function"
 msgid "Parse status"
 msgstr "Parse status"
 
-#: classes/class-oiksc-parsed-source.php:472
-#: shortcodes/oik-api-importer.php:1301
+#: classes/class-oiksc-parsed-source.php:476
+#: shortcodes/oik-api-importer.php:1305
 msgid "Lines: "
 msgstr "Lines: "
 
@@ -143,8 +147,8 @@ msgstr "Expands in 'the_title'?"
 msgid "Compatible with shortcake?"
 msgstr "Compatible with shortcake?"
 
-#: oik-shortcodes.php:216 oik-shortcodes.php:1253 oik-shortcodes.php:1282
-#: oik-shortcodes.php:1311 oik-shortcodes.php:1341
+#: oik-shortcodes.php:216 oik-shortcodes.php:1260 oik-shortcodes.php:1289
+#: oik-shortcodes.php:1318 oik-shortcodes.php:1348
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -179,6 +183,10 @@ msgstr "Notes"
 #: oik-shortcodes.php:389
 msgid "Block type name"
 msgstr "Block type name"
+
+#: oik-shortcodes.php:390
+msgid "Documentation"
+msgstr "Documentation"
 
 #: oik-shortcodes.php:441
 msgid "Block"
@@ -244,7 +252,7 @@ msgstr "File ref"
 msgid "API type"
 msgstr "API type"
 
-#: oik-shortcodes.php:735 oik-shortcodes.php:1368
+#: oik-shortcodes.php:735 oik-shortcodes.php:1375
 msgid "Source ref"
 msgstr "Source ref"
 
@@ -260,31 +268,31 @@ msgstr "MD5 hash"
 msgid "Version"
 msgstr "Version"
 
-#: oik-shortcodes.php:1120
+#: oik-shortcodes.php:1127
 msgid "Missing oik_apikey"
 msgstr "Missing oik_apikey"
 
-#: oik-shortcodes.php:1283 oik-shortcodes.php:1312
+#: oik-shortcodes.php:1290 oik-shortcodes.php:1319
 msgid "Type"
 msgstr "Type"
 
-#: oik-shortcodes.php:1369
+#: oik-shortcodes.php:1376
 msgid "Parse count / file date"
 msgstr "Parse count / file date"
 
-#: shortcodes/oik-api-importer.php:2665
+#: shortcodes/oik-api-importer.php:2676
 msgid "You appear to be a bot. Output may be restricted"
 msgstr "You appear to be a bot. Output may be restricted"
 
-#: shortcodes/oik-api-importer.php:2740
+#: shortcodes/oik-api-importer.php:2751
 msgid "Name of the function"
 msgstr "Name of the function"
 
-#: shortcodes/oik-api-importer.php:2741
+#: shortcodes/oik-api-importer.php:2752
 msgid "Sourcefile containing the function"
 msgstr "Sourcefile containing the function"
 
-#: shortcodes/oik-api-importer.php:2742
+#: shortcodes/oik-api-importer.php:2753
 msgid "Implementing plugin slug"
 msgstr "Implementing plugin slug"
 
@@ -296,11 +304,11 @@ msgstr "API name"
 msgid "Function name e.g. bw_get_posts"
 msgstr "Function name e.g. bw_get_posts"
 
-#: shortcodes/oik-blockslink.php:124
+#: shortcodes/oik-blockslink.php:125
 msgid "block name list e.g. oik-block/wp"
 msgstr "block name list e.g. oik-block/wp"
 
-#: shortcodes/oik-blockslink.php:125
+#: shortcodes/oik-blockslink.php:126
 msgid "ID of plugin/theme for the blocks"
 msgstr "ID of plugin/theme for the blocks"
 
@@ -329,8 +337,8 @@ msgid "Hook name e.g. oik_admin_menu"
 msgstr "Hook name e.g. oik_admin_menu"
 
 #. Plugin Name of the plugin/theme
-msgid "oik shortcodes server"
-msgstr "oik shortcodes server"
+msgid "oik blocks and shortcodes server"
+msgstr "oik blocks and shortcodes server"
 
 #. Plugin URI of the plugin/theme
 msgid "https://www.oik-plugins.com/oik-plugins/oik-shortcodes"
@@ -338,10 +346,10 @@ msgstr "https://www.oik-plugins.com/oik-plugins/oik-shortcodes"
 
 #. Description of the plugin/theme
 msgid ""
-"oik shortcodes, APIs, hooks, classes, files and blocks and the [bw_api], "
-"[api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] "
+"blocks, shortcodes, APIs, hooks, classes, files and the [bw_api], [api], "
+"[apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] "
 "shortcodes"
-msgstr "oik shortcodes, APIs, hooks, classes, files and blocks and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes"
+msgstr "blocks, shortcodes, APIs, hooks, classes, files and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes"
 
 #. Author of the plugin/theme
 msgid "bobbingwide"

@@ -3,9 +3,9 @@ Contributors: bobbingwide
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 5.0.3
-Tested up to: 5.1.0
+Tested up to: 5.2.2
 Gutenberg compatible: Yes
-Stable tag: 1.34.1
+Stable tag: 1.35.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.35.0 = 
+Upgrade to support block CPT creation/update using AJAX request from oik-blocks.
+
 = 1.34.1 =
 Upgrade for improved [blocks] shortcode. 
 
@@ -280,6 +283,12 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.35.0 = 
+* Added: add oiksc_create_or_update_block AJAX function, [github bobbingwide oik-shortcodes issues 64]
+* Added: add Documentation link field to Block CPT, [github bobbingwide oik-shortcodes issues 61]
+* Changed: Move the core/more block to after the oik-block/blockinfo block
+* Fixed: Remove the second more from the block CPT template
+
 = 1.34.1 = 
 * Changed: Improved [blocks] shortcode for ad-hoc usage, [github bobbingwide oik-shortcodes issues 70]
 * Changed: Display Blocks tab in a table with Title, Excerpt and taxonomies, [github bobbingwide oik-shortcodes issues 61]
