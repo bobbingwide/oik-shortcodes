@@ -48,7 +48,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	
 	$component = oik_batch_query_value_from_argv( 1, null );
 	$previous = oik_batch_query_value_from_argv( 2, null );
-	$start = oik_batch_query_value_from_argv( 3, 1 );
+	$start = oik_batch_query_value_from_argv( 3, null );
 	
 	$met = ini_get( 'max_execution_time' );
 	echo "Max execution time is: $met" . PHP_EOL;
