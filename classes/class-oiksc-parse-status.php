@@ -158,7 +158,11 @@ class oiksc_parse_status {
 	/**
 	 * Get the current file number
 	 */
-	public function get_file_m() {
+	public function get_file_m( $start=null ) {
+		if ( $start ) {
+			$this->file_m = $start;
+			$this->update_status();
+		}
 		return( $this->file_m );
 	}
 	
