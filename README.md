@@ -3,10 +3,10 @@
 * Contributors: bobbingwide
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
-* Requires at least: 5.0.3
-* Tested up to: 5.2.2
+* Requires at least: 5.2
+* Tested up to: 5.3
 * Gutenberg compatible: Yes
-* Stable tag: 1.35.0
+* Stable tag: 1.36.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.36.0 
+Upgrade for better support of restarting the batch API creation routine.
+
 # 1.35.0 
 Upgrade to support block CPT creation/update using AJAX request from oik-blocks.
 
@@ -284,6 +287,9 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.36.0 
+* Fixed: Better support for reprocessing from a given commit ID and start file,https://github.com/bobbingwide/oik-shortcodes/issues/21
+
 # 1.35.0 
 * Added: add oiksc_create_or_update_block AJAX function, https://github.com/bobbingwide/oik-shortcodes/issues/64
 * Added: add Documentation link field to Block CPT, https://github.com/bobbingwide/oik-shortcodes/issues/61
