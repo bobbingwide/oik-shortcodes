@@ -499,7 +499,7 @@ function oikai_reflect_usage( $refFunc, $docblock, $funcname ) {
   e( "$funcname(" );
   $sep = " $";
   $param = null;
-  if ( count( $refFunc->getParameters() ) ) {
+  if ( $refFunc && $refFunc->getParameters() && count( $refFunc->getParameters() ) ) {
     foreach( $refFunc->getParameters() as $param ) {
       e ( $sep );
       e( $param->getName() );
@@ -1126,7 +1126,7 @@ function oikai_check_its_a_list( $list, $line, $last_line_len ) {
 function oikai_reflect_parameters( $refFunc, $docblock ) {
   h2( "Parameters" );
   stag( "dl" );
-  if ( count( $refFunc->getParameters() ) ) {
+  if ( $refFunc && $refFunc->getParameters() && count( $refFunc->getParameters() ) ) {
     foreach( $refFunc->getParameters() as $param ){
       oikai_print_param( $param, $docblock );
     }
