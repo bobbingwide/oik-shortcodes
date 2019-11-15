@@ -471,13 +471,18 @@ function _oiksc_create_api( $plugin, $api, $file, $type, $title=null, $echo=true
 	
   oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
   $post_ids = oikai_get_oik_api_byname( $api );
-  bw_trace2( $post_ids, "post_ids", true, BW_TRACE_DEBUG );
-  if ( !$post_ids ) {
+  bw_trace2( $post_ids, "post_ids", BW_TRACE_DEBUG );
+  if ( !$post_ids || 0 === count( $post_ids) ) {
+
     $post_id = oiksc_create_oik_api( $plugin, $api, $file, $type, $title );     
   } else {
 		$post = get_post( $post_ids[0] );
-    $post_id = $post->ID;
-    oiksc_update_oik_api( $post, $plugin, $api, $file, $type, $title );
+		if ( $post ) {
+		    $post_id = $post->ID;
+            oiksc_update_oik_api( $post, $plugin, $api, $file, $type, $title );
+        } else {
+			p( "Error: post missing for " . $post_ids[0]);
+		}
   }
 	oikai_load_posts( $api );
   global $oikai_post_id;

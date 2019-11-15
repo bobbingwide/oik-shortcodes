@@ -1214,6 +1214,7 @@ function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_typ
 	bw_trace2( $refFunc->methodname, $plugin_slug, false );
 	//remove_action( "save_post", [ 'WPSEO_Link_Watcher', 'save_post']);
 	remove_all_filters( "save_post", 10 );
+	add_action( 'save_post', 'bw_effort_save_postdata', 10, 3 );
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
 	$saved_post = null;

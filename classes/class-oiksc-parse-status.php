@@ -127,14 +127,10 @@ class oiksc_parse_status {
 	}
 	
 	/**
-	 * Update the parse status
+	 * Update the parse status for the selected component
 	 */
 	public function update_status() {
-
 		$this->populate_parse_status();
-		print_r( $this->parse_status );
-		//print_r( $this );
-		//$parse_status = serialize( $this->parse_status );
 		update_post_meta( $this->component_id, "_oiksc_parse_status", $this->parse_status );
 	}
 	
