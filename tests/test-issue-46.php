@@ -7,7 +7,7 @@
  */
 class Tests_issue_46 extends BW_UnitTestCase {
 
-	function setUp() { 
+	function setUp(): void {
 		oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
 	}
 	

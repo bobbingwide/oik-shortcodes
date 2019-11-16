@@ -1,14 +1,14 @@
 <phpunit
-	bootstrap="../oik-batch/oik-wp.php"
+	bootstrap="../../plugins/oik-batch/oik-wp.php"
 	backupGlobals="false"
 	colors="false"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
-	<!-- for PHPUnit 4.8.0 or 5.5.2 -->
+	<!-- for PHPUnit 8.4.1 -->
 	<testsuites>
-		<testsuite>
+		<testsuite name="oik-shortcodes">
 			<directory prefix="test-" suffix=".php">tests/</directory>
 		</testsuite>
 	</testsuites>

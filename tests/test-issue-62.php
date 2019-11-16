@@ -9,7 +9,7 @@ class Tests_issue_62 extends BW_UnitTestCase {
 
 	public static $method = 'static method';
 
-	function setUp() { 
+	function setUp(): void {
 		oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
 	}
 
