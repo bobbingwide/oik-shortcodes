@@ -30,6 +30,7 @@ class Tests_issue_73 extends BW_UnitTestCase {
 	 * oik_class | 467     |  8320
 	 * oik_file | 816     |  9136
 	 * oik_hook | 2413 | 11549
+	 *
 	 */
 
 	function test_load_all_CPT() {

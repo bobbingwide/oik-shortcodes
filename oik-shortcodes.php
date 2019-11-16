@@ -1548,7 +1548,11 @@ function oiksc_oik_query_autoload_classes( $classes ) {
 										, "plugin" => "oik-shortcodes"
 										, "path" => "classes"
 										//, "file" => "classes/class-oiksc-parsed-source.php"
-										);																												
+										);
+	$classes[] = array( 'class' => 'OIK\oik_shortcodes\oiksc_wordpress_cache'
+				, 'plugin' => 'oik-shortcodes'
+				, 'path' => 'classes'
+				, 'file' => 'classes/class-oiksc-wordpress-cache.php');
 	return( $classes );								
 }
 
