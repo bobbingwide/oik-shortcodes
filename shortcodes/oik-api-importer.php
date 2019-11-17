@@ -1358,14 +1358,14 @@ function oikai_highlight_source( $sources ) {
  * User defines - our's and WordPress's are in the [user] array
  * 
  * Example for the array_merge() function
- * @link http://www.php.net/manual/en/function.array-merge.php
+ * @link https://www.php.net/manual/en/function.array-merge.php
  *
  * @param string $value
  * @return string HTML link to the PHP function
  */
 function oikai_link_to_php( $value ) {
   $hyphen = str_replace( "_", "-", $value );
-  $url = "http://www.php.net/manual/en/function.$hyphen.php" ;
+  $url = "https://www.php.net/manual/en/function.$hyphen.php" ;
   $link = retlink( null, $url, $value, "PHP docs for: $value" );
   return( $link );
 }
