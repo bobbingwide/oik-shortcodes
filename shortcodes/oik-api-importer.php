@@ -1186,6 +1186,18 @@ function oikai_set_time_limit( $limit=120 ) {
 }
 
 /**
+ * Protects against unwanted processing during save
+ *
+ *
+ */
+function oikai_protect_save_post( ) {
+	//remove_action( "save_post", [ 'WPSEO_Link_Watcher', 'save_post']);
+	remove_all_filters( "save_post", 10 );
+	add_action( 'save_post', 'bw_effort_save_postdata', 10, 3 );
+
+}
+
+/**
  * List the source of the function
  *
  * List source may involve parsing some or all of the source to create the dynamic listing.
@@ -1212,9 +1224,7 @@ function oikai_set_time_limit( $limit=120 ) {
  */
 function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
 	bw_trace2( $refFunc->methodname, $plugin_slug, false );
-	//remove_action( "save_post", [ 'WPSEO_Link_Watcher', 'save_post']);
-	remove_all_filters( "save_post", 10 );
-	add_action( 'save_post', 'bw_effort_save_postdata', 10, 3 );
+	oikai_protect_save_post();
   $fileName = $refFunc->getFileName();
   $paged = bw_context( "paged" );
 	$saved_post = null;
