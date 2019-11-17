@@ -34,27 +34,44 @@ class Tests_issue_73 extends BW_UnitTestCase {
 	 */
 
 	function test_load_all_CPT() {
-
-		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
-		$results         = $wordpress_cache->load_all_CPT( 'oik_api', '_oik_api_name' );
-		$this->assertEquals( $results, 7853 );
+		$expected = [ 'core.wp.a2z' => 7853 ]; // Total oik_api WordPress 5.3
+		$continue = bw_array_get( $expected, $_SERVER['SERVER_NAME'], false );
+		if ( $continue ) {
+			$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
+			$results         = $wordpress_cache->load_all_CPT( 'oik_api', '_oik_api_name' );
+			$this->assertEquals( $results, $continue );
+		} else {
+			$this->assertTrue( true ) ;
+		}
 	}
 
 	function test_load_cache_from_db() {
-		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
-		$wordpress_cache->load_cache_from_db();
-		$count = $wordpress_cache->query_cache_count();
-		$this->assertEquals( $count, 11549 );
+		$expected = [ 'core.wp.a2z' => 11549 ];  // Total WordPress 5.3
+		$continue = bw_array_get( $expected, $_SERVER['SERVER_NAME'], false );
+		if ( $continue ) {
+			$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
+			$wordpress_cache->load_cache_from_db();
+			$count = $wordpress_cache->query_cache_count();
+			$this->assertEquals( $count, $continue );
+		} else {
+			$this->assertTrue( true ) ;
+		}
+
+
 	}
 
 	/**
 	 * We shouldn't really run these 'tests' as they'll change the file if we get the url wrong.
 	 */
 	function test_save_cache() {
-		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
-		$wordpress_cache->load_cache_from_db();
-		$wordpress_cache->save_cache();
-		$this->assertFileExists( 'oiksc-wordpress-cache.json' );
+		if ( 'core.wp.a2z' === $_SERVER['SERVER_NAME'] ) {
+			$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
+			$wordpress_cache->load_cache_from_db();
+			$wordpress_cache->save_cache();
+			$this->assertFileExists( 'oiksc-wordpress-cache.json' );
+		} else {
+				$this->assertTrue( true ) ;
+		}
 
 	}
 
@@ -101,6 +118,7 @@ class Tests_issue_73 extends BW_UnitTestCase {
 	function test_get_wordpress_link() {
 		oik_require( 'admin/oik-create-apis.php', 'oik-shortcodes' );
 		$wordpress_cache = oiksc_load_wordpress_cache();
+		$wordpress_cache->set_wordpress_root( 'https://core.wp.a2z/');
 		$link            = $wordpress_cache->get_wordpress_link( 'capital_P_dangit' );
 		$expected = '<a class="oik_api" href="https://core.wp.a2z/oik_api/capital_p_dangit" title="capital_P_dangit() - Forever eliminate &quot;Wordpress&quot; from the planet (or at least the little bit we can influence).">capital_P_dangit</a>';
 		$this->assertEquals( $expected, $link );
