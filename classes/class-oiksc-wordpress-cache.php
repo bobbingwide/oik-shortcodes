@@ -14,9 +14,14 @@ class oiksc_wordpress_cache {
 	private $filename;
 	private $results; // results of the SQL query
 
+	private $wordpress_root = 'https://core.wp-a2z.org/';
+
+
 	function __construct() {
 		$this->filename = 'oiksc-wordpress-cache.json';
 		$this->cache = [];
+		// temporary override
+		$wordpress_root = 'https://core.wp.a2z/';
 	}
 
 	/**
@@ -87,7 +92,68 @@ class oiksc_wordpress_cache {
 	 *
 	*/
 	function add_to_cache( $result ) {
-		$this->cache[] = $result;
+		$cache_key = $this->get_cache_key( $result );
+		if ( $this->is_wordpress_api( $cache_key )) {
+			echo "Cache key for result is not unique";
+			print_r( $result );
+			gob();
+		}
+		//echo $cache_key;
+		$this->cache[ $cache_key ] = $result;
+	}
+
+	/**
+	 * Gets the cache key for the result
+	 *
+	 * We hope this is going to be unique.
+	 * Easy to check I suppose by logic in add_to_cache.
+	 * OK. that was done _get_page_link is both an API and a hook
+	 * so we have to be able to differentiate between these.
+	 * For the time being we'll use a prefix of `hook-` for hooks.
+	 *
+	 * What about functions and classes and methods within classes.
+	 * Are PHP class names case sensitive?
+
+	 *
+	 * @param $result	 *
+	 * @return mixed
+	 */
+
+	function get_cache_key( $result ) {
+		if ( 'oik_hook' === $result->post_type ) {
+			$cache_key = 'hook-' . $result->meta_value;
+			return $cache_key;
+		}
+		return $result->meta_value;
+	}
+
+	function is_wordpress_api( $key ) {
+		$result = bw_array_get( $this->cache, $key, null );
+		if ( null === $result ) {
+			return false;
+		}
+		return true;
+	}
+
+	function get_wordpress_link( $key ) {
+		$result = bw_array_get( $this->cache, $key, null );
+		if ( null === $result ) {
+			$link = $key;
+
+		} else {
+			$link = $this->get_link_from_result( $result );
+		}
+		return $link;
+	}
+
+	function get_link_from_result( $result ) {
+		$url = $this->wordpress_root; // should have a slash at the end
+		$url .= $result->post_type;
+		$url .= '/';
+		$url .= $result->post_name;
+		$link = retlink( "wordpress", $url, $result->post_title );
+		return $link;
+
 	}
 
 	function query_cache_count() {
@@ -95,24 +161,18 @@ class oiksc_wordpress_cache {
 	}
 
 	/**
-	 * Saves the cache to a csv file - oiksc-wordpress-cache.csv
+	 * Saves the cache to a .json file - oiksc-wordpress-cache.json
 	 *
 	 */
-	function save_cache() {
-		echo "Saving cache to: " . $this->filename;
-		echo PHP_EOL;
-		echo $this->query_cache_count();
-		echo PHP_EOL;
-		/*
-		$output = [];
-		foreach ( $this->cache as $result ) {
-			print_r( $result );
-			$output[] = implode( ',', $result);
-			print_r( $output );
-			gob();
+	function save_cache( $echo=false) {
+		if ( $echo ) {
+			echo "Saving cache to: " . $this->filename;
+			echo PHP_EOL;
+			echo $this->query_cache_count();
+			echo PHP_EOL;
 		}
-		*/
-		$output = json_encode( $this->cache );
+		$cache = array_values( $this->cache );
+		$output = json_encode( $cache );
 		file_put_contents( $this->filename, $output );
 	}
 
@@ -121,7 +181,9 @@ class oiksc_wordpress_cache {
 	 */
 	function load_cache() {
 		$cache = file_get_contents( $this->filename );
-		$this->cache = json_decode( $cache );
+		$cache_array = json_decode( $cache );
+		$this->results = $cache_array;
+		$this->add_results_to_cache();
 	}
 
 }
