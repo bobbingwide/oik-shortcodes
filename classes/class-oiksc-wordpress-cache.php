@@ -21,7 +21,12 @@ class oiksc_wordpress_cache {
 		$this->filename = 'oiksc-wordpress-cache.json';
 		$this->cache = [];
 		// temporary override
-		$wordpress_root = 'https://core.wp.a2z/';
+		$this->wordpress_root = 'https://core.wp.a2z/';
+	}
+
+	function full_filename() {
+		$full_filename = oik_path( $this->filename, 'oik-shortcodes');
+		return $full_filename;
 	}
 
 	/**
@@ -135,6 +140,14 @@ class oiksc_wordpress_cache {
 		return true;
 	}
 
+	function query_api_type( $key ) {
+		$result = bw_array_get( $this->cache, $key, null );
+		if ( null === $result ) {
+			return null;
+		}
+		return $result->post_type;
+	}
+
 	function get_wordpress_link( $key ) {
 		$result = bw_array_get( $this->cache, $key, null );
 		if ( null === $result ) {
@@ -151,7 +164,7 @@ class oiksc_wordpress_cache {
 		$url .= $result->post_type;
 		$url .= '/';
 		$url .= $result->post_name;
-		$link = retlink( "wordpress", $url, $result->post_title );
+		$link = retlink( $result->post_type, $url, $result->meta_value, $result->post_title );
 		return $link;
 
 	}
@@ -173,14 +186,14 @@ class oiksc_wordpress_cache {
 		}
 		$cache = array_values( $this->cache );
 		$output = json_encode( $cache );
-		file_put_contents( $this->filename, $output );
+		file_put_contents( $this->full_filename(), $output );
 	}
 
 	/**
 	 * Loads the cache from the csv file - oiksc-wordpress-cache.csv
 	 */
 	function load_cache() {
-		$cache = file_get_contents( $this->filename );
+		$cache = file_get_contents( $this->full_filename() );
 		$cache_array = json_decode( $cache );
 		$this->results = $cache_array;
 		$this->add_results_to_cache();

@@ -66,7 +66,7 @@ function oiksc_lazy_run_oik_shortcodes() {
 	oiksc_preloader();
 	oiksc_reassign_hooks();
 
-	$wordpress_cache = oiksc_load_wordpress_cache();
+	//$wordpress_cache = oiksc_load_wordpress_cache();
 	
 	if ( $previous !== "0" ) {
 		oiksc_preload_content(); 
@@ -75,27 +75,6 @@ function oiksc_lazy_run_oik_shortcodes() {
 	
 		_ca_doaplugin_local( $component, $previous, $start );
 	} 
-}
-
-/**
- * Loads the WordPress API cache if not already loaded
- *
- * If it fails to load we'll get some messages.
- *
- * @return \OIK\oik_shortcodes\oiksc_wordpress_cache
- */
-function oiksc_load_wordpress_cache( $echo=false) {
-	static $wordpress_cache = null;
-	if ( null === $wordpress_cache ) {
-		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
-		$wordpress_cache->load_cache();
-		if( $echo ) {
-			echo "WordPress cache count: ";
-			echo $wordpress_cache->query_cache_count();
-			echo PHP_EOL;
-		}
-	}
-	return $wordpress_cache;
 }
 
 /**

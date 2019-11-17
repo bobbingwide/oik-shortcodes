@@ -1811,6 +1811,7 @@ function oikai_handle_token_T_STRING_VARNAME( $key, $token, &$tokens ) {
  */ 
 function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) {
   bw_trace2( null, null, true, BW_TRACE_VERBOSE );
+  $post_id = null;
   if ( is_array( $token ) ) {
     $value = $token[1];
   } else { 
@@ -1819,17 +1820,27 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
   oik_require( "shortcodes/oik-apilink.php", "oik-shortcodes" );
   $api_name = oikai_concoct_api_name( $value );
   //br( "handle T_STRING,$value,$key,$api_name," ); 
-  $type = oikai_determine_function_type( $api_name ); 
-  if ( $type == "internal" ) {
-    $tokens[$key][3] = oikai_link_to_php( $api_name );
-    $post_id = null;
-  } else {
+  $type = oikai_determine_function_type( $api_name );
+	switch ( $type ) {
+		case 'internal':
+			$tokens[$key][3] = oikai_link_to_php( $api_name );
+			$post_id = null;
+			break;
+
+		case 'oik_api':
+			$wordpress_cache = oiksc_load_wordpress_cache();
+			$tokens[$key][3] = $wordpress_cache->get_wordpress_link( $api_name );
+			break;
+
+	  default:
+
 		if ( is_multisite() ) {
-			$post_id = oikai_pragmatic_link_to_api( $key, $tokens, $api_name, $doaction, $type ); 
+			$post_id = oikai_pragmatic_link_to_api( $key, $tokens, $api_name, $doaction, $type );
 		} else {
-			$post_id = oikai_link_to_local_site( $key, $tokens, $api_name, $doaction, $type, $value ); 
+			$post_id = oikai_link_to_local_site( $key, $tokens, $api_name, $doaction, $type, $value );
 		}
-  } 
+
+	}
   if ( $doaction ) {
     //br( "calling set_context with !$value! !$post_id!" );      
     oikai_set_context( $value ); 
@@ -2024,6 +2035,34 @@ function oikai_query_function_type( $defined_functions, $type, $funcname ) {
 }
 
 /**
+ * Loads the WordPress API cache if not already loaded
+ *
+ * If it fails to load we'll get some messages.
+ *
+ * @return \OIK\oik_shortcodes\oiksc_wordpress_cache
+ */
+function oiksc_load_wordpress_cache( $echo=false) {
+	static $wordpress_cache = null;
+	if ( null === $wordpress_cache ) {
+		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
+		$wordpress_cache->load_cache();
+		if( $echo ) {
+			echo "WordPress cache count: ";
+			echo $wordpress_cache->query_cache_count();
+			echo PHP_EOL;
+		}
+	}
+	return $wordpress_cache;
+}
+
+
+function oikai_query_wordpress_api_type( $funcname ) {
+	$wordpress_cache = oiksc_load_wordpress_cache();
+	$api_type = $wordpress_cache->query_api_type( $funcname );
+	return $api_type;
+}
+
+/**
  * Determine the function type
  * 
  * @param string $funcname - the function name
@@ -2032,6 +2071,11 @@ function oikai_query_function_type( $defined_functions, $type, $funcname ) {
 function oikai_determine_function_type( $funcname ) {
   $defined_functions = get_defined_functions();
   $type = oikai_query_function_type( $defined_functions, "internal", $funcname );
+
+  if ( !$type ) {
+  	$type = oikai_query_wordpress_api_type( $funcname );
+  }
+
   if ( !$type ) {
     $type = oikai_query_function_type( $defined_functions, "user", $funcname );
   }

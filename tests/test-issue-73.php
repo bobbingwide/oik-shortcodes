@@ -102,7 +102,8 @@ class Tests_issue_73 extends BW_UnitTestCase {
 		oik_require( 'admin/oik-create-apis.php', 'oik-shortcodes' );
 		$wordpress_cache = oiksc_load_wordpress_cache();
 		$link            = $wordpress_cache->get_wordpress_link( 'capital_P_dangit' );
-		$expected = '<a class="wordpress" href="https://core.wp-a2z.org/oik_api/capital_p_dangit">capital_P_dangit() - Forever eliminate &quot;Wordpress&quot; from the planet (or at least the little bit we can influence).</a>';
+		$expected = '<a class="oik_api" href="https://core.wp.a2z/oik_api/capital_p_dangit" title="capital_P_dangit() - Forever eliminate &quot;Wordpress&quot; from the planet (or at least the little bit we can influence).">capital_P_dangit</a>';
 		$this->assertEquals( $expected, $link );
 	}
+
 }
