@@ -160,6 +160,9 @@ class oiksc_wordpress_cache {
 	function query_api_type( $key ) {
 		$result = bw_array_get( $this->cache, $key, null );
 		if ( null === $result ) {
+			$result = bw_array_get( $this->cache, 'hook-' . $key, null );
+		}
+		if ( null === $result ) {
 			return null;
 		}
 		return $result->post_type;
