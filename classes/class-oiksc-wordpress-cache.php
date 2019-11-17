@@ -20,8 +20,25 @@ class oiksc_wordpress_cache {
 	function __construct() {
 		$this->filename = 'oiksc-wordpress-cache.json';
 		$this->cache = [];
-		// temporary override
-		$this->wordpress_root = 'https://core.wp.a2z/';
+		$this->maybe_set_wordpress_root();
+	}
+
+	/**
+	 * Sets the wordpress root to e.g. https://core.wp.a2z/
+	 * @param $wordpress_root
+	 */
+	function set_wordpress_root( $wordpress_root=null ) {
+		if ( null !== $wordpress_root ) {
+			$this->wordpress_root = $wordpress_root;
+		}
+		return $this->wordpress_root;
+	}
+
+	function maybe_set_wordpress_root() {
+		$server = bw_array_get( $_SERVER, 'SERVER_NAME', null );
+		if ( 'wp.a2z' === $server ) {
+			$this->set_wordpress_root( 'https://core.wp.a2z/' );
+		}
 	}
 
 	function full_filename() {
