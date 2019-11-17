@@ -2352,7 +2352,7 @@ function oikai_handle_token2( $key, $token ) {
  * 
  * Note: You can get sometimes get Warning messages when the source is truncated at an arbitrary line number
  * e.g.  Warning: Unterminated comment starting line 100 in \oik-shortcodes\shortcodes\oik-api-importer.php on line 1255
- * @TODO Eliminate this Warning notice.
+ * We use the @ prefix on token_get_all() to hide this warning.
  *  
  * @param array $sources - source lines for the function
  * @param int $startline - the start line of the function ( future use )  
@@ -2365,7 +2365,7 @@ function oikai_syntax_source( $sources, $startline, $prepend_php=true ) {
   }  
   $content .= implode( "", $sources );
   //bw_trace2( $content, "content" );
-  $tokens = token_get_all( $content );
+  $tokens = @token_get_all( $content );
   if ( !$prepend_php ) {
     //array_pop( $tokens );
   }
