@@ -1828,6 +1828,9 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
 			break;
 
 		case 'oik_api':
+		case 'oik_class':
+		case 'oik_file':
+		case 'oik_hook':
 			$wordpress_cache = oiksc_load_wordpress_cache();
 			$tokens[$key][3] = $wordpress_cache->get_wordpress_link( $api_name );
 			break;
@@ -2056,6 +2059,13 @@ function oiksc_load_wordpress_cache( $echo=false) {
 }
 
 
+/**
+ * Queries the API type for a WordPress API, class, file or hook
+ *
+ * @param $funcname
+ *
+ * @return  string |null - oik_api, oik_class, oik_file, oik_hook
+ */
 function oikai_query_wordpress_api_type( $funcname ) {
 	$wordpress_cache = oiksc_load_wordpress_cache();
 	$api_type = $wordpress_cache->query_api_type( $funcname );
@@ -2069,19 +2079,19 @@ function oikai_query_wordpress_api_type( $funcname ) {
  * @return string function type: "internal", "user" or original funcname
  */
 function oikai_determine_function_type( $funcname ) {
-  $defined_functions = get_defined_functions();
-  $type = oikai_query_function_type( $defined_functions, "internal", $funcname );
+	$defined_functions = get_defined_functions();
+	$type = oikai_query_function_type( $defined_functions, "internal", $funcname );
 
-  if ( !$type ) {
-  	$type = oikai_query_wordpress_api_type( $funcname );
-  }
+	if ( !$type ) {
+		$type = oikai_query_wordpress_api_type( $funcname );
+	}
 
-  if ( !$type ) {
-    $type = oikai_query_function_type( $defined_functions, "user", $funcname );
-  }
-  //e( "Type: $type " );
-  return( $type );
-} 
+	if ( !$type ) {
+		$type = oikai_query_function_type( $defined_functions, "user", $funcname );
+	}
+	//e( "Type: $type " );
+	return $type;
+}
 
 /**
  * Concoct an API name
