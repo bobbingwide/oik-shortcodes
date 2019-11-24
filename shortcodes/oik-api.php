@@ -202,6 +202,7 @@ function oikai_simplify_apiname( $api ) {
  *
  */
 function oikai_api( $atts=null, $content=null, $tag=null ) {
+	oiksc_autoload();
   $apis = bw_array_get_from( $atts, "api,0", null );
   if ( $apis ) {
     $apia = bw_as_array( $apis );

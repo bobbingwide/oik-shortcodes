@@ -1571,7 +1571,8 @@ function oiksc_autoload() {
 		oik_autoload();
 		$autoloaded = true;
 	}	else {
-		bw_trace2( $lib_autoload, "oik-autoload not loaded", false );
+		bw_trace2( $lib_autoload, "oik-autoload not loaded", false, BW_TRACE_ERROR );
+
 	}
 	return( $autoloaded );
 }

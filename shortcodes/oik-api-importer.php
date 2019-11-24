@@ -2058,12 +2058,10 @@ function oiksc_load_wordpress_cache( $echo=false) {
 	return $wordpress_cache;
 }
 
-
 /**
  * Queries the API type for a WordPress API, class, file or hook
  *
  * @param $funcname
- *
  * @return  string |null - oik_api, oik_class, oik_file, oik_hook
  */
 function oikai_query_wordpress_api_type( $funcname ) {
