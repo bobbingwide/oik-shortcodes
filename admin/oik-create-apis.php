@@ -372,21 +372,18 @@ function _ca_checkforselected_api( $api, $count ) {
 
 
 /**
- * Preload the libraries used in create_file and create_api
+ * Preloads the libraries used in create_file and create_api
  */
 function oiksc_preloader() {
-  do_action( "oik_loaded" );
+	do_action( 'oik_loaded' );
 	oiksc_autoload();
-	
-	
-	oik_require( "includes/bw_posts.php" ); 
+	oik_require( "includes/bw_posts.php" );
 	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 	oik_require( "admin/oik-files.php", "oik-shortcodes" );
 	oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
 	oik_require( "feed/oik-plugins-feed.php", "oik-plugins" );
 	oik_require( "shortcodes/oik-api-importer.php", "oik-shortcodes" );
-
-
+	oik_require( 'shortcodes/oik-apilink.php', 'oik-shortcodes');
 }
 
 /**
