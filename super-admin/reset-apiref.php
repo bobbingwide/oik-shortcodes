@@ -101,7 +101,7 @@ Step 3: Delete Unused Terms
 Finally, I ran the following statement to delete all terms that were no longer in use ( they have a count of 0 )
 This leaves the rows in the term_taxonomy table.
 */
-$query = "DELETE FROM $wpdb->terms a ";
+$query = "DELETE a.* FROM $wpdb->terms a ";
 $query .= "INNER JOIN $wpdb->term_taxonomy b ";
 $query .= "ON a.term_id = b.term_id ";
 $query .= "WHERE b.count = 0";
