@@ -136,7 +136,9 @@ class oiksc_function_loader {
        */
       if ( $i == $start ) {
         $line = $this->create_dummy_function_line( $line );
-				$line = str_replace( "::", "__",  $line );
+				//$line = str_replace( "::", "__",  $line );
+	      $line = str_replace( "self", "Telf", $line );
+
       } else { 
 				$line = str_replace( "parent::", "Quarent::", $line );
 				$line = str_replace( "self", "Telf", $line );
