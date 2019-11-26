@@ -25,8 +25,12 @@ function oikai_print_param_info( $param, $type="mixed", $name=null, $description
   //bw_trace2( $name );
   //bw_trace2( $description );
   if ( $param->isDefaultValueAvailable() ) {
-  
-    $default = $param->getDefaultValue();
+  	$constant = $param->isDefaultValueConstant();
+  	if ( $constant ) {
+  		$default = $param->getDefaultValueConstantName();
+    } else {
+	    $default = $param->getDefaultValue();
+    }
   } else {
     $default = null;
   }  
