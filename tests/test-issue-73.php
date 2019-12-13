@@ -31,28 +31,37 @@ class Tests_issue_73 extends BW_UnitTestCase {
 	 * oik_file | 816     |  9136
 	 * oik_hook | 2413 | 11549
 	 *
+	 *  For WordPress 5.3.1 the expected figures are:
+	 *
+	 * * post_type | count  | accum
+	 * --------- | ------ | ---
+	 * oik_api | 7981    | 7981
+	 * oik_class | 473    | 8454
+	 * oik_file | 827    |  9281
+	 * oik_hook | 2414 | 11695
+	 *
 	 */
 
 	function test_load_all_CPT() {
-		$expected = [ 'core.wp.a2z' => 7853 ]; // Total oik_api WordPress 5.3
+		$expected = [ 'core.wp.a2z' => 7981 ]; // Total oik_api WordPress 5.3.1
 		$continue = bw_array_get( $expected, $_SERVER['SERVER_NAME'], false );
 		if ( $continue ) {
 			$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
 			$results         = $wordpress_cache->load_all_CPT( 'oik_api', '_oik_api_name' );
-			$this->assertEquals( $results, $continue );
+			$this->assertEquals( $continue, $results );
 		} else {
 			$this->assertTrue( true ) ;
 		}
 	}
 
 	function test_load_cache_from_db() {
-		$expected = [ 'core.wp.a2z' => 11549 ];  // Total WordPress 5.3
+		$expected = [ 'core.wp.a2z' => 11695 ];  // Total WordPress 5.3.1
 		$continue = bw_array_get( $expected, $_SERVER['SERVER_NAME'], false );
 		if ( $continue ) {
 			$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
 			$wordpress_cache->load_cache_from_db();
 			$count = $wordpress_cache->query_cache_count();
-			$this->assertEquals( $count, $continue );
+			$this->assertEquals( $continue, $count );
 		} else {
 			$this->assertTrue( true ) ;
 		}
@@ -79,7 +88,7 @@ class Tests_issue_73 extends BW_UnitTestCase {
 		$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
 		$wordpress_cache->load_cache();
 		$count = $wordpress_cache->query_cache_count();
-		$this->assertEquals( $count, 11549 );
+		$this->assertEquals( 11695, $count );
 
 	}
 
@@ -98,7 +107,7 @@ class Tests_issue_73 extends BW_UnitTestCase {
 		$wordpress_cache = oiksc_load_wordpress_cache();
 		$this->assertInstanceOf( 'OIK\oik_shortcodes\oiksc_wordpress_cache', $wordpress_cache );
 		$count = $wordpress_cache->query_cache_count();
-		$this->assertEquals( $count, 11549 );
+		$this->assertEquals( 11695, $count );
 		//print_r( $wordpress_cache );
 
 	}
