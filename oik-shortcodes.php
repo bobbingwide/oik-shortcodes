@@ -48,6 +48,7 @@ function oik_shortcodes_init() {
   //oik_register_parse_status();
 	oik_register_component_version_field();
 	oik_register_block_editor_stuff();
+	oik_register_blocks_catalogued();
 
 
 	
@@ -441,6 +442,24 @@ function oik_register_block_example_CPT() {
 	bw_register_field( "_block_ref", "noderef", "Block", array( '#type' => 'block') );
 	bw_register_field_for_object_type( "_block_ref", $post_type );
 	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
+}
+
+/**
+ * Registers the Blocks catalogued virtual field
+ *
+ * Used to compare the blocks delivered field with what's actually documented.
+ *
+ */
+function oik_register_blocks_catalogued() {
+	$field_args = array( "#callback" => "oiksc_blocks_catalogued"
+	, "#parms" => null
+	, "#plugin" => 'oik-shortcodes'
+	, "#file" => "includes/oik-blocks-catalogued-virtual.php"
+	, "#form" => false
+	, "#hint" => "virtual field"
+	);
+	bw_register_field( "blocks_catalogued", "virtual", "Blocks catalogued", $field_args );
+
 }
 
 /**
