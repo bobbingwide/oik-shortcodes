@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 5.2
-* Tested up to: 5.3
+* Tested up to: 5.3.1
 * Gutenberg compatible: Yes
-* Stable tag: 1.36.0
+* Stable tag: 1.37.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,15 @@ Features
 * Parses WordPress core, plugins and themes (v1.20)
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox?
+
+New in version 1.37.0
+
+* Virtual field block_catalogued
+* WordPress APIs are now cached in a JSON file
+
+New in version 1.35.0
+
+* Adds AJAX function to create a block post
 
 New in version 1.34.0
 
@@ -106,6 +115,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.37.0 
+Upgrade to get the cached APIs for WordPress core and for the blocks_catalogued virtual field.
+
 # 1.36.0 
 Upgrade for better support of restarting the batch API creation routine.
 
@@ -287,6 +299,21 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.37.0 
+* Added: Add oiksc-wordpress-cache.json file for WordPress 5.3 API cache,https://github.com/bobbingwide/oik-shortcodes/issues/73
+* Added: Build a cached version of the WordPress API ref,https://github.com/bobbingwide/oik-shortcodes/issues/73
+* Added: register the blocks_catalogued virtual field,https://github.com/bobbingwide/oik-shortcodes/issues/78
+* Added: super-admin cleanup routine,https://github.com/bobbingwide/oik-shortcodes/issues/71
+* Changed: Update oiksc-wordpress-cache.json for WordPress 5.3.1 by re-running test-issue-73 ( with edits ) after reparse,https://github.com/bobbingwide/oik-shortcodes/issues/73
+* Changed: Use https: to link to php.net,https://github.com/bobbingwide/oik-shortcodes/issues/73
+* Fixed: Avoid displaying Warning: Unterminated comment by using the PHP error control operator ( @ ),https://github.com/bobbingwide/oik-shortcodes/issues/35
+* Fixed: Check if default value is a constant,https://github.com/bobbingwide/oik-shortcodes/issues/65
+* Fixed: avoid notices from count(),https://github.com/bobbingwide/oik-shortcodes/issues/72
+* Fixed: convert self to Telf when used as a type declaration,https://github.com/bobbingwide/oik-shortcodes/issues/76
+* Fixed: don't completely reset when $start parameter specified for $previous 0,https://github.com/bobbingwide/oik-shortcodes/issues/74
+* Fixed: enable skipping by requiring oik-apilink.php earlier,https://github.com/bobbingwide/oik-shortcodes/issues/74
+* Fixed: undo the original fix converting :: to __,https://github.com/bobbingwide/oik-shortcodes/issues/23
+
 # 1.36.0 
 * Fixed: Better support for reprocessing from a given commit ID and start file,https://github.com/bobbingwide/oik-shortcodes/issues/21
 
