@@ -7,10 +7,12 @@
 
 
 function oiksc_blocks_catalogued( $args = null ) {
-
-	$id = oiksc_maybe_get_current_post_id( $args );
-	//$id = bw_current_post_id();
-	$blocks_catalogued = oiksc_count_blocks_directly( $id );
+	$blocks_catalogued = null;
+	//$id = oiksc_maybe_get_current_post_id( $args );
+	$id = bw_current_post_id();
+	if ( $id ) {
+		$blocks_catalogued=oiksc_count_blocks_directly( $id );
+	}
 	return $blocks_catalogued;
 }
 
@@ -41,7 +43,6 @@ function oiksc_count_blocks_directly( $id ) {
 	$query .= "and meta_value = %d ";
 	$query .= "and post_id in ( select distinct ID from $wpdb->posts where post_type = 'block')";
 	$request = $wpdb->prepare( $query, $id );
-	//echo $request;
 	$rows = $wpdb->get_var( $request );
 	return $rows;
 }
