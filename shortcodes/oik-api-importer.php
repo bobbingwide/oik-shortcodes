@@ -1412,7 +1412,7 @@ function oikai_link_to_wordpress( $value ) {
   $url = "http://api.wordpress.org/core/handbook/1.0";
   $url = "http://codex.wordpress.org/Function_Reference/$value";
   $url = "http://developer.wordpress.org/reference/functions/$value"; 
-  $url = "http://wp-a2z.com/oik_api/$value"; 
+  $url = "http://core.wp-a2z.org/oik_api/$value";
   /*
   $url = add_query_arg( array( "function" => $value
                              , "version" => $wp_version
