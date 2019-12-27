@@ -132,7 +132,7 @@ function codes__syntax( $shortcode="codes" ) {
   $syntax = array( "codes" => bw_skv( null, "<i>shortcode</i>", "Shortcode name list e.g. bw_pages" )
 								 , "component" => bw_skv( null, "<i>ID</i>", "ID of plugin/theme for the shortcodes" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   

@@ -119,7 +119,7 @@ function files__help() {
 function files__syntax( $shortcode="files" ) {  
   $syntax = array( "file" => bw_skv( null, "<i>filename</i>", "File name e.g. shortcodes/oik-filelink.php" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   

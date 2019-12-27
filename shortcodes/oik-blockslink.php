@@ -125,7 +125,7 @@ function blocks__syntax( $shortcode="blocks" ) {
   $syntax = array( "blocks" => bw_skv( null, "<i>block</i>", "block name list e.g. oik-block/wp" )
 								 , "component" => bw_skv( null, "<i>ID</i>", "ID of plugin/theme for the blocks" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   

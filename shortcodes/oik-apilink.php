@@ -303,7 +303,7 @@ function apis__help() {
 function apis__syntax( $shortcode="apis" ) {  
   $syntax = array( "api" => bw_skv( null, "<i>function-name</i>", "Function name e.g. bw_get_posts" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   

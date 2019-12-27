@@ -121,7 +121,7 @@ function classes__help() {
 function classes__syntax( $shortcode="classes" ) {  
   $syntax = array( "classes" => bw_skv( null, "<i>class-name</i>", "Class names e.g. WP_Widget" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   

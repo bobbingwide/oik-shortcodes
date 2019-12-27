@@ -168,7 +168,7 @@ function hooks__help() {
 function hooks__syntax( $shortcode="hooks" ) {  
   $syntax = array( "hook" => bw_skv( null, "<i>hook name</i>", "Hook name e.g. oik_admin_menu" )
                  );
-  $syntax += _sc_classes();
+  $syntax += _sc_classes( false );
   return( $syntax );
 }
   
