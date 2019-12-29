@@ -804,22 +804,27 @@ function oikai_format_markdown_table_line( $table, $line ) {
  * Shortcodes such as [wp] are not expanded
  * 
  * @param string $line
+ * @param bool $echo - whether or not to echo the line
+ * @return string the markdown formatted line
  */ 
-function oikai_format_markdown_line( $line ) {
+function oikai_format_markdown_line( $line, $echo = true  ) {
 	$line = str_replace( "[", "&#91;", $line );
   $line = paired_replacements( "{@see '", "'}", "[hook ", " .] ", $line );
 	//bw_trace2( $line, "line", false );
   $line = esc_html( $line );
   $line .= " ";
-  $line = paired_replacements( " **", "** ", " <strong>", "</strong> ", $line );
+  $line = paired_replacements( "**", "** ", "<strong>", "</strong> ", $line );
   $line = paired_replacements( " *",  "* ",  " <em>", "</em> ", $line );
-  $line = paired_replacements( " __", "__ ", " <strong>", "</strong> ", $line );
+  $line = paired_replacements( "__", "__ ", "<strong>", "</strong> ", $line );
   $line = paired_replacements( " _",  "_ ",  " <em>", "</em> ", $line );
   $line = paired_replacements( " `", "` ", " <code>", "</code> ", $line );
   $line = paired_replacements( "{@link ", "} ", "[bw_link ", "] ", $line );
 	bw_trace2( $line, "line", false, BW_TRACE_DEBUG );
 	$line = bw_do_shortcode( $line );
-  e( $line );
+	if ( $echo ) {
+		e( $line );
+	}
+	return $line;
 }
 
 /**
@@ -1097,12 +1102,29 @@ function oikai_format_description( $long_description ) {
  * True markdown requires lists to be separated by blank lines.
  * But we were happy to create a list without the blank line.
  * This caused a problem in some situations.
- * 			-- like this one 
+ * 			-- like this one
+ * ** or this one?
+ *
+ * But we also have to cater for 
+ * **bold markdown with two stars**
+ *
+ * and
+ * __bold markdown with underscores__
+ *
+ * while making sure
+ * - we cater for normal lists
+ * * with stars or underscores
+ *
  * 
- * $last_line_len | $line starts | It's a list?
+ * $line starts | $last_line_len | It's a list?
  * -------------- | ------------ | ------------
- * 0              | '--'         | true
- * >0             | '--'         | $list
+ * -              | n/a          | true
+ * *              | n/a          | true
+ * `--`        | 0              | true
+ * `--`        | >0             | $list
+ * `**`        | 0              | true
+ * `**`        | >0             | $list
+
  * 
  * @param integer $list current list nesting level
  * @param string $line 
@@ -1110,15 +1132,17 @@ function oikai_format_description( $long_description ) {
  * @return bool true if we think it's a list
  */
 function oikai_check_its_a_list( $list, $line, $last_line_len ) {
-	$its_a_list = true;
-	if ( 0 < $last_line_len ) {
-		$line_starts = substr( $line, 0, 2 );
-		if ( $line_starts == "--" ) {
-			$its_a_list = $list;
+	$its_a_list = false;
+	$line_starts = substr( $line, 0, 2 );
+	if ( $line_starts == '- ' || $line_starts == '* ') {
+		$its_a_list = true;
+	} elseif ( $line_starts == "--" || $line_starts == '**' ) {
+		if ( $last_line_len > 0 ) {
+			$its_a_list=$list;
 		}
 	}
 	return( $its_a_list ); 
-}  
+}
 
 /**
  * List the function parameters
