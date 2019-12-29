@@ -69,6 +69,7 @@ function oik_shortcodes_init() {
 	add_filter( "get_the_excerpt", "oik_get_the_excerpt", 9 );
 	
 	add_filter( "request", "oiksc_request" );
+	add_filter( 'request', 'oiksc_wordpress_cache_redirect');
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
 	add_action( "run_oik-create-codes.php", "oiksc_run_oik_create_codes" );
 	add_action( "genesis_404", "oiksc_genesis_404" );
@@ -1656,4 +1657,36 @@ function oiksc_is_bot_maybe() {
 		}
 	}	
 	return $is_bot;
+}
+
+
+/**
+ * Considers redirecting the request to core.wp-a2z.org.
+ * The redirection is performed because we no longer parse WordPress core in other subdomains of wp-a2z.org,
+ * but Google still creates links to these subdomains.
+ *
+ * WordPress has parsed the request and now gives us an opportunity to decide what to do.
+ * If the post_type is one of the types used for core APIs and we're not in the core subdomain
+ * then we'll consider performing a redirection.
+ *
+ * @param array $request request array which may contain post_type and name
+ * @return mixed if we havent performed the redirect.
+ */
+function oiksc_wordpress_cache_redirect( $request ) {
+	$post_type = bw_array_get( $request, 'post_type', null );
+	switch ( $post_type ) {
+		case 'oik_api':
+		case 'oik_class':
+		case 'oik_file':
+		case 'oik_hook':
+			$site_url = site_url();
+			if ( false === strpos( $site_url,'core.') ) {
+				oiksc_autoload();
+				$wordpress_cache = new OIK\oik_shortcodes\oiksc_wordpress_cache();
+				$wordpress_cache->load_cache();
+				$wordpress_cache->maybe_redirect( $request );
+			}
+			break;
+	}
+	return $request;
 }

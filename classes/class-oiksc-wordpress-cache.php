@@ -36,7 +36,7 @@ class oiksc_wordpress_cache {
 
 	function maybe_set_wordpress_root() {
 		$server = bw_array_get( $_SERVER, 'SERVER_NAME', null );
-		if ( 'wp.a2z' === $server ) {
+		if ( false !== strpos($server, 'wp.a2z' ) ) {
 			$this->set_wordpress_root( 'https://core.wp.a2z/' );
 		}
 	}
@@ -217,6 +217,37 @@ class oiksc_wordpress_cache {
 		$cache_array = json_decode( $cache );
 		$this->results = $cache_array;
 		$this->add_results_to_cache();
+	}
+
+	/**
+	 * Redirects to https://core.wp-a2z.org if this is a core API, class, file or hook.
+	 *
+	 * We already know the current site is not core.wp-a2z.org and that the post_type is
+	 * one of: oik_api, oik_class, oik_hook or oik_file
+	 *
+	 * @param array $request the parse reques to WordPress
+	 * @return mixed the original $request
+	 */
+	function maybe_redirect( $request ) {
+		$name = bw_array_get( $request, 'name', null );
+		$funcname = $name;
+		$post_type = bw_array_get( $request, 'post_type', null );
+		if ( $post_type === 'oik_file') {
+			$funcname = str_replace( '-php', '.php', $name );
+		}
+
+		if ( $funcname ) {
+			$api_type = $this->query_api_type( $funcname );
+			if ( $api_type ) {
+				$url  = $this->wordpress_root;
+				$url .= "/$api_type/$name";
+				bw_trace2( $url, 'Redirect:', true, BW_TRACE_DEBUG );
+				wp_redirect( $url, 301, 'WP-a2z' );
+				exit();
+			}
+		}
+
+		return $request;
 	}
 
 }
