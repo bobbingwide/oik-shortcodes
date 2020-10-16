@@ -364,6 +364,7 @@ function oik_register_block_editor_stuff() {
 
 	oik_register_block_CPT();
 	oik_register_block_example_CPT();
+	//oik_register_block_variation_CPT();
 	//oik_register_metabox_CPT();
 	//oik_register_panel_CPT();
 
@@ -379,19 +380,23 @@ function oik_register_block_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Blocks';
 	$post_type_args['description'] = 'WordPress blocks';
-	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home', 'page-attributes' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;
+	$post_type_args['hierarchical'] = true;
 	$post_type_args['taxonomies'] = [ 'block_category', 'block_keyword', 'block_classification' ];
 	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
 	$post_type_args['template'] = oik_block_CPT_template();
 	bw_register_post_type( $post_type, $post_type_args );
 	add_post_type_support( $post_type, 'publicize' );
+	add_post_type_support( $post_type, 'page-attributes');
 
 	bw_register_field( "_block_type_name", "text", "Block type name" );
+	bw_register_field( '_block_variation', 'text', 'Variation name' );
 	bw_register_field( "_block_doc_link", "url", "Documentation");
 
 	bw_register_field_for_object_type( "_block_type_name", $post_type );
+	bw_register_field_for_object_type( '_block_variation', $post_type );
 	bw_register_field_for_object_type( "_block_doc_link", $post_type );
 	bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
 	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
@@ -433,6 +438,32 @@ function oik_register_block_example_CPT() {
 	$post_type_args = array();
 	$post_type_args['label'] = 'Block examples';
 	$post_type_args['description'] = 'Example block usage';
+	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
+	$post_type_args['has_archive'] = true;
+	$post_type_args['show_in_rest'] = true;
+	$post_type_args['taxonomies'] = [ 'block_category' ];
+	$post_type_args['menu_icon'] = 'dashicons-lightbulb'; //'dashicons-block-default';
+	bw_register_post_type( $post_type, $post_type_args );
+	add_post_type_support( $post_type, 'publicize' );
+	bw_register_field( "_block_ref", "noderef", "Block", array( '#type' => 'block') );
+	bw_register_field_for_object_type( "_block_ref", $post_type );
+	bw_register_field_for_object_type( "_oikp_dependency", $post_type );
+}
+
+/**
+ * Register custom post type "block_variation"
+ *
+ * A block example refers to a particular block.
+ * It refers to the block for which it's an example.
+ * It may also reference the shortcodes it implements
+ * Post type support of "publicize" is added to enable publicizing using JetPack.
+ *
+ */
+function oik_register_block_variation_CPT() {
+	$post_type = 'block_variation';
+	$post_type_args = array();
+	$post_type_args['label'] = 'Block variations';
+	$post_type_args['description'] = 'Variations for blocks';
 	$post_type_args['supports'] = array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'clone', 'author', 'home' );
 	$post_type_args['has_archive'] = true;
 	$post_type_args['show_in_rest'] = true;

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2019
+<?php // (C) Copyright Bobbing Wide 2019,2020
 
 if ( PHP_SAPI === "cli" ) {
 	oiksc_update_blocks_loaded();
@@ -56,14 +56,14 @@ function oiksc_update_blocks_loaded() {
  * @param string $required_component
 
  */
-function oiksc_update_block( $block_type_name, $keywords, $category ) {
+function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $variation ) {
 
 	$block_keywords = "$block_type_name $keywords $category";
 	echo "Updating $block_keywords" . PHP_EOL;
 	$post = array();
 	oik_require( "includes/bw_posts.php" );
 
-	$post = oiksc_get_block( $block_type_name );
+	$post = oiksc_get_block( $block_type_name, $parent, $variation );
 	if ( $post ) {
 
 		//$post_id = wp_update_post( $post );
@@ -83,17 +83,31 @@ function oiksc_update_block( $block_type_name, $keywords, $category ) {
 	bw_flush();
 }
 
-if ( !function_exists( 'oiksc_get_block')) {
-	function oiksc_get_block( $block_type_name ) {
-		$args  = array(
-			"post_type"    => "block"
-		,
-			"meta_key"     => "_block_type_name"
-		,
-			"number_posts" => 1
-		,
-			"meta_value"   => $block_type_name
-		);
+
+function oiksc_get_block( $block_type_name, $parent=0, $variation=null ) {
+
+		if ( $parent ) {
+
+			$args  = array(		"post_type"    => "block"
+			,		"meta_key"     => "_block_variation"
+			,		"number_posts" => 1
+			,		"meta_value"   => $variation
+			, 'post_parent' => $parent
+			);
+
+		} else {
+			$args=array(
+				"post_type"   =>"block"
+			,
+				"meta_key"    =>"_block_type_name"
+			,
+				"number_posts"=>1
+			,
+				"meta_value"  =>$block_type_name
+			,
+				'post_parent' =>$parent
+			);
+		}
 		$posts = bw_get_posts( $args );
 		if ( $posts ) {
 			$post = $posts[0];
@@ -103,7 +117,7 @@ if ( !function_exists( 'oiksc_get_block')) {
 
 		return $post;
 	}
-}
+
 
 function oiksc_update_block_yoastseo( $post, $keywords ){
 	$id = $post->ID;

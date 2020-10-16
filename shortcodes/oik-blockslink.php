@@ -60,8 +60,9 @@ function oikai_listblocks( $atts ) {
 }
 
 /**
- * Load the blocks listed in the array
+ * Loads the blocks listed in the array.
  *
+ * This now only loads parent blocks not variations.
  * Since the plugin/theme name is not specified we could get duplicates in the results.
  * 
  * @param array $blocks - array of blocks
@@ -78,6 +79,7 @@ function oiksc_get_blocks_byblock( $blocks ) {
                        , "compare" => "IN"  
                        );
   $atts['meta_query'] = $meta_query;
+  $atts['post_parent'] = 0;
   $posts = bw_get_posts( $atts ); 
   return( $posts );
 } 

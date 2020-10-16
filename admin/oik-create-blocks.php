@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2019
+<?php // (C) Copyright Bobbing Wide 2019, 2020
 
 if ( PHP_SAPI === "cli" ) {
 	oiksc_create_blocks_loaded();
@@ -19,9 +19,7 @@ if ( PHP_SAPI === "cli" ) {
  */
 
 /**
- * Create oik-shortcode entries programmatically
- *
- * After the plugins, themes and APIs have been created we need to update the definitions of all the shortblocks
+ * Creates Block and block variation entries programmatically.
  *
  */
 function oiksc_create_blocks_loaded() {
@@ -40,17 +38,12 @@ function oiksc_create_blocks_loaded() {
 	$post_title = "$title - $block_type_name";
 	oiksc_create_block( $block_type_name, $title, $component );
 
-
 }
-
-
-
-
 
 /**
  * Programmatically create a block post
  *
- * This is run in batch
+ * This used to be run in batch.
  *
  * @param string $block_type_name
  * @param string $title
@@ -59,7 +52,7 @@ function oiksc_create_blocks_loaded() {
  * @param string|null $description
 
  */ 
-function oiksc_create_block( $block_type_name, $title, $required_component, $icon=null, $description=null ) {
+function oiksc_create_block( $block_type_name, $title, $required_component, $icon=null, $description=null, $parent=0, $variation=null ) {
 
 	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
 	$component_id = oiksc_get_component_by_name( $required_component );
@@ -73,7 +66,7 @@ function oiksc_create_block( $block_type_name, $title, $required_component, $ico
 	echo "Creating $post_title: $required_component: $component_id" . PHP_EOL;
 	$post = array();
 
-	$post = oiksc_get_block( $block_type_name );
+	$post = oiksc_get_block( $block_type_name, $parent, $variation );
 	if ( !$post ) {
 		$post = [];
 		$post = array( 'post_type' => 'block'
@@ -81,8 +74,10 @@ function oiksc_create_block( $block_type_name, $title, $required_component, $ico
 		, 'post_status' => 'publish'
 		);
 		$post['title'] = $post_title;
-		$post['post_content' ] = oiksc_create_block_content( $block_type_name, $icon, $title, $description );
+		$post['post_content' ] = oiksc_create_block_content( $block_type_name, $icon, $title, $description, $variation );
+		$post['post_parent'] = $parent;
 		$_POST['_block_type_name'] = $block_type_name;
+		$_POST['_block_variation'] = $variation;
 		$_POST['_oik_sc_plugin'] = $component_id;
 		//oikb_get_response( "Continue?", true );
 		$post_id = wp_insert_post( $post );
@@ -105,8 +100,9 @@ function oiksc_create_block( $block_type_name, $title, $required_component, $ico
  * @return array
  */
 
-function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, $description=null ) {
-	$atts = oiksc_block_atts_encode( [ 'className' => 'svg64',  'blockicon' => $block_type_name,
+function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, $description=null, $variation=null ) {
+	$blockicon = $variation ? $block_type_name . '|' . $variation : $block_type_name;
+	$atts = oiksc_block_atts_encode( [ 'className' => 'svg64',  'blockicon' => $blockicon,
 	'showBlockTypeName' => false, 'showTitle' => false, 'showCategory' => false, 'showKeywords' => false ] );
 	if ( $icon ) {
 		$iconinfo = oiksc_icon_blockinfo( $icon, $block_type_name, $title, $description );
@@ -129,6 +125,12 @@ function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, 
 	$content .= oiksc_generate_block( "separator", null, '<hr class="wp-block-separator"/>');
 	$content .= oiksc_generate_block( "heading", null, "<h2>Notes</h2>");
 	$content .= oiksc_generate_block( "list", null, '<ul><li>TBC</li></ul>');
+
+	// When it's a variation then we don't need to display Variations.
+	// When it's not then we don't know, programmatically, if there are variations.
+	// until we edit the block.
+	// $content .= oiksc_generate_block( "heading", null, "<h2>Variations</h2>");
+
 	//echo $content;
 	//oikb_get_response( "Continue?", true );
 	return $content;
@@ -162,9 +164,12 @@ function oiksc_default_blockinfo() {
 
 function oiksc_icon_blockinfo( $icon, $block_type_name, $block_title=null, $block_description=null ) {
 	$iconinfo = '<div class="wp-block-oik-block-blockinfo svg64"><div>';
+	//$icon = str_replace( 'viewbox', 'viewBox', $icon );
+	//$icon = str_replace( 'preserveaspectratio', 'preserveAspectRatio', $icon );
 	$iconinfo .= $icon;
 	$iconinfo .= '</div>';
 	$iconinfo .= '<div>';
+	$iconinfo .= '</div><div>';
 	//$iconinfo .= $block_type_name;
 	//$iconinfo .= '</div><div>';
 	//$iconinfo .= $block_title;
@@ -184,34 +189,13 @@ function oiksc_get_component_by_name( $component_name ) {
 	if ( $plugin_post ) {
 		$component_id = $plugin_post->ID;
 	} else {
-
-		gob();
+		echo "Invalid component name: $component_name";
+		$component_id = 0;
 	}
 	return( $component_id );
 }
 
-if ( !function_exists( 'oiksc_get_block')) {
-
-	function oiksc_get_block( $block_type_name ) {
-		$args  = array(
-			"post_type"    => "block"
-		,
-			"meta_key"     => "_block_type_name"
-		,
-			"number_posts" => 1
-		,
-			"meta_value"   => $block_type_name
-		);
-		$posts = bw_get_posts( $args );
-		if ( $posts ) {
-			$post = $posts[0];
-		} else {
-			$post = null;
-		}
-
-		return $post;
-	}
-}
+/** oiksc_get_block now only in oik-update-blocks.php */
 
 /**
  * @return array

@@ -1,16 +1,26 @@
 <?php
 
 /**
- * @copyright (C) Copyright Bobbing Wide 2019
+ * @copyright (C) Copyright Bobbing Wide 2019, 2020
  */
 
 /**
  * Implements "oiksc_create_or_update_block" request
  *
- * To create or update a block definition for a WordPress block editor block
+ * To create or update a block definition for a WordPress block editor block.
+ * Now supports creating blocks which are variations.
  *
  * Fields:
  * block
+ *
+ * https://blocks.wp.a2z/wp-admin/admin-ajax.php?action=oiksc_create_or_update_block
+ * &title=Search
+ * &name=default
+ * &description=Help%20visitors%20find%20your%20content.
+ * &component=gutenberg
+ * &keywords=
+ * &variation=core%2Fsearch
+ * &icon=someverylongstring
  */
 function oiksc_lazy_create_or_update_block() {
 
@@ -21,6 +31,7 @@ function oiksc_lazy_create_or_update_block() {
 	$category = bw_array_get( $_REQUEST, 'category');
 	$icon = bw_array_get( $_REQUEST, 'icon');
 	$description = bw_array_get( $_REQUEST, 'description' );
+	$variation = bw_array_get( $_REQUEST, 'variation');
 
 	bw_trace2( $icon, 'icon' );
 	e( esc_html( $icon ));
@@ -32,12 +43,28 @@ function oiksc_lazy_create_or_update_block() {
 
 	kses_remove_filters();
 
-	$post = oiksc_get_block( $block_type_name );
-	if ( null === $post ) {
-		oiksc_create_block( $block_type_name, $title, $component, $icon, $description );
+	$parent_ID = 0;
+	if ( $variation ) {
+		$parent = oiksc_get_block( $variation, 0, null );
+		if ( !$parent ) {
+			e( "No parent block found for variation: $variation $block_type_name ");
+			return;
+		} else {
+			$parent_ID = $parent->ID;
+			e( "Parent is: $parent_ID" );
+
+		}
+		$saved = $block_type_name;
+		$block_type_name = $variation;
+		$variation = $saved;
 	}
-	oiksc_update_block( $block_type_name, $keywords, $category );
-	$post = oiksc_get_block( $block_type_name );
+
+	$post = oiksc_get_block( $block_type_name, $parent_ID, $variation );
+	if ( null === $post ) {
+		oiksc_create_block( $block_type_name, $title, $component, $icon, $description, $parent_ID, $variation );
+	}
+	oiksc_update_block( $block_type_name, $keywords, $category, $parent_ID, $variation );
+	$post = oiksc_get_block( $block_type_name, $parent_ID, $variation );
 
 	//$block_icon = bw_array_get( $_REQUEST, 'icon');
 	e( $block_type_name );
