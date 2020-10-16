@@ -103,7 +103,7 @@ class oiksc_file_loader extends oiksc_function_loader {
     //p( $this->tempnam );
     //bw_trace2( $this->contents );
     //require_once( $this->tempnam );
-    //unlink( $this->tempnam );
+    unlink( $this->tempnam );
   }
 }
   
