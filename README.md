@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 5.2
-* Tested up to: 5.3.1
+* Tested up to: 5.5.1
 * Gutenberg compatible: Yes
-* Stable tag: 1.37.0
+* Stable tag: 1.38.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,10 @@ Features
 * Parses WordPress core, plugins and themes (v1.20)
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox?
+
+New in version 1.38.0
+* Supports block variations as children of the parent block
+
 
 New in version 1.37.0
 
@@ -115,6 +119,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.38.0 
+Upgrade to support documentation of block variations.
+
 # 1.37.0 
 Upgrade to get the cached APIs for WordPress core and for the blocks_catalogued virtual field.
 
@@ -299,6 +306,19 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.38.0 
+* Fixed: Delete temporary files to avoid disk full problems,https://github.com/bobbingwide/oik-shortcodes/issues/79
+* Added: Add support for block variations implemented as children of the parent block,https://github.com/bobbingwide/oik-shortcodes/issues/80
+* Changed: Redirect to WordPress core API reference when appropriate,https://github.com/bobbingwide/oik-shortcodes/issues/73
+* Changed: Better attempts at detecting bold markdown characters at the start of a line,,https://github.com/bobbingwide/oik-shortcodes/issues/6
+* Fixed: Make use of the change to _sc_classes( false ) to exclude the id= parameter from shortcodes that don't use it,,https://github.com/bobbingwide/oik-shortcodes/issues/57
+* Changed: Update oiksc-wordpress-cache.json for WordPress 5.3.2 by rerunning PHPUnit tests
+* Fixed: Correct logic for blocks_catalogued virtual field,https://github.com/bobbingwide/oik-shortcodes/issues/78
+* Changed: Change default link to WordPress to core.wp-a2z.org not wp-a2z.com
+* Tested: With WordPress 5.5.1 and WordPress Multi Site
+* Tested: With Gutenberg 9.1.0
+* Tested: With PHP 7.4
+
 # 1.37.0 
 * Added: Add oiksc-wordpress-cache.json file for WordPress 5.3 API cache,https://github.com/bobbingwide/oik-shortcodes/issues/73
 * Added: Build a cached version of the WordPress API ref,https://github.com/bobbingwide/oik-shortcodes/issues/73
