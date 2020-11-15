@@ -66,7 +66,7 @@ function oik_shortcodes_init() {
 	 * Perhaps we should add our filter earlier in the process! 
 	 */
 	//remove_filter( "get_the_excerpt", "wp_trim_excerpt" );
-	add_filter( "get_the_excerpt", "oik_get_the_excerpt", 9 );
+	add_filter( "get_the_excerpt", "oik_get_the_excerpt", 9, 2 );
 	
 	add_filter( "request", "oiksc_request" );
 	add_filter( 'request', 'oiksc_wordpress_cache_redirect');
@@ -83,7 +83,7 @@ function oik_shortcodes_init() {
  * WordPress SEO ( Yoast SEO ) has a nasty habit of asking for the Excerpt if you don't set a Meta description.
  * This can invoke a whole bunch of filters. We don't need this. 
  * 
- * While it quite easy to type the Meta description when you hand create content, it may not be created
+ * While it's quite easy to type the Meta description when you hand create content, it may not be created
  * for automatically generated stuff. 
  * 
  * - This filter will return an excerpt either from the excerpt or the part of the content before any <!--more comment
@@ -92,18 +92,15 @@ function oik_shortcodes_init() {
  * - If there isn't a <!--more tag we return the full post content.
  * - That can be dealt with by the subsequent filters. 
  * 
- * @param string $excerpt
+ * @param string $excerpt The current value for the excerpt.
+ * @param object $post The post from which the excerpt has been extracted.
  * @return string the excerpt we think will do
  */
-function oik_get_the_excerpt( $excerpt=null ) {
-
-	global $post;
-	bw_trace2( $post, "global post", true, BW_TRACE_DEBUG );
+function oik_get_the_excerpt( $excerpt=null, $post ) {
 	if ( !$excerpt ) {
 		if ( $post ) {
 			if ( $post->post_excerpt ) {
 				$excerpt = $post->post_excerpt;
-				
 			} else {
 				$pos_more = strpos( $post->post_content, "<!--more" );
 				if ( false !== $pos_more ) {
@@ -111,12 +108,10 @@ function oik_get_the_excerpt( $excerpt=null ) {
 				} else {
 					$excerpt = $post->post_content;
 				}
-			} 
-				
-			
+			}
 		}
 	}
-	return( $excerpt );
+	return $excerpt;
 }
 
 /**
