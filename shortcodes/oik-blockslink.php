@@ -95,7 +95,7 @@ function oiksc_get_blocks_byblock( $blocks ) {
  * @param string $tag - shortcode name
  * @return string generated HTML 
  */
-function oikai_blockslink( $atts=null, $content, $tag ) {
+function oikai_blockslink( $atts=null, $content=null, $tag=null ) {
 	$atts['thumbnail'] = bw_array_get( $atts, "thumbnail", "none");
   $block = bw_array_get( $atts, "blocks", null );
   $blocks = bw_as_array( $block );

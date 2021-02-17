@@ -92,11 +92,11 @@ function oik_shortcodes_init() {
  * - If there isn't a <!--more tag we return the full post content.
  * - That can be dealt with by the subsequent filters. 
  * 
- * @param string $excerpt The current value for the excerpt.
- * @param object $post The post from which the excerpt has been extracted.
+ * @param string|null $excerpt The current value for the excerpt.
+ * @param object|null $post The post from which the excerpt has been extracted.
  * @return string the excerpt we think will do
  */
-function oik_get_the_excerpt( $excerpt=null, $post ) {
+function oik_get_the_excerpt( $excerpt=null, $post=null ) {
 	if ( !$excerpt ) {
 		if ( $post ) {
 			if ( $post->post_excerpt ) {
