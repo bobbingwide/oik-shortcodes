@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2017
+<?php // (C) Copyright Bobbing Wide 2012-2021
 
 /**
  * Print a function's parameters in a definition list 
@@ -1245,12 +1245,13 @@ function oikai_protect_save_post( ) {
  * Once we've got the source then we can do the "navi" bit.
  * 
  * @param object $refFunc
- * @param ID $post_id 
+ * @param ID $post_id
+ * @param string $plugin_slug
  * @param string $component_type
  * @param bool $echo true if we actually do want the source listed
  * 
  */
-function oikai_listsource( $refFunc, $post_id=null, $plugin_slug, $component_type, $echo=true ) {
+function oikai_listsource( $refFunc, $post_id, $plugin_slug, $component_type, $echo=true ) {
 	bw_trace2( $refFunc->methodname, $plugin_slug, false );
 	oikai_protect_save_post();
   $fileName = $refFunc->getFileName();
@@ -2664,7 +2665,7 @@ function oikai_update_oik_class( $post, $class, $plugin, $file ) {
  * @param bool $echo true if we actually want the source to be listed
  * @param ID $plugin_id - the post ID for the plugin or theme
  */
-function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id, $echo=true, $plugin_id ) {
+function oikai_build_apiref( $funcname, $sourcefile=null, $plugin_slug="oik", $classname=null, $post_id=null, $echo=true, $plugin_id=null ) {
 	$func = oikai_get_func( $funcname, $classname );
 	bw_context( "func", $func );
 	$class = oikai_get_class( $funcname, $classname );

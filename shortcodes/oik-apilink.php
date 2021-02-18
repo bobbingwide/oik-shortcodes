@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2017
+<?php // (C) Copyright Bobbing Wide 2012-2021
 /** 
  * Automagically determine the API list
  *
@@ -217,7 +217,7 @@ function oikai_list_hooks( $post_id ) {
  * @param string $tag - shortcode tag
  * @return string - the generated HTML
  */
-function oikai_apilink( $atts=null, $content, $tag ) {
+function oikai_apilink( $atts=null, $content=null, $tag=null ) {
   $function = bw_array_get( $atts, "api", null );
   $functions = bw_as_array( $function );
   $unkeyed = bw_array_get_unkeyed( $atts );
