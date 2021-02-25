@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 5.2
-* Tested up to: 5.5.1
+* Tested up to: 5.7-beta3
 * Gutenberg compatible: Yes
-* Stable tag: 1.38.0
+* Stable tag: 1.39.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,9 +44,11 @@ Features
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox?
 
+New in version 1.39.0
+* Supports Comments on Blocks and Block examples
+
 New in version 1.38.0
 * Supports block variations as children of the parent block
-
 
 New in version 1.37.0
 
@@ -119,6 +121,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.39.0 
+Update for Comments on Blocks and Block examples.
+
 # 1.38.0 
 Upgrade to support documentation of block variations.
 
@@ -306,6 +311,15 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.39.0 
+* Changed: Add Comments support for Blocks and Block examples,https://github.com/bobbingwide/oik-shortcodes/issues/83
+* Changed: Support PHP 8.0
+* Fixed: Fix oik_get_the_excerpt for FSE,https://github.com/bobbingwide/oik-shortcodes/issues/81
+* Tested: With WordPress 5.6.2 and WordPress Multi Site
+* Tested: With WordPress 5.7-beta3 and WordPress Multi Site
+* Tested: With PHP 8.0
+* Tested: With PHPUnit 9
+
 # 1.38.0 
 * Fixed: Delete temporary files to avoid disk full problems,https://github.com/bobbingwide/oik-shortcodes/issues/79
 * Added: Add support for block variations implemented as children of the parent block,https://github.com/bobbingwide/oik-shortcodes/issues/80
