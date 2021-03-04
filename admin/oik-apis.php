@@ -121,7 +121,7 @@ function _oiksc_get_apis( $file=null, $reload=false ) {
  * @param string $component_slug - the plugin / theme name
  * @return array - array of oiksc_token_objects
  */
-function _oiksc_get_apis2( $file=null, $reload=false, $component_type, $component_slug ) {
+function _oiksc_get_apis2( $file, $reload, $component_type, $component_slug ) {
   static $apis = null;
   if ( !$apis || $reload ) {
     if ( $file ) {
