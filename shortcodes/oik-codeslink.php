@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2017
+<?php // (C) Copyright Bobbing Wide 2012-2021
 
 /** 
  * Automagically determine the shortcode list
@@ -97,7 +97,7 @@ function oiksc_get_shortcodes_bycode( $shortcodes ) {
  * @param string $tag - shortcode name
  * @return string generated HTML 
  */
-function oikai_codeslink( $atts=null, $content, $tag ) {
+function oikai_codeslink( $atts, $content, $tag ) {
   $shortcode = bw_array_get( $atts, "codes", null );
   $shortcodes = bw_as_array( $shortcode );
   $unkeyed = bw_array_get_unkeyed( $atts );
