@@ -114,7 +114,7 @@ function oikho_list_callees( $post_id ) {
  * @param string $tag shortcode name
  * @return string the generated HTML
  */
-function oikho_hooklink( $atts=null, $content, $tag ) {
+function oikho_hooklink( $atts, $content, $tag ) {
   $function = bw_array_get( $atts, "hook", null );
   $functions = bw_as_array( $function );
   $unkeyed = bw_array_get_unkeyed( $atts );

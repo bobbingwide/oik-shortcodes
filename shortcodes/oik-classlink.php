@@ -63,7 +63,7 @@ function oikai_listclasses( $atts ) {
  * [classes "bbboing_sc fiddle" ]  
  *
  */
-function oikai_classlink( $atts=null, $content, $tag ) {
+function oikai_classlink( $atts, $content, $tag ) {
   $class = bw_array_get( $atts, "classes", null );
   $classes = bw_as_array( $class );
   $unkeyed = bw_array_get_unkeyed( $atts );

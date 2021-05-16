@@ -65,7 +65,7 @@ function oikai_listfiles( $atts ) {
  * @param string $tag - shortcode tag
  * @return string - the generated HTML
  */
-function oikai_filelink( $atts=null, $content, $tag ) {
+function oikai_filelink( $atts, $content, $tag ) {
   $file = bw_array_get( $atts, "file", null );
   $files = bw_as_array( $file );
   $unkeyed = bw_array_get_unkeyed( $atts );
