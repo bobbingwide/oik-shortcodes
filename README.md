@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 5.2
-* Tested up to: 5.7-beta3
+* Tested up to: 5.7.2
 * Gutenberg compatible: Yes
-* Stable tag: 1.39.0
+* Stable tag: 1.40.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,9 @@ Yes - see above
 2. Editing an oik_shortcode
 
 ## Upgrade Notice 
+# 1.40.0 
+Update for PHP 8.0 support.
+
 # 1.39.0 
 Update for Comments on Blocks and Block examples.
 
@@ -311,6 +314,13 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.40.0 
+* Changed: Update to support PHP 8.0
+* Tested: With WordPress 5.7.2 and WordPress Multi Site
+* Tested: With Gutenberg 10.7.1
+* Tested: With PHP 8.0
+* Tested: With PHPUnit 9
+
 # 1.39.0 
 * Changed: Add Comments support for Blocks and Block examples,https://github.com/bobbingwide/oik-shortcodes/issues/83
 * Changed: Support PHP 8.0
