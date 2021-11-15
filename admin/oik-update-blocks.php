@@ -74,7 +74,7 @@ function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $v
 		oiksc_update_block_category( $post, $category );
 		echo PHP_EOL;
 	} else {
-		echo "Block does not exist: " . $block_type_name;
+		echo "Block does not exist: " . $block_type_name .":". $parent .":". $variation;
 		echo PHP_EOL;
 		echo "It needs to be created first";
 		echo PHP_EOL;
@@ -85,27 +85,25 @@ function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $v
 
 
 function oiksc_get_block( $block_type_name, $parent=0, $variation=null ) {
-
+		bw_trace2();
 		if ( $parent ) {
 
 			$args  = array(		"post_type"    => "block"
 			,		"meta_key"     => "_block_variation"
-			,		"number_posts" => 1
+			,		"numberposts" => 1
 			,		"meta_value"   => $variation
 			, 'post_parent' => $parent
+				, 'exclude' => -1
 			);
 
 		} else {
 			$args=array(
 				"post_type"   =>"block"
-			,
-				"meta_key"    =>"_block_type_name"
-			,
-				"number_posts"=>1
-			,
-				"meta_value"  =>$block_type_name
-			,
-				'post_parent' =>$parent
+			,	"meta_key"    =>"_block_type_name"
+			,	"numberposts"=>1
+			,	"meta_value"  =>$block_type_name
+			,	'post_parent' =>$parent
+			, 'exclude' => -1
 			);
 		}
 		$posts = bw_get_posts( $args );
@@ -113,6 +111,7 @@ function oiksc_get_block( $block_type_name, $parent=0, $variation=null ) {
 			$post = $posts[0];
 		} else {
 			$post = null;
+			bw_trace2($args, "No result", true, BW_TRACE_ERROR);
 		}
 
 		return $post;

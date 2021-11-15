@@ -72,10 +72,13 @@ function oiksc_lazy_create_or_update_block() {
 	e( $description );
 	//oik_require( 'includes/bw_formatter.php');
 	//bw_field_function_edit( $post );
-
-	$link = get_edit_post_link( $post->ID );
-	if ( $link ) {
-		BW_::alink( "bw_edit", $link, __( "[Edit]", "oik" ) );
+	if ( $post ) {
+		$link=get_edit_post_link( $post->ID );
+		if ( $link ) {
+			BW_::alink( "bw_edit", $link, __( "[Edit]", "oik" ) );
+		}
+	} else {
+		e( "No post. What's gone wrong!");
 	}
 
 
