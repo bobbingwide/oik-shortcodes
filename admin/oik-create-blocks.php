@@ -1,7 +1,7 @@
-<?php // (C) Copyright Bobbing Wide 2019, 2020
+<?php // (C) Copyright Bobbing Wide 2019, 2020, 2021
 
 if ( PHP_SAPI === "cli" ) {
-	oiksc_create_blocks_loaded();
+	//oiksc_create_blocks_loaded();
 
 }
 
@@ -115,8 +115,11 @@ function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, 
 	$content .= oiksc_generate_block( "paragraph", oiksc_block_atts_encode( ['backgroundColor' => 'very-light-gray'] ), $para );
 	//$content .= oiksc_generate_block( "more", null, '<!--more-->' );
 	$content .= oiksc_generate_block( "heading", null, "<h2>Screenshot</h2>" );
-	$content .= oiksc_generate_block( "oik-block/fields", oiksc_block_atts_encode( [ "fields" => "featured"  ] ) );
-	$content .= oiksc_generate_block( "heading", null, "<h2>Example</h2>" );
+	//$content .= oiksc_generate_block( "oik-block/fields", oiksc_block_atts_encode( [ "fields" => "featured"  ] ) );
+    $placeholder = oiksc_block_atts_encode( [ "placeholder" => "Paste the blocks screenshot here."]);
+    $content .= oiksc_generate_block( "paragraph", $placeholder, "<p></p>");
+
+    $content .= oiksc_generate_block( "heading", null, "<h2>Example</h2>" );
 	$content .= oiksc_generate_block( "spacer", null, '<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>' );
 	$placeholder = oiksc_block_atts_encode( [ "placeholder" => "Type / to choose the sample block"]);
 	$content .= oiksc_generate_block( "paragraph", $placeholder, "<p></p>");
@@ -124,6 +127,8 @@ function oiksc_create_block_content( $block_type_name, $icon=null, $title=null, 
 	$content .= oiksc_generate_block( "spacer", null, '<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>' );
 	$content .= oiksc_generate_block( "separator", null, '<hr class="wp-block-separator"/>');
 	$content .= oiksc_generate_block( "heading", null, "<h2>Notes</h2>");
+
+	// Can we write anything useful here such as whether or not this is an inner block.
 	$content .= oiksc_generate_block( "list", null, '<ul><li>TBC</li></ul>');
 
 	// When it's a variation then we don't need to display Variations.
