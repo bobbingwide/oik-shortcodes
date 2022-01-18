@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2018, 2019
+<?php // (C) Copyright Bobbing Wide 2018, 2019, 2022
 
 /**
  * Implements [blocks] shortcode to automagically determine the block list
@@ -60,6 +60,70 @@ function oikai_listblocks( $atts ) {
 }
 
 /**
+ * Display links to blocks and variations in the order set by the parameters.
+ *
+ * @param $blocks
+ * @param $atts
+ */
+function oiksc_display_blocks_and_variations( $blocks, $atts ) {
+
+    $block_posts = oiksc_get_blocks_and_variations( $blocks, $atts );
+    $posts = [];
+    $missing = [];
+    if ( $block_posts ) {
+        foreach ($block_posts as $key => $post) {
+            if (null === $post) {
+                $missing[] = $key;
+            } else {
+                $posts[] = $post;
+            }
+        }
+    }
+    oik_require( "shortcodes/oik-list.php" );
+    $atts['uo'] = bw_array_get( $atts, "uo", "s");
+    bw_simple_list( $posts, $atts );
+
+    if ( count( $missing )) {
+        p( "The following blocks/variations are not registered: ");
+        e( implode( ', ', $missing ));
+    }
+}
+
+/**
+ * Loads the blocks and variations listed in the array.
+ *
+ * `oiksc_get_blocks_byblock()` only finds blocks and not variations.
+ *
+ * If it finds at least one block then the blocks shortcode appears to have worked.
+ * But that's not the full story. This is a refactoring to find both blocks and variations.
+ * The returned array is an associative array of the block/variation name to the implementing post.
+ *
+ */
+function oiksc_get_blocks_and_variations( $blocks, $atts ) {
+    oik_require( 'admin/oik-update-blocks.php', 'oik-shortcodes');
+    oik_require( "includes/bw_posts.php" );
+    $block_posts = [];
+
+    foreach ( $blocks as $block ) {
+        $block_parts = explode(':', $block);
+        $block_name = $block_parts[0];
+        $variation = isset($block_parts[1]) ? $block_parts[1] : null;
+         $post = oiksc_get_block( $block_name, 0 , null );
+        if ( $post ) {
+            if ( $variation ) {
+                $variation = oiksc_get_block( $block_name, $post->ID, $variation );
+                $block_posts[ $block] = $variation;
+            } else {
+                $block_posts[ $block ] = $post;
+            }
+        } else {
+            $block_posts[ $block ] = null;
+        }
+    }
+    return $block_posts;
+}
+
+/**
  * Loads the blocks listed in the array.
  *
  * This now only loads parent blocks not variations.
@@ -82,7 +146,18 @@ function oiksc_get_blocks_byblock( $blocks ) {
   $atts['post_parent'] = 0;
   $posts = bw_get_posts( $atts ); 
   return( $posts );
-} 
+}
+
+function oiksc_display_blocks_byblock( $blocks, $atts ) {
+    $posts = oiksc_get_blocks_byblock( $blocks );
+    if ( $posts ) {
+        oik_require( "shortcodes/oik-list.php" );
+        $atts['uo'] = bw_array_get( $atts, "uo", "s");
+        bw_simple_list( $posts, $atts );
+    } else {
+        p( "Cannot find block(s):" . implode( ",", $blocks) );
+    }
+}
 
 /**
  * Implements links to blocks
@@ -105,14 +180,9 @@ function oikai_blockslink( $atts=null, $content=null, $tag=null ) {
   
   if ( count( $blocks) ) {
     oik_require( "admin/oik-shortcodes.php", "oik-shortcodes" );
-    $posts = oiksc_get_blocks_byblock( $blocks );
-    if ( $posts ) {
-	    oik_require( "shortcodes/oik-list.php" );
-	    $atts['uo'] = bw_array_get( $atts, "uo", "s");
-    	bw_simple_list( $posts, $atts );
-    } else {
-      p( "Cannot find block(s):" . implode( ",", $blocks) );
-    } 
+    //oiksc_display_blocks_byblock( $blocks, $atts );
+    oiksc_display_blocks_and_variations( $blocks, $atts );
+
   } else {
     oikai_listblocks( $atts );
   }
