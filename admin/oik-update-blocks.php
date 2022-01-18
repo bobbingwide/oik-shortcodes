@@ -1,7 +1,7 @@
-<?php // (C) Copyright Bobbing Wide 2019,2020
+<?php // (C) Copyright Bobbing Wide 2019,2020, 2021, 2022
 
 if ( PHP_SAPI === "cli" ) {
-	oiksc_update_blocks_loaded();
+	//oiksc_update_blocks_loaded();
 }
 
 /**
@@ -59,7 +59,7 @@ function oiksc_update_blocks_loaded() {
 function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $variation ) {
 
 	$block_keywords = "$block_type_name $keywords $category";
-	echo "Updating $block_keywords" . PHP_EOL;
+	echo "Updating: $block_keywords" . PHP_EOL;
 	$post = array();
 	oik_require( "includes/bw_posts.php" );
 
@@ -84,6 +84,14 @@ function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $v
 }
 
 
+/**
+ * Gets a block by its meta data value and parent.
+ *
+ * @param $block_type_name - ignored if parent is not 0
+ * @param int $parent - pass a non-zero parent to access the variation
+ * @param null $variation - used if parent is set
+ * @return mixed|null
+ */
 function oiksc_get_block( $block_type_name, $parent=0, $variation=null ) {
 		bw_trace2();
 		if ( $parent ) {
