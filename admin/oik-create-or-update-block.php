@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright (C) Copyright Bobbing Wide 2019, 2020
+ * @copyright (C) Copyright Bobbing Wide 2019, 2020, 2021, 2022
  */
 
 /**
@@ -45,6 +45,7 @@ function oiksc_lazy_create_or_update_block() {
 
 	$parent_ID = 0;
 	if ( $variation ) {
+
 		$parent = oiksc_get_block( $variation, 0, null );
 		if ( !$parent ) {
 			e( "No parent block found for variation: $variation $block_type_name ");
@@ -59,6 +60,7 @@ function oiksc_lazy_create_or_update_block() {
 		$variation = $saved;
 	}
 
+
 	$post = oiksc_get_block( $block_type_name, $parent_ID, $variation );
 	if ( null === $post ) {
 		oiksc_create_block( $block_type_name, $title, $component, $icon, $description, $parent_ID, $variation );
@@ -66,12 +68,9 @@ function oiksc_lazy_create_or_update_block() {
 	oiksc_update_block( $block_type_name, $keywords, $category, $parent_ID, $variation );
 	$post = oiksc_get_block( $block_type_name, $parent_ID, $variation );
 
-	//$block_icon = bw_array_get( $_REQUEST, 'icon');
 	e( $block_type_name );
 	e( $title );
 	e( $description );
-	//oik_require( 'includes/bw_formatter.php');
-	//bw_field_function_edit( $post );
 	if ( $post ) {
 		$link=get_edit_post_link( $post->ID );
 		if ( $link ) {
@@ -80,14 +79,4 @@ function oiksc_lazy_create_or_update_block() {
 	} else {
 		e( "No post. What's gone wrong!");
 	}
-
-
-
-
-
-
-
-
-
-
 }
