@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2017
+<?php // (C) Copyright Bobbing Wide 2014-2017, 2021
 
 /**
  * Strip all the classes, methods and APIs from the file
@@ -81,7 +81,9 @@ function oiksc_contents_link( $contents_arr, $api ) {
 	if ( $api->methodname ) {
 		$line .= " function ";
 		$post = oikai_get_oik_api_byname( $api->getApiName() );
-		$post_id = $post[0];
+		if ( $post ) {
+			$post_id=$post[0];
+		}
 	} else {
 		$line .= " class ";
 		$post = oikai_get_oik_class_byname( $api->classname );
