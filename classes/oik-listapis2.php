@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2017
+<?php // (C) Copyright Bobbing Wide 2014-2017, 2021
 /**
  * Functions to dynamically "load" methods and functions from source files that are not already loaded
  * 
@@ -74,7 +74,7 @@ function _oiksc_get_endline( $tokens, $t ) {
  * @param string $component_type_p - the component type - "plugin"|"theme"| ?
  * @param string $component_slug - the plugin or theme slug - may be "wordpress"
  */ 
-function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) {
+function oiksc_real_file( $file=null, $component_type_p=null, $component_slug=null ) {
   global $plugin, $filename, $component_type ;
   if ( $file ) {
     $filename = $file;
@@ -126,7 +126,7 @@ function oiksc_real_file( $file=null, $component_type_p=null, $component_slug ) 
  * @param string $component_type_p - "plugin"|"theme"| ?
  * @return array - the file contents
  */
-function oiksc_load_file( $file=null, $component_type_p=null, $component_slug ) { 
+function oiksc_load_file( $file=null, $component_type_p=null, $component_slug=null ) {
   $real_file = oiksc_real_file( $file, $component_type_p, $component_slug );
   $contents_arr = file( $real_file );
   return( $contents_arr );
