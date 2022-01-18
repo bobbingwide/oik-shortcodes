@@ -296,6 +296,7 @@ function oik_register_oik_sc_param() {
   $post_type = 'oik_sc_param';
   $post_type_args = array();
   $post_type_args['label'] = 'Shortcode parameters';
+  //$post_type_args['singular_label'] = "Shortcode parameter";
   $post_type_args['description'] = 'Parameter definitions for shortcodes';
   $post_type_args['supports'] = array( 'title', 'editor', 'revisions', 'author' );
   // This might reduce the amount of gumpf we see when searching. Herb 2014/01/10
