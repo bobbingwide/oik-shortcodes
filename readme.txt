@@ -3,9 +3,9 @@ Contributors: bobbingwide
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 5.2
-Tested up to: 5.7.2
+Tested up to: 5.9
 Gutenberg compatible: Yes
-Stable tag: 1.40.0
+Stable tag: 1.41.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ Features
 * Parses WordPress core, plugins and themes (v1.20)
 * Pagination of long lists
 * 'Compatible with Shortcake' checkbox?
+
+New in version 1.41.0
+* [blocks] shortcode supports link to block variations
 
 New in version 1.39.0
 * Supports Comments on Blocks and Block examples
@@ -120,6 +123,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.41.0 =
+Update for improvements to the [blocks] shortcode.
+
 = 1.40.0 = 
 Update for PHP 8.0 support.
 
@@ -313,6 +319,20 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.41.0 =
+* Changed: Delete some commented out code
+* Changed: Don't automatically call oiksc_update_blocks_loaded() in batch
+* Changed: Improve the initial content for a block
+* Changed: PHP 8.0 support #84
+* Changed: Set singular_label for Shortcode parameters
+* Changed: Update [blocks] to support links to variations #85
+* Fixed: Add exclude=-1 parameter to oiksc_get_block #80
+* Fixed: oiksc_content_link Check $post before referencing #84
+* Tested: With WordPress 5.9-RC2 and WordPress Multi Site
+* Tested: With Gutenberg 12.3.2
+* Tested: With PHP 8.0
+* Tested: With PHPUnit 9
+
 = 1.40.0 = 
 * Changed: Update to support PHP 8.0
 * Tested: With WordPress 5.7.2 and WordPress Multi Site
