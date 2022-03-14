@@ -4,7 +4,7 @@ Plugin Name: oik blocks and shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: blocks, shortcodes, APIs, hooks, classes, files and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.40.0
+Version: 1.41.1
 Author: bobbingwide
 Author URI: https://www.bobbingwide.com/about-bobbing-wide
 License: GPL2
@@ -162,6 +162,7 @@ function oik_register_oik_shortcodes() {
 	// Not using query_var for this post type
 	// $post_type_args['query_var'] = "oik-shortcodes";
 	$post_type_args['show_in_rest'] = true;
+	$post_type_args['show_in_nav_menus'] = false;
   bw_register_post_type( $post_type, $post_type_args );
   //add_post_type_support( $post_type, 'publicize' );
 	//add_post_type_support( $post_type, 'author' );
@@ -185,7 +186,7 @@ function oik_register_oik_shortcodes() {
                          , "#hint" => "virtual field"
                          ); 
   bw_register_field( "_oik_sc_the_title_cb", "virtual", "Expands in 'the_title'?", $the_title_args );
-	bw_register_field( "_oik_sc_shortcake_cb", "checkbox", "Compatible with shortcake?" );
+  //bw_register_field( "_oik_sc_shortcake_cb", "checkbox", "Compatible with shortcake?" );
   
   bw_register_field_for_object_type( "_oik_sc_code", $post_type );
   bw_register_field_for_object_type( "_oik_sc_plugin", $post_type );
@@ -196,7 +197,7 @@ function oik_register_oik_shortcodes() {
   bw_register_field_for_object_type( "_oik_sc_snippet_cb", $post_type );
   bw_register_field_for_object_type( "_oik_sc_endcode_cb", $post_type );
   bw_register_field_for_object_type( "_oik_sc_the_title_cb", $post_type );
-  bw_register_field_for_object_type( "_oik_sc_shortcake_cb", $post_type );
+  //bw_register_field_for_object_type( "_oik_sc_shortcake_cb", $post_type );
   
   add_filter( "manage_edit-${post_type}_columns", "oik_shortcodes_columns", 10, 2 );
   add_action( "manage_${post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
