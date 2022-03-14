@@ -4,9 +4,9 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 * Requires at least: 5.2
-* Tested up to: 5.9
+* Tested up to: 5.9.2
 * Gutenberg compatible: Yes
-* Stable tag: 1.41.0
+* Stable tag: 1.41.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -320,6 +320,14 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 ## Changelog 
+# 1.41.1 
+* Changed: remove show_in_nav_menus from oik-shortcodes.
+* Changed: Remove 'Compatibe with shortcake?' cb #86
+* Tested: With WordPress 5.9.2 and WordPress Multi Site
+* Tested: With Gutenberg 12.7.2
+* Tested: With PHP 8.0
+* Tested: With PHPUnit 9
+
 # 1.41.0 
 * Changed: Delete some commented out code
 * Changed: Don't automatically call oiksc_update_blocks_loaded() in batch
