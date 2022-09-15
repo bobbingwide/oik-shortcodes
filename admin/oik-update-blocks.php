@@ -57,8 +57,12 @@ function oiksc_update_blocks_loaded() {
 
  */
 function oiksc_update_block( $block_type_name, $keywords, $category, $parent, $variation ) {
-
-	$block_keywords = "$block_type_name $keywords $category";
+	if ( is_array( $keywords) ) {
+		$keywords_string=implode( ',', $keywords );
+	} else {
+		$keywords_string = $keywords;
+	}
+	$block_keywords = "$block_type_name $keywords_string $category";
 	echo "Updating: $block_keywords" . PHP_EOL;
 	$post = array();
 	oik_require( "includes/bw_posts.php" );
