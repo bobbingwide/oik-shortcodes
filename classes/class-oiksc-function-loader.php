@@ -144,7 +144,7 @@ class oiksc_function_loader {
 				$line = str_replace( "self", "Telf", $line );
 	            $line = str_replace( "new static", "new Ttatic", $line );
 	            $line = str_replace( "static::", "Ttatic::", $line );
-			//$line = str_replace( "Telf::", 'self__', $line );
+			    $line = str_replace( "instanceof static", 'instanceof Ttatic', $line );
 			}
       $this->write( $line );
     }
