@@ -90,7 +90,9 @@ class oiksc_api_cache {
 		$posts = $this->get_oik_api_byname( $function );
 		//$this->map_posts( $posts, true );
 		bw_trace2( $posts, "posts", true, BW_TRACE_VERBOSE );
-		$this->preload_api_calls( $posts[0] );
+        if ( $posts && count( $posts )) {
+            $this->preload_api_calls($posts[0]);
+        }
 	}
 	
  
