@@ -376,7 +376,9 @@ function _ca_checkforselected_api( $api, $count ) {
  * Preloads the libraries used in create_file and create_api
  */
 function oiksc_preloader() {
-	do_action( 'oik_loaded' );
+    if ( !did_action( 'oik_loaded')) {
+        do_action('oik_loaded');
+    }
 	oiksc_autoload();
 	oik_require( "includes/bw_posts.php" );
 	oik_require( "admin/oik-apis.php", "oik-shortcodes" );
