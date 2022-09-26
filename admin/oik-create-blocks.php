@@ -1,7 +1,8 @@
-<?php // (C) Copyright Bobbing Wide 2019, 2020, 2021
+<?php // (C) Copyright Bobbing Wide 2019, 2020, 2021, 2022
 
 if ( PHP_SAPI === "cli" ) {
 	//oiksc_create_blocks_loaded();
+    oiksc_list_registered_blocks();
 
 }
 
@@ -240,6 +241,26 @@ function oiksc_generate_block( $block_type_name, $atts=null, $content=null ) {
 	return $block;
 }
 
+
+function oiksc_list_registered_blocks() {
+    echo "Registered blocks";
+    $registry = WP_Block_Type_Registry::get_instance();
+    $blocks = $registry->get_all_registered();
+    ksort( $blocks );
+    // $blocks is an enormous array of WP_Block_Type objects
+    foreach ( $blocks as $name => $block ) {
+        echo $name;
+        echo ',';
+        echo $block->title;
+        echo ',';
+        echo $block->description;
+        echo ',';
+        echo count( $block->variations);
+        echo PHP_EOL;
+    }
+
+    //print_r( $blocks );
+}
 
 	
 

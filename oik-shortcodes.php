@@ -75,6 +75,7 @@ function oik_shortcodes_init() {
 	add_action( "genesis_404", "oiksc_genesis_404" );
 	
 	//oik_shortcodes_define_shortcode_parameter_server();
+    add_filter( 'render_block_oik-block/blocklist', 'oiksc_render_block_oik_block_blocklist', 10, 3 );
 }
 
 /**
@@ -1717,4 +1718,29 @@ function oiksc_wordpress_cache_redirect( $request ) {
 			break;
 	}
 	return $request;
+}
+
+/**
+ * Implements 'render_block_oik-block/blocklist'.
+ *
+ * When rendering the oik-block/blocklist block we enhance the output when
+ * determineUpdates, showBatch and showBlockLink are true.
+ * This combination is required since otherwise we don't get passed enough information about the registered blocks & variations.
+ *
+ * @param $content
+ * @param $parsed_block
+ * @param $wp_block_object
+ * @return string
+ *
+ */
+function oiksc_render_block_oik_block_blocklist( $content, $parsed_block, $wp_block_object ) {
+    $showBatch = bw_array_get( $parsed_block['attrs'], 'showBatch', false );
+    $determineUpdates = bw_array_get( $parsed_block['attrs'], 'determineUpdates', false );
+    $showBlockLink = bw_array_get( $parsed_block['attrs'], 'showBlockLink', true );
+    if ( $determineUpdates && $showBatch && $showBlockLink ) {
+        oik_require( 'admin/oik-block-determine-updates.php', 'oik-shortcodes' );
+        $content .= oiksc_oik_block_determine_updates( $content, $parsed_block, $wp_block_object );
+    }
+
+    return $content;
 }
