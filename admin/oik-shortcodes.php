@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2017
+<?php // (C) Copyright Bobbing Wide 2012-2017, 2023
 
 /**
  * Admin functions for oik_shortcodes
@@ -59,20 +59,20 @@ function oiksc_api_do_page() {
 function oiksc_parms_rows( ) {
   stag( "table", "widefat" );
   $parmc = 1;
-  $cols[]  = label( "sc${parmc}_name", "Name:" );
-  $cols[]  = label( "sc${parmc}_type", "Type:" );
-  $cols[]  = label( "sc${parmc}_default", "Default:" );
-  $cols[]  = label( "sc${parmc}_values", "Values:" );
-  $cols[]  = label( "sc${parmc}_notes", "Notes:" );
+  $cols[]  = label( "sc{$parmc}_name", "Name:" );
+  $cols[]  = label( "sc{$parmc}_type", "Type:" );
+  $cols[]  = label( "sc{$parmc}_default", "Default:" );
+  $cols[]  = label( "sc{$parmc}_values", "Values:" );
+  $cols[]  = label( "sc{$parmc}_notes", "Notes:" );
   bw_tablerow( $cols );
   $options = array( "#options" => oiksc_param_types() );
   for ( $parmc = 1; $parmc < 10; $parmc++ ) {
     $cols = array();
-    $cols[] = itext( "sc${parmc}_name", 30, "", "textBox" ); 
-    $cols[] = iselect( "sc${parmc}_type", "", $options ); 
-    $cols[] = itext( "sc${parmc}_default", 30, "", "textBox" ); 
-    $cols[] = itext( "sc${parmc}_values", 30, "", "textBox" ); 
-    $cols[] = itext( "sc${parmc}_notes", 60, "", "textBox" ); 
+    $cols[] = itext( "sc{$parmc}_name", 30, "", "textBox" ); 
+    $cols[] = iselect( "sc{$parmc}_type", "", $options ); 
+    $cols[] = itext( "sc{$parmc}_default", 30, "", "textBox" ); 
+    $cols[] = itext( "sc{$parmc}_values", 30, "", "textBox" ); 
+    $cols[] = itext( "sc{$parmc}_notes", 60, "", "textBox" ); 
     bw_tablerow( $cols );
   }
   etag( "table" );
@@ -244,11 +244,11 @@ function oiksc_create_oik_sc_param( $sc_post_id, $code, $param, $skv ) {
 function _oiksc_create_params( $plugin, $code, $post_id ) {
   $syntax = array();
   for ( $parmc = 1; $parmc < 10; $parmc++ ) {
-    $name = bw_array_get( $_REQUEST, "sc${parmc}_name", null );
-    $type = bw_array_get( $_REQUEST, "sc${parmc}_type", null );
-    $default = bw_array_get( $_REQUEST, "sc${parmc}_default", null );
-    $values = bw_array_get( $_REQUEST, "sc${parmc}_values", null );
-    $notes = bw_array_get( $_REQUEST, "sc${parmc}_notes", null );
+    $name = bw_array_get( $_REQUEST, "sc{$parmc}_name", null );
+    $type = bw_array_get( $_REQUEST, "sc{$parmc}_type", null );
+    $default = bw_array_get( $_REQUEST, "sc{$parmc}_default", null );
+    $values = bw_array_get( $_REQUEST, "sc{$parmc}_values", null );
+    $notes = bw_array_get( $_REQUEST, "sc{$parmc}_notes", null );
     if ( $name ) {
       $syntax[ $name ] = bw_skv( $default, $values, $notes );
     }  
