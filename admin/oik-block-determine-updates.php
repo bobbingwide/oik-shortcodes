@@ -16,6 +16,12 @@ function oiksc_oik_block_determine_updates( $content, $parsed_block, $wp_block_o
     $extra_content = null;
     bw_trace2( $content, "content", false);
     bw_trace2( $parsed_block, "parsed_block", false);
+
+    // Bail out early if in the editor.
+    $action = bw_array_get( $_REQUEST, 'action', null );
+    if ( 'edit' === $action ) {
+        return $content;
+    }
     $component = bw_array_get( $parsed_block['attrs'], 'component', null );
     if ( null === $component || empty( $component ) ) {
         p( "Error: Please specify component name in order to determine updates.");
