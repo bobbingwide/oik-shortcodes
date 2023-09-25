@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2017
+<?php // (C) Copyright Bobbing Wide 2012-2017, 2023
 /**
  * Display the "Create API" admin page
  */
@@ -338,14 +338,14 @@ function oiksc_report( $post_id, $type, $action, $title=null) {
   if ( $post_id ) {
     sdiv( "updated", "message" );
     sp();
-    e( "$type ${action} success:" );
+    e( "$type {$action} success:" );
     e( "&nbsp;" . $title . "&nbsp;" );
     alink( null, get_permalink( $post_id ), "View $type" );
     ep();
     ediv();
   } else {
     sdiv( "error", "message" ); 
-    p( "$type ${action} failure." );
+    p( "$type {$action} failure." );
     ediv();
   }
 } 
