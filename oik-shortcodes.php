@@ -9,7 +9,7 @@ Author: bobbingwide
 Author URI: https://www.bobbingwide.com/about-bobbing-wide
 License: GPL2
 
-    Copyright 2012-2022 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2023 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -200,8 +200,8 @@ function oik_register_oik_shortcodes() {
   bw_register_field_for_object_type( "_oik_sc_the_title_cb", $post_type );
   //bw_register_field_for_object_type( "_oik_sc_shortcake_cb", $post_type );
   
-  add_filter( "manage_edit-${post_type}_columns", "oik_shortcodes_columns", 10, 2 );
-  add_action( "manage_${post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
+  add_filter( "manage_edit-{$post_type}_columns", "oik_shortcodes_columns", 10, 2 );
+  add_action( "manage_{$post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
 }
 
 /**
@@ -411,7 +411,8 @@ function oik_block_CPT_template() {
 	$template[] = ['core/more' ];
 	$template[] = ['core/paragraph', ['backgroundColor' => 'very-light-gray'] ];
 	$template[] = ['core/heading', [ 'content' => "Screenshot" ] ];
-	$template[] = ['oik-block/fields', [ 'fields' => 'featured'] ];
+	//$template[] = ['oik-block/fields', [ 'fields' => 'featured'] ];
+	$template[] = ['core/post-featured-image'];
 	$template[] = ['core/heading', [ 'content' => 'Example'] ];
 	$template[] = ['core/spacer'];
 	$template[] = ['core/paragraph', ['placeholder' => 'Type / to choose the sample block' ]];
@@ -1292,10 +1293,10 @@ if ( !function_exists( "oikp_columns_and_titles" ) ) {
 function oikp_columns_and_titles( $post_type ) {
   if ( function_exists( "bw_function_namify" ) ) {
     $post_type_namify = bw_function_namify( $post_type );
-    add_filter( "manage_edit-${post_type}_columns", "${post_type_namify}_columns", 10, 2 );
-    add_action( "manage_${post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
-    add_filter( "oik_table_fields_${post_type}", "${post_type_namify}_fields", 10, 2 );
-    add_filter( "oik_table_titles_${post_type}", "${post_type_namify}_titles", 10, 3 ); 
+    add_filter( "manage_edit-{$post_type}_columns", "{$post_type_namify}_columns", 10, 2 );
+    add_action( "manage_{$post_type}_posts_custom_column", "bw_custom_column_admin", 10, 2 );
+    add_filter( "oik_table_fields_{$post_type}", "{$post_type_namify}_fields", 10, 2 );
+    add_filter( "oik_table_titles_{$post_type}", "{$post_type_namify}_titles", 10, 3 );
   }
 }
 }
