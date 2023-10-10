@@ -147,16 +147,19 @@ function oik_create_codes_create_code( $shortcode, $component_id, $required_comp
  * Return the component ID for the name
  *
  */
-function oiksc_get_component_by_name( $component_name ) {
-	$component_type = oiksc_query_component_type( $component_name );
-	$plugin_post = oiksc_load_component( $component_name, $component_type );
-	if ( $plugin_post ) {
-		$component_id = $plugin_post->ID;
-	} else {
-		
-		gob();
+if ( !function_exists( 'oiksc_get_component_by_name')) {
+	function oiksc_get_component_by_name( $component_name ) {
+		$component_type=oiksc_query_component_type( $component_name );
+		$plugin_post   =oiksc_load_component( $component_name, $component_type );
+		if ( $plugin_post ) {
+			$component_id=$plugin_post->ID;
+		} else {
+
+			gob();
+		}
+
+		return ( $component_id );
 	}
-	return( $component_id );
 }
 	
 

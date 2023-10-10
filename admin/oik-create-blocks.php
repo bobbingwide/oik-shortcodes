@@ -189,16 +189,19 @@ function oiksc_icon_blockinfo( $icon, $block_type_name, $block_title=null, $bloc
 * Return the component ID for the name
                                   *
  */
-function oiksc_get_component_by_name( $component_name ) {
-	$component_type = oiksc_query_component_type( $component_name );
-	$plugin_post = oiksc_load_component( $component_name, $component_type );
-	if ( $plugin_post ) {
-		$component_id = $plugin_post->ID;
-	} else {
-		echo "Invalid component name: $component_name";
-		$component_id = 0;
+if ( !function_exists( 'oiksc_get_component_by_name')) {
+	function oiksc_get_component_by_name( $component_name ) {
+		$component_type=oiksc_query_component_type( $component_name );
+		$plugin_post   =oiksc_load_component( $component_name, $component_type );
+		if ( $plugin_post ) {
+			$component_id=$plugin_post->ID;
+		} else {
+			echo "Invalid component name: $component_name";
+			$component_id=0;
+		}
+
+		return ( $component_id );
 	}
-	return( $component_id );
 }
 
 /** oiksc_get_block now only in oik-update-blocks.php */

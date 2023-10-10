@@ -105,6 +105,8 @@ class Tests_oik_api_importer extends BW_UnitTestCase {
 	 * </pre>'
 	 *
 	 * afterwards we want id=4 to link to wp-a2z.org
+	 *
+	 * This test assumes the locale is en_GB; it fails for en_US.
 	 */
 
 	function test_oikai_easy_tokens_for_wordpress_cache() {

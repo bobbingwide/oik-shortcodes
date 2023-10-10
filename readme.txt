@@ -123,6 +123,9 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
+= 1.41.1 =
+Upgrade for a couple of minor changes.
+
 = 1.41.0 =
 Update for improvements to the [blocks] shortcode.
 
@@ -321,7 +324,7 @@ First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oi
 == Changelog ==
 = 1.41.1 =
 * Changed: remove show_in_nav_menus from oik-shortcodes. 
-* Changed: Remove 'Compatibe with shortcake?' cb #86
+* Changed: Remove 'Compatible with shortcake?' cb #86
 * Tested: With WordPress 5.9.2 and WordPress Multi Site
 * Tested: With Gutenberg 12.7.2
 * Tested: With PHP 8.0

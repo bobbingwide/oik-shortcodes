@@ -1777,6 +1777,9 @@ function oikai_handle_dummy_TCES( $key, $value, &$tokens ) {
 function oikai_dummy_TCES( $key, $value=null, $tokens=null ) {
   if ( $key ) {
     $dummy_TCES = bw_context( "dummy_TCES" );
+	if ( false === $dummy_TCES ) {
+		$dummy_TCES = [];
+	}
     $dummy_TCES[] = $key;
   } else { 
     $dummy_TCES = array();
