@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2014-2017
+<?php // (C) Copyright Bobbing Wide 2014-2023
 /**
  * oiksc_parsed_source class
  *
@@ -44,7 +44,7 @@ class oiksc_parsed_source {
 	//public $parsed_bytes;
 	public $po_post;
 	public $po_md5_hash;
-	public $latest_hd5_hash;
+	public $latest_md5_hash;
 	public $sourceref;
 	
 	/**
