@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2019
+<?php // (C) Copyright Bobbing Wide 2019-2023
 
 /**
  * @package
