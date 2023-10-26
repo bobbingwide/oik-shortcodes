@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2016,2017
+<?php // (C) Copyright Bobbing Wide 2016,2017, 2023
 /**
  * 404 handler for oik-shortcodes
  *
@@ -17,6 +17,7 @@ class oiksc_404_handler {
 	public $wpdb;
 	public $query;
 	public $post_type_object;
+	public $handlers;
 	
 	/**
 	 * @var $instance - the true instance
