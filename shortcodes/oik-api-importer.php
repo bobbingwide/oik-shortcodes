@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2021
+<?php // (C) Copyright Bobbing Wide 2012-2023
 
 /**
  * Print a function's parameters in a definition list 
@@ -8,7 +8,7 @@
  * @param string $name parameter name - should match $param->getName()
  * @param string $description parameter description
  */
-function oikai_print_param_info( $param, $type="mixed", $name=null, $description=null ) {
+function oikai_print_param_info( $param, $type="mixed", $name=null, $description='' ) {
 	//bw_trace2(); 
 	//bw_backtrace();
   if ( null == $name ) {
@@ -152,7 +152,7 @@ function oikai_print_param( $param, $docblock ) {
  */
 function oikai_explode_tag( $tag ) {
 	$parts = explode( " ", $tag ); 
-	$list = array( null, null, null, null );
+	$list = array( null, null, null, '' );
 	$index = 0;
 	foreach ( $parts as $part ) {
 		$part = trim( $part );
@@ -178,7 +178,7 @@ function oikai_explode_tag( $tag ) {
  * @param string $description - the description of the return value
  *
  */
-function oikai_print_return_info( $type="void", $description=null ) {
+function oikai_print_return_info( $type="void", $description='' ) {
   h2( "Returns" );
   $type = ( $type ) ? $type : "void";
   e( "<i>$type</i> " );
@@ -203,14 +203,14 @@ function oikai_print_return( $refFunc, $docblock, $print=true ) {
   // $returnsref = $refFunc->returnsReference();
   $tags = $docblock->getTags();
   $type = null;
-  $description = null;
+  $description = '';
   foreach ( $tags as $tag ) {
     list( $tagname, $type, $description ) = explode( " ", $tag . " . . .", 3 );
     if ( ( $tagname == "@return" ) ) { 
       break;
     } else {
       $type = null;
-      $description = null;
+      $description = '';
     }  
   }
   if ( $print ) {
