@@ -3,9 +3,9 @@ Contributors: bobbingwide
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: oik, fields, custom post types, shortcodes, APIs, hooks, [bw_api], [apis], [hooks], [codes]
 Requires at least: 5.2
-Tested up to: 6.4-beta2
+Tested up to: 6.4-RC3
 Gutenberg compatible: Yes
-Stable tag: 1.41.2
+Stable tag: 1.41.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,27 +123,19 @@ Yes - see above
 2. Editing an oik_shortcode  
 
 == Upgrade Notice ==
-= 1.41.2 =
-Upgrade for improved templates and PHP 8.2 support.
+= 1.41.3 =
+Upgrade for more changes for PHP 8.2 support.
 
 == Changelog ==
 = 1.41.2 =
-* Changed: Support PHP 8.2. Add some basic file loading PHPUnit tests #91
-* Changed: Don't process determine updates when in the block editor #88
-* Changed: Improve template #92
-* Changed: Extend oik-block/blocklist dynamic rendering #88
-* Changed: Avoid more Warnings #62
-* Changed: Don't invoke oik_loaded more than once #87
-* Changed: Cater for an array of keywords #80
-* Changed: Cater for instanceof static #62
-* Changed: Remove show_in_nav_menus from oik-shortcodes. 
-* Changed: Remove 'Compatible with shortcake?' cb #86
-* Tested: With WordPress 6.3.1 and WordPress Multisite
-* Tested: With WordPress 6.4-beta2 and WordPress Multisite
-* Tested: With Gutenberg 16.7.1
+* Changed: Update Copyright year #91
+* Fixed: Correct latest_hd5_hash to latest_md5_hash #84
+* Changed: Default description to '' not null #84
+* Changed: Declare $handlers #91
+* Tested: With WordPress 6.4-RC3 and WordPress Multisite
+* Tested: With Gutenberg 16.9.0
 * Tested: With PHP 8.0, PHP 8.1 and PHP 8.2
 * Tested: With PHPUnit 9.6
-
 
 == Further reading ==
 If you want to read more about the oik plugins then please visit the

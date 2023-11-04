@@ -1,4 +1,7 @@
 == Upgrade Notice ==
+= 1.41.2 =
+Upgrade for improved templates and PHP 8.2 support.
+
 = 1.41.1 =
 Upgrade for a couple of minor changes.
 
@@ -198,6 +201,23 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.41.2 =
+* Changed: Support PHP 8.2. Add some basic file loading PHPUnit tests #91
+* Changed: Don't process determine updates when in the block editor #88
+* Changed: Improve template #92
+* Changed: Extend oik-block/blocklist dynamic rendering #88
+* Changed: Avoid more Warnings #62
+* Changed: Don't invoke oik_loaded more than once #87
+* Changed: Cater for an array of keywords #80
+* Changed: Cater for instanceof static #62
+* Changed: Remove show_in_nav_menus from oik-shortcodes. 
+* Changed: Remove 'Compatible with shortcake?' cb #86
+* Tested: With WordPress 6.3.1 and WordPress Multisite
+* Tested: With WordPress 6.4-beta2 and WordPress Multisite
+* Tested: With Gutenberg 16.7.1
+* Tested: With PHP 8.0, PHP 8.1 and PHP 8.2
+* Tested: With PHPUnit 9.6
+
 = 1.41.1 =
 * Changed: remove show_in_nav_menus from oik-shortcodes. 
 * Changed: Remove 'Compatible with shortcake?' cb #86
