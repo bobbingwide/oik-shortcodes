@@ -1864,7 +1864,9 @@ function oikai_handle_token_T_STRING( $key, $token, &$tokens, $doaction=true  ) 
 		case 'oik_file':
 		case 'oik_hook':
 			$wordpress_cache = oiksc_load_wordpress_cache();
-			$tokens[$key][3] = $wordpress_cache->get_wordpress_link( $api_name );
+			if ( is_array( $tokens[$key])) {
+				$tokens[ $key ][3]=$wordpress_cache->get_wordpress_link( $api_name );
+			}
 			break;
 
 	  default:
