@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2016
+<?php // (C) Copyright Bobbing Wide 2016, 2023
 
 /**
  * Class oiksc_parse_status
@@ -36,6 +36,7 @@ class oiksc_parse_status {
 	public $current_sha;
 	
 	public $component_id;
+	public $current_of_n;
 
 	/**
 	 * @var $instance - the true instance
