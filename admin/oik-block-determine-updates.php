@@ -101,7 +101,7 @@ function oiksc_check_block_status( $block, $component ) {
     $_REQUEST['description'] = $block['description'];
     $_REQUEST['component'] = $block['component'];
     $_REQUEST['keywords'] = $block['keywords'];
-    $_REQUEST['category'] = $block['category'];
+    $_REQUEST['category'] = isset( $block['category'] ) ? $block['category'] : null;
     $_REQUEST['variation'] = bw_array_get( $block, 'variation', null );
     //oiksc_create_or_update_block();
     oik_require( "admin/oik-create-or-update-block.php", "oik-shortcodes" );
