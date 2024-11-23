@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012-2023
+<?php // (C) Copyright Bobbing Wide 2012-2024
 
 /**
  * Print a function's parameters in a definition list 
@@ -593,7 +593,7 @@ function oikai_reflect_descriptions( $docblock ) {
   //p( esc_html( $docblock->getLongDescription() ) );
   sp();
   oikai_format_description( $docblock->getLongDescription() );
-  ep();
+  bw_echo( '</p>' );
   //bw_trace2( $docblock );
 }
 

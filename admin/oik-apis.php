@@ -278,7 +278,7 @@ function oiksc_api() {
   e( isubmit( "_oiksc_create_api", "Create API",  null, "button-primary" ) );
   e( "&nbsp;" );
   e( isubmit( "_oiksc_list_apis", "List", null, "button-secondary" ) );
-  ep();
+  bw_echo( '</p>' );
   etag( "form" );
   bw_flush();
 } 
@@ -341,7 +341,7 @@ function oiksc_report( $post_id, $type, $action, $title=null) {
     e( "$type {$action} success:" );
     e( "&nbsp;" . $title . "&nbsp;" );
     alink( null, get_permalink( $post_id ), "View $type" );
-    ep();
+	bw_echo( '</p>' );
     ediv();
   } else {
     sdiv( "error", "message" ); 
