@@ -120,8 +120,9 @@ class DocBlock //implements \Reflector
      */
     private function stripDocComment($comment)
     {
-        $comment = trim(preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ \t]{0,1}(.*)?#u', '$1', $comment));
-
+		if ( $comment) {
+			$comment=trim( preg_replace( '#[ \t]*(?:\/\*\*|\*\/|\*)?[ \t]{0,1}(.*)?#u', '$1', $comment ) );
+		}
         // reg ex above is not able to remove */ from a single line docblock
         if (substr($comment, -2) == '*/') {
             $comment = trim(substr($comment, 0, -2));
