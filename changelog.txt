@@ -1,4 +1,10 @@
 == Upgrade Notice ==
+= 1.41.4 =
+Upgrade for more changes for PHP 8.2 to PHP 8.4 support.
+
+= 1.41.3 =
+Upgrade for more changes for PHP 8.2 support.
+
 = 1.41.2 =
 Upgrade for improved templates and PHP 8.2 support.
 
@@ -201,6 +207,27 @@ Includes a fix for the Create shortcode admin page
 First version for oik-plugins.com, depends on oik v1.17 and oik-fields v1.18, oik-plugins v1.1
 
 == Changelog ==
+= 1.41.4 =
+* Fixed: Don't preg_replace null #84
+* Fixed: Cater for $block['category'] not being set #93
+* Fixed: Replace ep() with bw_echo( '</p>' ); #95
+* Fixed: Declare missing property. #84
+* Fixed: Temporary fix to avoid Warning #89
+* Tested: With WordPress 6.7.1 and WordPress Multisite
+* Tested: With Gutenberg 19.6.4
+* Tested: With PHP 8.3 and PHP 8.4
+* Tested: With PHPUnit 9.6
+
+= 1.41.3 =
+* Changed: Update Copyright year #91
+* Fixed: Correct latest_hd5_hash to latest_md5_hash #84
+* Changed: Default description to '' not null #84
+* Changed: Declare $handlers #91
+* Tested: With WordPress 6.4-RC3 and WordPress Multisite
+* Tested: With Gutenberg 16.9.0
+* Tested: With PHP 8.0, PHP 8.1 and PHP 8.2
+* Tested: With PHPUnit 9.6
+
 = 1.41.2 =
 * Changed: Support PHP 8.2. Add some basic file loading PHPUnit tests #91
 * Changed: Don't process determine updates when in the block editor #88

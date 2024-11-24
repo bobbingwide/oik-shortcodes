@@ -4,12 +4,12 @@ Plugin Name: oik blocks and shortcodes server
 Plugin URI: https://www.oik-plugins.com/oik-plugins/oik-shortcodes
 Description: blocks, shortcodes, APIs, hooks, classes, files and the [bw_api], [api], [apis], [codes], [hooks], [file], [files], [classes], [hook] and [md] shortcodes
 Depends: oik base plugin, oik fields, oik-sc-help
-Version: 1.41.3
+Version: 1.41.4
 Author: bobbingwide
 Author URI: https://www.bobbingwide.com/about-bobbing-wide
 License: GPL2
 
-    Copyright 2012-2023 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2024 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -69,7 +69,7 @@ function oik_shortcodes_init() {
 	add_filter( "get_the_excerpt", "oik_get_the_excerpt", 9, 2 );
 	
 	add_filter( "request", "oiksc_request" );
-	add_filter( 'request', 'oiksc_wordpress_cache_redirect');
+	add_filter( 'request', 'oiksc_wordpress_cache_redirect' );
 	add_action( "run_oik-shortcodes.php", "oiksc_run_oik_shortcodes" );
 	add_action( "run_oik-create-codes.php", "oiksc_run_oik_create_codes" );
 	add_action( "genesis_404", "oiksc_genesis_404" );
