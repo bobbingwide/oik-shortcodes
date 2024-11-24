@@ -1437,7 +1437,7 @@ function oikai_link_to_wordpress( $value ) {
   $url = "http://api.wordpress.org/core/handbook/1.0";
   $url = "http://codex.wordpress.org/Function_Reference/$value";
   $url = "http://developer.wordpress.org/reference/functions/$value"; 
-  $url = "http://core.wp-a2z.org/oik_api/$value";
+  //$url = "http://core.wp-a2z.org/oik_api/$value";
   /*
   $url = add_query_arg( array( "function" => $value
                              , "version" => $wp_version
@@ -1911,7 +1911,24 @@ function oikai_link_to_local_site( $key, &$tokens, $api_name, $doaction, $type, 
 		}
 	}	else {
 		if ( $type == "user" ) {
-			$tokens[$key][3] = oikai_link_to_wordpress( $value );
+
+			/**
+			 * The key may be the wrong value!
+			 * such as a comma or closing parenthesis.
+			 * Backtrack to the most recent token which is an array.
+			 *
+			 */
+			while ( (!is_array($tokens[ $key ])  || ( is_array( $tokens[ $key ]) && ( $tokens[ $key][0] !== T_CONSTANT_ENCAPSED_STRING )) )  && $key >= 1  ) {
+				//bw_trace2( $tokens[$key], "Token at: $key", false );
+				$key--;
+			}
+			if ( is_array( $tokens[$key] ) && ( $tokens[$key][0] === T_CONSTANT_ENCAPSED_STRING ) ) {
+				$tokens[ $key ][3]=oikai_link_to_wordpress( $value );
+			} else {
+				//bw_trace2( $tokens[$key], "tokens $key: $api_name!$value!", false );
+				//bw_trace2( $tokens, "tokens", false );
+				//bw_backtrace();
+			}
 		} else {
 			// br( "$value $api_name" );  // This used to contain " $type" as well. **?**
 		}
@@ -2457,6 +2474,12 @@ function oikai_syntax_source( $sources, $startline, $prepend_php=true ) {
   }
   if ( count( $tokens ) ) { 
     oikai_easy_tokens( $tokens, $startline, $prepend_php );
+	/*
+	  oik_require( 'shortcodes/oik-css.php', 'oik-css' );
+	  $geshid = bw_geshi_it( $content, 'PHP');
+	  e( $geshid );
+	*/
+
   }  
 }
 
